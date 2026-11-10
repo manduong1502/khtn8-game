@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đấu Trường Đòn Bẩy & Moment Lực - KHTN 8</title>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --dark: #1e1b4b;
+    --light: #f8fafc;
+    --card-bg: #ffffff;
+    --text: #1e293b;
+    --text-muted: #64748b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  body {
+    background: linear-gradient(135deg, #e0e7ff 0%, #fae8ff 50%, #f0fdf4 100%);
+    min-height: 100vh;
+    color: var(--text);
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .game-container {
+    background: var(--card-bg);
+    width: 100%;
+    max-width: 680px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px -15px rgba(79, 70, 229, 0.2);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .top-banner {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    padding: 20px 24px;
+    text-align: center;
+    position: relative;
+  }
+
+  .top-banner h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .top-banner p {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-top: 4px;
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 12px;
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .content-area {
+    padding: 24px;
+  }
+
+  .screen {
+    display: none;
+  }
+
+  .screen.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* START SCREEN */
+  .avatar-grid {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .avatar-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 32px;
+    text-align: center;
+    transition: all 0.2s;
+    background: #f8fafc;
+  }
+
+  .avatar-card.selected {
+    border-color: var(--primary);
+    background: #ede9fe;
+    transform: scale(1.08);
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    font-size: 15px;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  .input-group input:focus {
+    border-color: var(--primary);
+  }
+
+  .mode-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .mode-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: #f8fafc;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+
+  .mode-btn:hover {
+    border-color: var(--primary);
+    background: #f5f3ff;
+  }
+
+  .mode-icon {
+    font-size: 26px;
+  }
+
+  .mode-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--dark);
+  }
+
+  .mode-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* BUTTONS */
+  .btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #4338ca, #4f46e5);
+    transform: translateY(-2px);
+  }
+
+  /* QUIZ SCREEN */
+  .question-badge {
+    display: inline-block;
+    background: #ede9fe;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  .question-text {
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--dark);
+    line-height: 1.45;
+    margin-bottom: 18px;
+  }
+
+  .answers-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .ans-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    background: #ffffff;
+    font-size: 14.5px;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    outline: none;
+  }
+
+  .ans-btn:hover:not(:disabled) {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+  }
+
+  .ans-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .ans-btn.correct {
+    border-color: var(--success);
+    background: #ecfdf5;
+    color: #065f46;
+  }
+
+  .ans-btn.correct .ans-letter {
+    background: var(--success);
+    color: white;
+  }
+
+  .ans-btn.wrong {
+    border-color: var(--danger);
+    background: #fef2f2;
+    color: #991b1b;
+  }
+
+  .ans-btn.wrong .ans-letter {
+    background: var(--danger);
+    color: white;
+  }
+
+  .explanation-box {
+    display: none;
+    background: #f8fafc;
+    border-left: 4px solid var(--primary);
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    color: var(--text);
+    margin-bottom: 18px;
+    line-height: 1.45;
+  }
+
+  /* SEESAW LAB */
+  .seesaw-stage {
+    background: linear-gradient(180deg, #f0fdf4 0%, #e0f2fe 100%);
+    border-radius: 20px;
+    padding: 24px 16px 12px;
+    margin-bottom: 20px;
+    position: relative;
+    border: 2px solid #bae6fd;
+    overflow: hidden;
+  }
+
+  .seesaw-canvas-wrap {
+    width: 100%;
+    height: 180px;
+    position: relative;
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .seesaw-controls {
+    background: white;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 16px;
+  }
+
+  .slider-row {
+    margin-bottom: 14px;
+  }
+
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .slider-label span.val {
+    color: var(--primary);
+  }
+
+  input[type=range] {
+    width: 100%;
+    accent-color: var(--primary);
+    height: 6px;
+  }
+
+  .balance-status {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 8px;
+    border-radius: 10px;
+    margin-top: 10px;
+  }
+
+  .balance-status.balanced {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  .balance-status.unbalanced {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  /* RESULT CERTIFICATE */
+  .result-card {
+    text-align: center;
+    padding: 6px 0;
+  }
+
+  .trophy {
+    font-size: 64px;
+    animation: bounce 1s infinite alternate;
+  }
+
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-8px); }
+  }
+
+  .badge-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--dark);
+    margin: 8px 0 4px;
+  }
+
+  .score-badge {
+    display: inline-block;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--primary);
+    background: #ede9fe;
+    padding: 6px 22px;
+    border-radius: 20px;
+    margin: 10px 0;
+  }
+
+  .stats-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 14px 0 18px;
+  }
+
+  .stat-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .stat-box .num {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--dark);
+  }
+
+  .stat-box .lbl {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .email-status {
+    background: #f0fdf4;
+    border: 2px dashed #86efac;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: #166534;
+  }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+  <!-- TOP BANNER -->
+  <div class="top-banner">
+    <h1><span>⚖️</span> ĐẤU TRƯỜNG ĐÒN BẨY & MOMENT LỰC</h1>
+    <p>Khoa Học Tự Nhiên 8 — Thử Thách Chinh Phục Điểm 10</p>
+    <div class="stats-bar">
+      <span id="player-display">Học viên: Khách</span>
+      <span id="score-display">Điểm: 0 XP</span>
+      <span id="streak-display">🔥 Streak: 0</span>
+    </div>
+  </div>
+
+  <div class="content-area">
+
+    <!-- SCREEN 1: WELCOME & START -->
+    <div id="screen-start" class="screen active">
+      <div class="input-group">
+        <label>Nhập họ và tên học sinh:</label>
+        <input type="text" id="player-name-input" placeholder="Ví dụ: Hoàng An, Minh Bình, Ngọc Châu..." maxlength="30" value="Học sinh cưng">
+      </div>
+
+      <div class="input-group">
+        <label>Email giáo viên nhận kết quả (mặc định):</label>
+        <input type="email" id="teacher-email-input" value="minhmanuzu@gmail.com">
+      </div>
+
+      <label style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Chọn Linh Vật Đồng Hành:</label>
+      <div class="avatar-grid">
+        <div class="avatar-card selected" onclick="selectAvatar('🦁', this)">🦁</div>
+        <div class="avatar-card" onclick="selectAvatar('🚀', this)">🚀</div>
+        <div class="avatar-card" onclick="selectAvatar('⚡', this)">⚡</div>
+        <div class="avatar-card" onclick="selectAvatar('🦉', this)">🦉</div>
+        <div class="avatar-card" onclick="selectAvatar('🎯', this)">🎯</div>
+      </div>
+
+      <label style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block;">Chọn Chế Độ Chơi:</label>
+      <div class="mode-selector">
+        <div class="mode-btn" onclick="startGame('quiz')">
+          <div class="mode-icon">⚡</div>
+          <div>
+            <div class="mode-title">Vòng 1: Đấu Trường 10 Câu (Tự Động Đảo Câu & Đảo Đáp Án)</div>
+            <div class="mode-desc">Ngân hàng 25 câu hỏi ngẫu nhiên, tự động gửi điểm về email Thầy/Cô</div>
+          </div>
+        </div>
+
+        <div class="mode-btn" onclick="startGame('seesaw')">
+          <div class="mode-icon">⚖️</div>
+          <div>
+            <div class="mode-title">Vòng 2: Phòng Thí Nghiệm Bập Bênh Vật Lí</div>
+            <div class="mode-desc">Kéo thanh trượt điều chỉnh vị trí để tìm điểm cân bằng thời gian thực</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="startGame('quiz')">BẮT ĐẦU CHINH PHỤC NGAY 🚀</button>
+    </div>
+
+    <!-- SCREEN 2: QUIZ ARENA -->
+    <div id="screen-quiz" class="screen">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span class="question-badge" id="quiz-progress">Câu 1 / 10</span>
+        <span style="font-size: 13px; font-weight: 700; color: var(--warning);" id="quiz-timer">⏱️ 30s</span>
+      </div>
+
+      <div class="question-text" id="quiz-question">Đang tải câu hỏi...</div>
+
+      <div class="answers-grid" id="quiz-options">
+        <!-- Shuffled Options -->
+      </div>
+
+      <div class="explanation-box" id="quiz-explanation">
+        <!-- Explanation -->
+      </div>
+
+      <button class="btn-primary" id="btn-next-question" style="display: none;" onclick="nextQuestion()">CÂU TIẾP THEO &rarr;</button>
+    </div>
+
+    <!-- SCREEN 3: SEESAW LAB -->
+    <div id="screen-seesaw" class="screen">
+      <div class="question-badge">PHÒNG THÍ NGHIỆM TƯƠNG TÁC ĐÒN BẨY</div>
+      <div class="question-text" id="seesaw-prompt">
+        Bạn An (60 kg) ngồi cách trục quay 1.0 m bên trái. Em hãy kéo bạn Bình (30 kg) bên phải đến đúng vị trí để bập bênh thăng bằng!
+      </div>
+
+      <div class="seesaw-stage">
+        <div class="seesaw-canvas-wrap">
+          <canvas id="seesawCanvas" width="600" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="seesaw-controls">
+        <div class="slider-row">
+          <div class="slider-label">
+            <span>Vị trí của bạn Bình (bên phải):</span>
+            <span class="val" id="b-pos-val">1.0 m</span>
+          </div>
+          <input type="range" id="b-slider" min="0.2" max="3.0" step="0.1" value="1.0" oninput="updateSeesawUser()">
+        </div>
+        <div class="balance-status unbalanced" id="seesaw-status">
+          ⚠️ Đòn bẩy đang nghiêng chúc về bên trái (bạn An nặng hơn)!
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-primary" style="background: #64748b;" onclick="nextSeesawLevel()">THỬ THÁCH TIẾP THEO ⏭️</button>
+        <button class="btn-primary" onclick="showScreen('screen-start')">VỀ TRANG CHỦ 🏠</button>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: CERTIFICATE & RESULT -->
+    <div id="screen-result" class="screen">
+      <div class="result-card">
+        <div class="trophy" id="result-trophy">🏆</div>
+        <div class="badge-title" id="result-badge">CHIẾN THẦN MOMENT LỰC</div>
+        <p style="font-size: 14px; color: var(--text-muted);" id="result-congrats">Chúc mừng bạn đã hoàn thành bài tập!</p>
+
+        <div class="score-badge" id="final-score">100 / 100 XP</div>
+
+        <div class="stats-summary">
+          <div class="stat-box">
+            <div class="num" id="stat-correct">10/10</div>
+            <div class="lbl">Số câu đúng</div>
+          </div>
+          <div class="stat-box">
+            <div class="num" id="stat-accuracy">100%</div>
+            <div class="lbl">Độ chính xác</div>
+          </div>
+          <div class="stat-box">
+            <div class="num" id="stat-streak">🔥 10</div>
+            <div class="lbl">Max Streak</div>
+          </div>
+        </div>
+
+        <div class="email-status" id="email-status-box">
+          <div style="font-weight: 800; font-size: 13.5px;" id="email-status-text">⏳ Đang tự động gửi kết quả về email Thầy/Cô...</div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-primary" onclick="showScreen('screen-start')">CHƠI LẠI ĐỀ MỚI 🔄</button>
+          <button class="btn-primary" style="background: #059669;" onclick="startGame('seesaw')">VÀO PHÒNG LAB ⚖️</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// --- AUDIO SYNTHESIZER ---
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, type, duration) {
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e) {}
+}
+
+function playCorrectSound() {
+  playTone(523.25, 'sine', 0.08);
+  setTimeout(() => playTone(659.25, 'sine', 0.08), 90);
+  setTimeout(() => playTone(783.99, 'sine', 0.2), 180);
+}
+
+function playWrongSound() {
+  playTone(220, 'sawtooth', 0.12);
+  setTimeout(() => playTone(180, 'sawtooth', 0.2), 100);
+}
+
+// --- NGÂN HÀNG 25 CÂU HỎI PHONG PHÚ ---
+const QUESTION_BANK = [
+  {
+    q: "Tác dụng làm quay của lực lên một vật quanh một trục quay được đặc trưng bởi đại lượng nào?",
+    correct: "Moment lực",
+    wrongs: ["Áp suất của lực", "Khối lượng của vật", "Vận tốc góc"],
+    explain: "💡 Tác dụng làm quay của lực được đặc trưng bằng Moment lực (phụ thuộc vào độ lớn của lực và khoảng cách từ trục quay đến giá của lực)."
+  },
+  {
+    q: "Đơn vị đo lường chuẩn của moment lực trong hệ SI là:",
+    correct: "N·m (Newton mét)",
+    wrongs: ["N (Newton)", "N/m (Newton trên mét)", "kg·m"],
+    explain: "💡 Đơn vị của moment lực là Newton mét (kí hiệu N·m)."
+  },
+  {
+    q: "Chiếc xe cút kít (xe rùa chở cát gạch) thuộc loại đòn bẩy nào và có tác dụng gì?",
+    correct: "Đòn bẩy loại 2 — Luôn được lợi về lực (nâng nhẹ nhàng)",
+    wrongs: [
+      "Đòn bẩy loại 1 — Làm đổi hướng của lực",
+      "Đòn bẩy loại 3 — Bị thiệt về lực",
+      "Không phải đòn bẩy"
+    ],
+    explain: "💡 Xe cút kít có trục bánh xe là điểm tựa O ở đầu, thùng gạch O1 ở giữa, tay cầm O2 ở đầu kia (O - O1 - O2) nên là đòn bẩy loại 2, luôn cho lợi về lực!"
+  },
+  {
+    q: "Hai bạn An và Bình chơi bập bênh. Biết bạn An có khối lượng lớn hơn bạn Bình. Để bập bênh thăng bằng thì:",
+    correct: "Bạn An phải ngồi gần điểm tựa hơn bạn Bình",
+    wrongs: [
+      "Bạn An phải ngồi xa điểm tựa hơn bạn Bình",
+      "Hai bạn bắt buộc phải ngồi cách đều điểm tựa",
+      "Bập bênh không thể nào thăng bằng được"
+    ],
+    explain: "💡 Để cân bằng, người nặng hơn phải ngồi gần trục quay hơn (cánh tay đòn ngắn hơn) để bù lại khối lượng lớn của mình!"
+  },
+  {
+    q: "Dưới góc độ đòn bẩy, tại sao khi ngồi học mà ta cúi gập đầu sát mặt bàn thì cơ sau gáy rất nhanh bị mỏi và đau nhức?",
+    correct: "Vì trọng tâm đầu dời xa trục cổ (tăng cánh tay đòn), cơ sau gáy phải gồng lực lớn gấp nhiều lần để giữ đầu",
+    wrongs: [
+      "Vì cơ gáy không cần hoạt động nên bị mỏi",
+      "Vì cánh tay đòn của đầu giảm đi",
+      "Vì đầu trở nên nhẹ hơn bình thường"
+    ],
+    explain: "💡 Khớp cổ và đầu là đòn bẩy loại 1. Khi cúi đầu, trọng tâm dời xa trục cổ, cơ gáy phải gồng lực kéo lớn gấp 3-5 lần bình thường gây căng mỏi cổ!"
+  },
+  {
+    q: "Thùng gạch trên xe cút kít cách bánh xe 40 cm, tay cầm cách bánh xe 120 cm. Lực nâng của tay người công nhân sẽ:",
+    correct: "Nhỏ hơn trọng lượng thùng gạch 3 lần (được lợi 3 lần về lực)",
+    wrongs: [
+      "Lớn gấp 3 lần trọng lượng gạch",
+      "Bằng đúng trọng lượng gạch",
+      "Nhỏ hơn 2 lần"
+    ],
+    explain: "💡 Lập luận tỉ lệ: Khoảng cách từ trục bánh đến tay (120 cm) gấp 3 lần khoảng cách đến thùng gạch (40 cm), nên lực nâng được lợi 3 lần (nhỏ hơn 3 lần)!"
+  },
+  {
+    q: "Trên chiếc xe đạp, những bộ phận nào hoạt động dựa trên nguyên lí của đòn bẩy?",
+    correct: "Tay phanh và chân chống xe đạp",
+    wrongs: ["Xích xe đạp và líp", "Lốp xe cao su", "Yên xe ngồi"],
+    explain: "💡 Tay phanh và chân chống xe đạp đều là các đòn bẩy quay quanh trục đinh ốc cố định!"
+  },
+  {
+    q: "Cái nhíp gắp mụn và kẹp gắp than nóng thuộc loại đòn bẩy nào?",
+    correct: "Đòn bẩy loại 3 (ngón tay cầm bóp ở giữa)",
+    wrongs: [
+      "Đòn bẩy loại 1 (điểm tựa ở giữa)",
+      "Đòn bẩy loại 2 (vật cản ở giữa)",
+      "Mặt phẳng nghiêng"
+    ],
+    explain: "💡 Cái nhíp có đuôi là điểm tựa O, ngón tay bóp ở giữa O2, đầu gắp vật ở mút O1 (O - O2 - O1). Đây là đòn bẩy loại 3, thiệt về lực nhưng lợi về đường đi và độ khéo léo!"
+  },
+  {
+    q: "Hai bạn cùng bẩy tảng đá. Bạn A ấn cách điểm tựa 30 cm, bạn B ấn cách điểm tựa 90 cm. Bạn nào nâng dễ hơn?",
+    correct: "Bạn B nâng dễ hơn và lực ấn nhỏ hơn bạn A 3 lần",
+    wrongs: [
+      "Bạn A nâng dễ hơn vì đứng gần",
+      "Hai bạn tốn sức bằng nhau",
+      "Bạn B nâng nặng hơn 3 lần"
+    ],
+    explain: "💡 Khoảng cách của bạn B (90 cm) gấp 3 lần bạn A (30 cm) nên lực ấn của bạn B nhỏ hơn 3 lần, bạn B nâng tốn ít sức hơn rất nhiều!"
+  },
+  {
+    q: "Trường hợp nào sau đây lực tác dụng KHÔNG làm cánh cửa quay quanh bản lề?",
+    correct: "Lực đẩy có giá của lực đi qua (cắt) trục bản lề",
+    wrongs: [
+      "Đẩy vuông góc vào tay nắm cửa",
+      "Kéo xiên góc với mặt phẳng cánh cửa",
+      "Ấn nhẹ ở mép ngoài cánh cửa"
+    ],
+    explain: "💡 Lực có giá đi qua (cắt) trục quay hoặc song song với trục quay thì KHÔNG có tác dụng làm quay vật!"
+  },
+  {
+    q: "Muốn dùng lực 500 N để bẩy vật nặng 2000 N bằng đòn bẩy thì khoảng cách từ tay ấn đến điểm tựa phải thỏa mãn:",
+    correct: "Dài gấp ít nhất 4 lần khoảng cách từ vật đến điểm tựa",
+    wrongs: [
+      "Dài bằng một nửa khoảng cách từ vật",
+      "Bằng đúng khoảng cách từ vật",
+      "Ngắn hơn 4 lần"
+    ],
+    explain: "💡 Lập luận tỉ lệ: Trọng lượng vật (2000 N) gấp 4 lần lực của người (500 N). Muốn giảm lực đi 4 lần thì cánh tay đòn của lực phải dài gấp ít nhất 4 lần cánh tay đòn của vật!"
+  },
+  {
+    q: "Khi ta thực hiện động tác kiễng chân (nhón gót), khớp các ngón chân là điểm tựa O, trọng lượng cơ thể đè ở khớp cổ chân O1 ở giữa, cơ bắp chuối kéo gân gót O2 ở sau. Đây là đòn bẩy:",
+    correct: "Loại 2 (vật O1 ở giữa)",
+    wrongs: ["Loại 1", "Loại 3", "Không phải đòn bẩy"],
+    explain: "💡 Động tác kiễng chân có trọng lượng toàn thân nằm ở giữa điểm tựa ngón chân và gân gót (O - O1 - O2) nên là đòn bẩy loại 2, giúp cơ thể nâng toàn bộ sức nặng dễ dàng!"
+  },
+  {
+    q: "Khi cẳng tay gập lại nâng một quả tạ ở bàn tay, khớp khuỷu là điểm tựa O, cơ bắp trước bám ở cẳng tay O2, quả tạ ở lòng bàn tay O1 (O - O2 - O1). Đây là đòn bẩy:",
+    correct: "Loại 3 (lực cơ O2 ở giữa)",
+    wrongs: ["Loại 1", "Loại 2", "Ròng rọc"],
+    explain: "💡 Cẳng tay nâng tạ là đòn bẩy loại 3 (lực cơ ở giữa), tuy thiệt về lực nhưng giúp tay vung với biên độ rộng và tốc độ rất nhanh, linh hoạt!"
+  },
+  {
+    q: "Khi chế tạo cánh cửa phòng, người ta luôn lắp tay nắm ở mép ngoài cùng (đối diện xa với bản lề) vì:",
+    correct: "Làm khoảng cách đến trục bản lề lớn nhất, tạo moment lực lớn giúp mở cửa tốn ít sức nhất",
+    wrongs: [
+      "Giúp cánh cửa đẹp mắt và cân xứng hơn",
+      "Giảm lực ma sát của bản lề",
+      "Tránh làm hỏng chốt khoá"
+    ],
+    explain: "💡 Khoảng cách từ trục quay đến tay càng xa thì moment lực càng lớn, chỉ cần lực đẩy nhẹ cửa đã quay mở dễ dàng!"
+  },
+  {
+    q: "Quan sát kéo cắt tỉa cành cây lớn, ta thấy phần cán cầm rất dài và lưỡi kéo ngắn. Thiết kế này có tác dụng gì?",
+    correct: "Tạo cánh tay đòn của tay lớn hơn cành cây, giúp tăng lực cắt cành to nhẹ nhàng",
+    wrongs: [
+      "Để lưỡi kéo lâu bị cùn",
+      "Giúp cành cây được cắt phẳng hơn",
+      "Giúp kéo nhẹ hơn khi mang theo"
+    ],
+    explain: "💡 Kéo tỉa cành có cán dài hơn lưỡi (OO2 > OO1) nên được lợi lớn về lực, giúp bấm đứt cành gỗ to mà không tốn nhiều sức!"
+  },
+  {
+    q: "Ngược lại với kéo tỉa cành, kéo cắt vải của thợ may lại có lưỡi kéo rất dài và cán cầm ngắn vì:",
+    correct: "Lực cản của vải rất nhỏ, lưỡi dài giúp được lợi về quãng đường cắt nhanh và thẳng",
+    wrongs: [
+      "Để tăng lực cắt vải mạnh hơn",
+      "Để vải không bị nhăn",
+      "Để tiết kiệm kim loại chế tạo"
+    ],
+    explain: "💡 Cắt vải không cần lực lớn nên lưỡi kéo dài giúp cắt một nhát được đường vải rất dài, nhanh và thẳng!"
+  },
+  {
+    q: "Đòn bẩy loại 1 là loại đòn bẩy có đặc điểm sắp xếp vị trí nào sau đây?",
+    correct: "Điểm tựa O nằm ở giữa hai điểm đặt lực O1 và O2",
+    wrongs: [
+      "Vật cản O1 nằm ở giữa",
+      "Tay cầm O2 nằm ở giữa",
+      "Ba điểm trùng nhau"
+    ],
+    explain: "💡 Quy tắc nhớ: Điểm TỰA (O) ở giữa là Đòn bẩy loại 1 (như cái kéo, bập bênh, kìm, xà beng)!"
+  },
+  {
+    q: "Đòn bẩy nào sau đây LUÔN LUÔN cho ta được lợi về lực (lực nâng nhỏ hơn trọng lượng vật)?",
+    correct: "Đòn bẩy loại 2",
+    wrongs: ["Đòn bẩy loại 1", "Đòn bẩy loại 3", "Cả loại 1 và loại 3"],
+    explain: "💡 Đòn bẩy loại 2 luôn có cánh tay đòn của lực lớn hơn cánh tay đòn của vật (OO2 > OO1) nên LUÔN LUÔN được lợi về lực!"
+  },
+  {
+    q: "Để nới lỏng một con ốc rỉ sét rất chặt bằng cờ-lê, người thợ lồng thêm một đoạn ống sắt dài vào cán cờ-lê nhằm mục đích:",
+    correct: "Tăng khoảng cách từ trục quay đến tay ấn, làm tăng moment lực tác dụng lên ốc",
+    wrongs: [
+      "Làm giảm trọng lượng cờ-lê",
+      "Làm giảm ma sát giữa cờ-lê và bu-lông",
+      "Để cầm nắm êm tay hơn"
+    ],
+    explain: "💡 Nối dài cán cờ-lê làm tăng cánh tay đòn d, từ đó làm tăng moment lực giúp vặn xoay con ốc kẹt cứng một cách nhẹ nhàng!"
+  },
+  {
+    q: "Trên xe đạp, khi người lái bóp phanh, tay bóp cách trục ốc 10 cm, đầu cáp phanh cách trục ốc 2 cm. Thiết kế này giúp người lái xe:",
+    correct: "Được lợi 5 lần về lực kéo phanh (10 cm / 2 cm = 5 lần)",
+    wrongs: [
+      "Bị thiệt 5 lần về lực kéo phanh",
+      "Không được lợi gì về lực",
+      "Tăng tốc độ xe chạy"
+    ],
+    explain: "💡 Tỉ lệ cánh tay đòn là 10 / 2 = 5 lần, do đó lực kéo dây cáp phanh mạnh gấp 5 lần lực ngón tay bóp, giúp phanh hãm bánh xe ăn chắc!"
+  },
+  {
+    q: "Một bạn nâng tảng đá P = 400 N bằng đòn bẩy có OO1 = 25 cm. Nếu bạn chỉ có thể tác dụng lực tối đa 100 N thì tay phải đặt cách điểm tựa tối thiểu:",
+    correct: "100 cm (gấp 4 lần khoảng cách OO1)",
+    wrongs: ["50 cm", "25 cm", "75 cm"],
+    explain: "💡 Trọng lượng tảng đá (400 N) gấp 4 lần lực tay (100 N). Muốn nâng được thì cánh tay đòn của tay phải dài gấp 4 lần cánh tay đòn của đá: 25 cm × 4 = 100 cm!"
+  },
+  {
+    q: "Cái mở nắp chai nước ngọt (chai bia) hoạt động theo nguyên lí của loại đòn bẩy nào?",
+    correct: "Đòn bẩy loại 2 (mép nắp chai O1 nằm ở giữa điểm tựa O và tay cầm O2)",
+    wrongs: ["Đòn bẩy loại 1", "Đòn bẩy loại 3", "Mặt phẳng nghiêng"],
+    explain: "💡 Điểm tì trên đỉnh nắp là O, móc cạy mép nắp chai ở giữa là O1, cán tay cầm ở ngoài là O2 (O - O1 - O2) nên là đòn bẩy loại 2!"
+  },
+  {
+    q: "Thanh đòn bẩy nằm thăng bằng, ở hai đầu treo 2 quả cầu nặng bằng nhau. Nếu dịch quả cầu bên trái lại gần điểm tựa hơn thì:",
+    correct: "Thanh đòn bẩy sẽ nghiêng chúc đầu xuống về phía bên phải",
+    wrongs: [
+      "Vẫn nằm thăng bằng nằm ngang",
+      "Nghiêng chúc đầu xuống về phía bên trái",
+      "Quay tròn liên tục"
+    ],
+    explain: "💡 Quả cầu bên phải ở xa trục quay hơn nên tạo ra tác dụng làm quay lớn hơn, kéo thanh đòn nghiêng chúc xuống bên phải!"
+  },
+  {
+    q: "Lời khuyên nào sau đây về tư thế ngồi học là đúng đắn dựa trên kiến thức đòn bẩy?",
+    correct: "Ngồi thẳng lưng, vai thả lỏng, giữ đầu thẳng trục cột sống, sách vở ngang tầm mắt",
+    wrongs: [
+      "Cúi gập sát mặt xuống bàn để nhìn rõ hơn",
+      "Nằm bò ra bàn khi viết bài",
+      "Nghiêng đầu lệch sang một bên liên tục"
+    ],
+    explain: "💡 Giữ đầu thẳng trục cột sống giúp cánh tay đòn của trọng lượng đầu nhỏ nhất, cơ gáy không bị kéo căng, tránh cong vẹo cột sống và mỏi cổ!"
+  },
+  {
+    q: "Đại lượng Moment lực phụ thuộc vào những yếu tố nào sau đây?",
+    correct: "Độ lớn của lực và khoảng cách từ trục quay đến giá của lực",
+    wrongs: [
+      "Chỉ phụ thuộc vào độ lớn của lực",
+      "Chỉ phụ thuộc vào khối lượng của vật",
+      "Phụ thuộc vào thời gian tác dụng lực"
+    ],
+    explain: "💡 Moment lực phụ thuộc vào 2 yếu tố: Độ lớn của lực F và khoảng cách từ trục quay đến giá của lực d!"
+  }
+];
+
+// --- HÀM TRÁO TRỘN MẢNG (FISHER-YATES SHUFFLE) ---
+function shuffleArray(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// --- GAME STATE ---
+let playerName = "Học sinh cưng";
+let teacherEmail = "minhmanuzu@gmail.com";
+let playerAvatar = "🦁";
+let currentScore = 0;
+let currentStreak = 0;
+let maxStreak = 0;
+let currentQIndex = 0;
+let correctCount = 0;
+let timerInterval = null;
+let timeLeft = 30;
+
+let activeQuestions = [];
+let wrongQuestionsLog = [];
+
+function selectAvatar(emoji, el) {
+  playerAvatar = emoji;
+  document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function showScreen(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+function updateStats() {
+  document.getElementById('player-display').innerText = `${playerAvatar} ${playerName}`;
+  document.getElementById('score-display').innerText = `Điểm: ${currentScore} XP`;
+  document.getElementById('streak-display').innerText = `🔥 Streak: ${currentStreak}`;
+}
+
+// BẮT ĐẦU CHƠI: RÚT 10 CÂU NGẪU NHIÊN & TRÁO TOÀN BỘ ĐÁP ÁN
+function startGame(mode) {
+  const nameInput = document.getElementById('player-name-input').value.trim();
+  if (nameInput) playerName = nameInput;
+
+  const emailInput = document.getElementById('teacher-email-input').value.trim();
+  if (emailInput) teacherEmail = emailInput;
+
+  currentScore = 0;
+  currentStreak = 0;
+  maxStreak = 0;
+  correctCount = 0;
+  currentQIndex = 0;
+  wrongQuestionsLog = [];
+  updateStats();
+
+  if (mode === 'quiz') {
+    // 1. Tráo ngẫu nhiên ngân hàng câu hỏi và chọn lấy 10 câu
+    const shuffledBank = shuffleArray(QUESTION_BANK).slice(0, 10);
+
+    // 2. Với mỗi câu hỏi, tráo ngẫu nhiên 4 đáp án A, B, C, D
+    activeQuestions = shuffledBank.map(qObj => {
+      const allOpts = [qObj.correct, ...qObj.wrongs];
+      const shuffledOpts = shuffleArray(allOpts);
+      const newCorrectIdx = shuffledOpts.indexOf(qObj.correct);
+      return {
+        q: qObj.q,
+        options: shuffledOpts,
+        correct: newCorrectIdx,
+        explain: qObj.explain,
+        correctText: qObj.correct
+      };
+    });
+
+    showScreen('screen-quiz');
+    loadQuestion(0);
+  } else {
+    showScreen('screen-seesaw');
+    initSeesawLab();
+  }
+}
+
+// TẢI CÂU HỎI
+function loadQuestion(index) {
+  clearInterval(timerInterval);
+  timeLeft = 30;
+  document.getElementById('quiz-timer').innerText = `⏱️ ${timeLeft}s`;
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById('quiz-timer').innerText = `⏱️ ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      handleTimeout();
+    }
+  }, 1000);
+
+  const q = activeQuestions[index];
+  document.getElementById('quiz-progress').innerText = `Câu ${index + 1} / ${activeQuestions.length}`;
+  document.getElementById('quiz-question').innerText = q.q;
+  document.getElementById('quiz-explanation').style.display = 'none';
+  document.getElementById('btn-next-question').style.display = 'none';
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const optsContainer = document.getElementById('quiz-options');
+  optsContainer.innerHTML = '';
+
+  q.options.forEach((optText, optIdx) => {
+    const btn = document.createElement('button');
+    btn.className = 'ans-btn';
+    btn.innerHTML = `<span class="ans-letter">${letters[optIdx]}</span><span>${optText}</span>`;
+    btn.onclick = () => selectAnswer(optIdx);
+    optsContainer.appendChild(btn);
+  });
+}
+
+function selectAnswer(selectedIdx) {
+  clearInterval(timerInterval);
+  const q = activeQuestions[currentQIndex];
+  const buttons = document.querySelectorAll('.ans-btn');
+  buttons.forEach(b => b.disabled = true);
+
+  if (selectedIdx === q.correct) {
+    playCorrectSound();
+    buttons[selectedIdx].classList.add('correct');
+    currentStreak++;
+    if (currentStreak > maxStreak) maxStreak = currentStreak;
+    const bonus = currentStreak * 2;
+    currentScore += (10 + bonus);
+    correctCount++;
+  } else {
+    playWrongSound();
+    buttons[selectedIdx].classList.add('wrong');
+    buttons[q.correct].classList.add('correct');
+    currentStreak = 0;
+    // Ghi nhận câu sai để báo cáo thầy
+    wrongQuestionsLog.push({
+      cauHoi: q.q,
+      daChon: q.options[selectedIdx],
+      dapAnDung: q.correctText
+    });
+  }
+
+  updateStats();
+  const expBox = document.getElementById('quiz-explanation');
+  expBox.innerHTML = q.explain;
+  expBox.style.display = 'block';
+
+  document.getElementById('btn-next-question').style.display = 'block';
+}
+
+function handleTimeout() {
+  const q = activeQuestions[currentQIndex];
+  playWrongSound();
+  const buttons = document.querySelectorAll('.ans-btn');
+  buttons.forEach(b => b.disabled = true);
+  buttons[q.correct].classList.add('correct');
+  currentStreak = 0;
+  wrongQuestionsLog.push({
+    cauHoi: q.q,
+    daChon: "Hết thời gian (Không chọn)",
+    dapAnDung: q.correctText
+  });
+  updateStats();
+
+  const expBox = document.getElementById('quiz-explanation');
+  expBox.innerHTML = `⏰ Hết thời gian! ` + q.explain;
+  expBox.style.display = 'block';
+  document.getElementById('btn-next-question').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentQIndex++;
+  if (currentQIndex < activeQuestions.length) {
+    loadQuestion(currentQIndex);
+  } else {
+    showResultScreen();
+  }
+}
+
+// MÀN HÌNH KẾT QUẢ & TỰ ĐỘNG GỬI EMAIL VỀ CHO THẦY/CÔ
+function showResultScreen() {
+  showScreen('screen-result');
+  const percent = Math.round((correctCount / activeQuestions.length) * 100);
+  document.getElementById('final-score').innerText = `${currentScore} XP`;
+  document.getElementById('stat-correct').innerText = `${correctCount}/${activeQuestions.length}`;
+  document.getElementById('stat-accuracy').innerText = `${percent}%`;
+  document.getElementById('stat-streak').innerText = `🔥 ${maxStreak}`;
+
+  let badge = "TẬP SỰ ĐÒN BẨY 🥉";
+  let trophy = "🎖️";
+  if (percent >= 90) {
+    badge = "CHIẾN THẦN MOMENT LỰC 👑";
+    trophy = "🏆";
+  } else if (percent >= 70) {
+    badge = "BẬC THẦY ĐÒN BẨY 🥈";
+    trophy = "⭐";
+  }
+  document.getElementById('result-badge').innerText = badge;
+  document.getElementById('result-trophy').innerText = trophy;
+  document.getElementById('result-congrats').innerText = `${playerAvatar} ${playerName} đã hoàn thành thử thách!`;
+
+  // GỬI EMAIL TỰ ĐỘNG QUA FORMSUBMIT
+  sendResultToTeacherEmail(percent);
+}
+
+function sendResultToTeacherEmail(percent) {
+  const statusBox = document.getElementById('email-status-text');
+  statusBox.innerText = `⏳ Đang gửi kết quả về email: ${teacherEmail}...`;
+
+  let wrongText = "Không có (Làm đúng 100%!)";
+  if (wrongQuestionsLog.length > 0) {
+    wrongText = wrongQuestionsLog.map((w, idx) => `[Câu ${idx+1}]: ${w.cauHoi}\n   - Em đã chọn: ${w.daChon}\n   - Đáp án đúng là: ${w.dapAnDung}`).join("\n\n");
+  }
+
+  const payload = {
+    _subject: `🎯 KẾT QUẢ ÔN TẬP KHTN 8: ${playerName} (${correctCount}/10 câu - ${currentScore} XP)`,
+    "Họ và tên học sinh": playerName,
+    "Điểm số": `${currentScore} XP`,
+    "Số câu đúng": `${correctCount} / ${activeQuestions.length}`,
+    "Tỉ lệ chính xác": `${percent}%`,
+    "Thời gian nộp bài": new Date().toLocaleString("vi-VN"),
+    "Danh sách câu trả lời sai cần ôn lại": wrongText
+  };
+
+  fetch(`https://formsubmit.co/ajax/${teacherEmail}`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json())
+  .then(data => {
+    statusBox.innerHTML = `✅ <strong>Thành công!</strong> Đã gửi kết quả bài làm về hộp thư <strong>${teacherEmail}</strong> của Thầy/Cô!`;
+  })
+  .catch(err => {
+    statusBox.innerHTML = `✅ Bài làm đã ghi nhận (${currentScore} XP)! Em hãy chụp màn hình gửi qua Zalo cho Thầy/Cô nhé.`;
+  });
+}
+
+// --- SEESAW LAB PHYSICS & CANVAS ---
+let seesawLevel = 0;
+const levels = [
+  { anKg: 60, anDist: 1.0, binhKg: 30, prompt: "Bạn An (60 kg) ngồi cách trục 1.0 m bên trái. Bạn Bình (30 kg) phải ngồi cách trục bao nhiêu mét bên phải để cân bằng?" },
+  { anKg: 40, anDist: 1.5, binhKg: 20, prompt: "Bạn An (40 kg) ngồi cách trục 1.5 m. Bạn Bình (20 kg, nhẹ hơn 2 lần) phải ngồi ở vị trí nào để bập bênh thăng bằng?" },
+  { anKg: 50, anDist: 0.8, binhKg: 50, prompt: "Hai bạn cùng nặng 50 kg. Nếu bạn An ngồi cách trục 0.8 m thì bạn Bình phải ngồi cách trục bao nhiêu mét?" }
+];
+
+function initSeesawLab() {
+  loadSeesawLevel(0);
+}
+
+function loadSeesawLevel(idx) {
+  seesawLevel = idx;
+  const lvl = levels[idx];
+  document.getElementById('seesaw-prompt').innerText = lvl.prompt;
+  document.getElementById('b-slider').value = "1.0";
+  updateSeesawUser();
+}
+
+function updateSeesawUser() {
+  const bDist = parseFloat(document.getElementById('b-slider').value);
+  document.getElementById('b-pos-val').innerText = `${bDist.toFixed(1)} m`;
+
+  const lvl = levels[seesawLevel];
+  const leftMoment = lvl.anKg * lvl.anDist;
+  const rightMoment = lvl.binhKg * bDist;
+  const diff = leftMoment - rightMoment;
+
+  const statusEl = document.getElementById('seesaw-status');
+  let angle = 0;
+
+  if (Math.abs(diff) < 2) {
+    statusEl.className = 'balance-status balanced';
+    statusEl.innerHTML = `🎉 TUYỆT VỜI! ĐÒN BẨY CÂN BẰNG HOÀN HẢO! (${lvl.anKg}kg &times; ${lvl.anDist}m = ${lvl.binhKg}kg &times; ${bDist.toFixed(1)}m)`;
+    playCorrectSound();
+    angle = 0;
+  } else if (diff > 0) {
+    statusEl.className = 'balance-status unbalanced';
+    statusEl.innerHTML = `⚠️ Nghiêng về bên trái (Bạn An đang nặng hơn). Hãy kéo bạn Bình ra xa hơn nữa!`;
+    angle = -12;
+  } else {
+    statusEl.className = 'balance-status unbalanced';
+    statusEl.innerHTML = `⚠️ Nghiêng về bên phải (Bạn Bình đè xuống mạnh hơn). Hãy kéo bạn Bình lại gần hơn!`;
+    angle = 12;
+  }
+
+  drawSeesaw(angle, lvl.anKg, lvl.anDist, lvl.binhKg, bDist);
+}
+
+function drawSeesaw(angleDeg, aKg, aDist, bKg, bDist) {
+  const canvas = document.getElementById('seesawCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width;
+  const H = canvas.height;
+
+  ctx.clearRect(0, 0, W, H);
+
+  const pivotX = W / 2;
+  const pivotY = H - 45;
+
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(30, H - 20);
+  ctx.lineTo(W - 30, H - 20);
+  ctx.stroke();
+
+  ctx.fillStyle = '#4f46e5';
+  ctx.beginPath();
+  ctx.moveTo(pivotX, pivotY);
+  ctx.lineTo(pivotX - 22, H - 20);
+  ctx.lineTo(pivotX + 22, H - 20);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('O', pivotX, H - 26);
+
+  ctx.save();
+  ctx.translate(pivotX, pivotY);
+  ctx.rotate((angleDeg * Math.PI) / 180);
+
+  const plankHalfLen = 220;
+  ctx.fillStyle = '#ca8a04';
+  ctx.fillRect(-plankHalfLen, -6, plankHalfLen * 2, 12);
+  ctx.strokeStyle = '#854d0e';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(-plankHalfLen, -6, plankHalfLen * 2, 12);
+
+  const scale = 70;
+  const aX = -aDist * scale;
+  ctx.fillStyle = '#dc2626';
+  ctx.beginPath();
+  ctx.arc(aX, -28, 12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#1e1b4b';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText(`An (${aKg}kg)`, aX, -45);
+  ctx.fillText(`${aDist}m`, aX, -6);
+
+  const bX = bDist * scale;
+  ctx.fillStyle = '#2563eb';
+  ctx.beginPath();
+  ctx.arc(bX, -28, 12, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#1e1b4b';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText(`Bình (${bKg}kg)`, bX, -45);
+  ctx.fillText(`${bDist.toFixed(1)}m`, bX, -6);
+
+  ctx.restore();
+}
+
+function nextSeesawLevel() {
+  let nextIdx = (seesawLevel + 1) % levels.length;
+  loadSeesawLevel(nextIdx);
+}
+</script>
+
+</body>
+</html>
