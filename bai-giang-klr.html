@@ -1,0 +1,3390 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chương III: Khối Lượng Riêng & Cách Xác Định - KHTN 8</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #7c3aed;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --dark: #0f172a;
+    --light: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  body {
+    background-color: #f1f5f9;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* STICKY TOP HEADER + NAVIGATION TABS */
+  .sticky-top-shell {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+  }
+
+  header {
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+    color: white;
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-title h1 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-title p {
+    font-size: 12.5px;
+    opacity: 0.92;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  nav.tab-bar {
+    background: #ffffff;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    padding: 0 16px;
+    scrollbar-width: thin;
+  }
+
+  .nav-tab {
+    padding: 12px 18px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--muted);
+    border: none;
+    background: transparent;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .nav-tab:hover {
+    color: var(--primary);
+    background: #f8fafc;
+  }
+
+  .nav-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: #eff6ff;
+  }
+
+  /* MAIN CONTAINER */
+  main {
+    flex: 1;
+    max-width: 1220px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 22px 18px 80px;
+  }
+
+  .section-view {
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .section-view.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .section-header {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 23px;
+    font-weight: 800;
+    color: #1e3a8a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-header p {
+    font-size: 14.5px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* RESET BUTTONS */
+  .btn-reset {
+    background: #fff1f2;
+    color: #be123c;
+    border: 1.5px solid #fda4af;
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.18s;
+  }
+
+  .btn-reset:hover {
+    background: #ffe4e6;
+    border-color: #f43f5e;
+  }
+
+  .btn-action-soft {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1.5px solid #bfdbfe;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.18s;
+  }
+
+  .btn-action-soft:hover {
+    background: #dbeafe;
+  }
+
+  /* UNIT CONVERSION CHAINS */
+  .unit-chain-container {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 18px;
+    padding: 18px 16px;
+    margin-bottom: 18px;
+  }
+
+  .unit-chain-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .unit-chain {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 8px 2px;
+    gap: 2px;
+  }
+
+  .unit-box {
+    background: white;
+    border: 2px solid var(--primary);
+    border-radius: 12px;
+    padding: 10px 12px;
+    min-width: 70px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.08);
+    flex-shrink: 0;
+  }
+
+  .unit-box .sym {
+    font-size: 19px;
+    font-weight: 800;
+    color: #1e3a8a;
+  }
+
+  .unit-box .name {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .arrow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 3px;
+    flex-shrink: 0;
+  }
+
+  .arrow-step .step-val {
+    font-size: 11px;
+    font-weight: 800;
+    color: #b91c1c;
+    background: #fee2e2;
+    padding: 2px 5px;
+    border-radius: 6px;
+  }
+
+  .arrow-step .arrow-icon {
+    font-size: 16px;
+    color: #64748b;
+    line-height: 1;
+  }
+
+  /* HIGHLIGHT INFO BOX */
+  .golden-box {
+    background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin: 14px 0 4px;
+  }
+
+  .golden-box h4 {
+    font-size: 15.5px;
+    color: #92400e;
+    font-weight: 800;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .golden-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+  }
+
+  .golden-item {
+    background: white;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #78350f;
+    text-align: center;
+  }
+
+  /* ========================================================================= */
+  /* SMART WHITEBOARD (MULTI-LAYER + SCREEN SNIPPING + RESIZABLE)             */
+  /* ========================================================================= */
+  .smart-wb-wrapper {
+    border: 2px solid #94a3b8;
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 12px;
+    margin: 18px 0;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+  }
+
+  .smart-wb-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #cbd5e1;
+  }
+
+  .wb-tool-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wb-title-tag {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-right: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .wb-btn {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s;
+  }
+
+  .wb-btn:hover {
+    border-color: #64748b;
+    background: #f1f5f9;
+  }
+
+  .wb-btn.active {
+    background: #eff6ff;
+    border-color: #2563eb;
+    color: #1d4ed8;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  }
+
+  .wb-btn.snip-btn {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: white;
+    border-color: #6d28d9;
+  }
+
+  .wb-btn.snip-btn:hover {
+    opacity: 0.93;
+  }
+
+  .color-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1.5px #94a3b8;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  .color-dot.active {
+    transform: scale(1.22);
+    box-shadow: 0 0 0 2.5px #1e293b;
+  }
+
+  .wb-stage {
+    position: relative;
+    width: 100%;
+    height: 460px;
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(to right, rgba(203, 213, 225, 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(203, 213, 225, 0.35) 1px, transparent 1px);
+    background-size: 28px 28px;
+    border-radius: 12px;
+    border: 1.5px solid #cbd5e1;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .wb-stage.plain-bg {
+    background-image: none;
+  }
+
+  .wb-stage canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .wb-bg-canvas {
+    z-index: 1;
+  }
+
+  .wb-ink-canvas {
+    z-index: 2;
+    cursor: crosshair;
+  }
+
+  /* SCREEN SNIPPING OVERLAY & FLOATING GUIDE BAR */
+  #snip-floating-bar {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9998;
+    background: #0f172a;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    border: 2px solid #8b5cf6;
+  }
+
+  #snip-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.25);
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  #snip-rect {
+    display: none;
+    position: fixed;
+    border: 2.5px dashed #2563eb;
+    background: rgba(59, 130, 246, 0.14);
+    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.38);
+    pointer-events: none;
+    z-index: 10000;
+  }
+
+  /* FORMULA BIG CARD */
+  .formula-hero {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 2px solid #60a5fa;
+    border-radius: 20px;
+    padding: 24px;
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .formula-display {
+    font-size: 42px;
+    font-weight: 900;
+    color: #1e3a8a;
+    font-family: 'Cambria Math', 'Times New Roman', serif;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    line-height: 1.05;
+  }
+
+  .frac .num {
+    border-bottom: 3px solid currentColor;
+    padding: 0 8px 3px;
+  }
+
+  .frac .den {
+    padding: 3px 8px 0;
+  }
+
+  .triangle-magic {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  .sub-formula-pill {
+    background: white;
+    border: 2px solid #3b82f6;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 21px;
+    font-weight: 800;
+    color: #1d4ed8;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* INTERACTIVE EXERCISE CARDS */
+  .ex-card {
+    background: #ffffff;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 18px;
+    transition: border-color 0.2s;
+  }
+
+  .ex-card:hover {
+    border-color: #93c5fd;
+  }
+
+  .ex-badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 12.5px;
+    font-weight: 800;
+    padding: 4px 11px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .ex-title {
+    font-size: 17.5px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .ex-btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .ans-toggle-btn {
+    background: #f1f5f9;
+    color: #334155;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s;
+  }
+
+  .ans-toggle-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .wb-toggle-btn {
+    background: #f5f3ff;
+    color: #6d28d9;
+    border: 2px solid #ddd6fe;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s;
+  }
+
+  .wb-toggle-btn:hover {
+    background: #ede9fe;
+  }
+
+  .solution-box {
+    display: none;
+    background: #f0fdf4;
+    border-left: 5px solid #10b981;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.65;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .solution-box .step-line {
+    margin-bottom: 7px;
+  }
+
+  /* QUIZ OPTIONS */
+  .quiz-opt-btn {
+    padding: 11px 14px;
+    text-align: left;
+    border: 2px solid #cbd5e1;
+    border-radius: 11px;
+    background: white;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+  }
+
+  .quiz-opt-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    background: #eff6ff;
+  }
+
+  .quiz-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  /* FILL IN BLANK & MATCHING STYLES */
+  .word-chip {
+    background: #eff6ff;
+    border: 2px solid #93c5fd;
+    color: #1e40af;
+    font-weight: 700;
+    font-size: 14.5px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .word-chip:hover:not(:disabled) {
+    background: #dbeafe;
+    transform: translateY(-1px);
+  }
+
+  .blank-slot {
+    display: inline-block;
+    min-width: 110px;
+    padding: 2px 10px;
+    margin: 0 4px;
+    border-bottom: 2.5px dashed #2563eb;
+    color: #1d4ed8;
+    font-weight: 800;
+    text-align: center;
+    background: #eff6ff;
+    border-radius: 6px;
+  }
+
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .match-item {
+    padding: 11px 14px;
+    border: 2px solid #cbd5e1;
+    border-radius: 11px;
+    background: white;
+    font-size: 14.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .match-item.selected {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  .match-item.matched {
+    border-color: #10b981;
+    background: #ecfdf5;
+    color: #065f46;
+    cursor: default;
+  }
+
+  /* COMPARISON TABLE */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+
+  .compare-table th, .compare-table td {
+    border: 1px solid #cbd5e1;
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .compare-table th {
+    background: #1e3a8a;
+    color: white;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .compare-table tr:nth-child(even) {
+    background: #f8fafc;
+  }
+
+  /* INTERACTIVE LAB SIMULATION STAGE (TAB 5) */
+  .sim-card {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 26px;
+  }
+
+  .sim-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .sim-layout {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  @media (max-width: 920px) {
+    .sim-layout { grid-template-columns: 1fr; }
+  }
+
+  .sim-canvas-box {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sim-canvas-box canvas {
+    width: 100%;
+    max-width: 580px;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  .sim-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 10px;
+    justify-content: center;
+  }
+
+  .sim-btn {
+    background: white;
+    border: 1.5px solid #cbd5e1;
+    padding: 8px 12px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .sim-btn:hover {
+    border-color: var(--primary);
+    background: #eff6ff;
+  }
+
+  .sim-btn.play {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white;
+    border-color: #2563eb;
+  }
+
+  .sim-btn.active-step {
+    background: #dbeafe;
+    border-color: #2563eb;
+    color: #1d4ed8;
+  }
+
+  .sim-info-panel {
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .sim-knowledge-tag {
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    padding: 9px 12px;
+    border-radius: 0 8px 8px 0;
+    font-size: 13.5px;
+    color: #1e3a8a;
+    margin-bottom: 12px;
+    line-height: 1.45;
+  }
+
+  .sim-step-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .sim-step-list li {
+    padding: 8px 10px;
+    border-radius: 9px;
+    font-size: 14px;
+    line-height: 1.45;
+    margin-bottom: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .sim-step-list li.current {
+    background: #ecfdf5;
+    border-color: #6ee7b7;
+    color: #065f46;
+    font-weight: 600;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 13px 22px;
+    border-radius: 13px;
+    font-size: 15.5px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.28);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- FLOATING GUIDE BAR & OVERLAY FOR SCREEN SNIPPING -->
+<div id="snip-floating-bar">
+  <span id="snip-guide-text">✂️ Cuộn đến nội dung muốn cắt, sau đó bấm nút bên cạnh:</span>
+  <button onclick="beginSnipDragMode()" style="background:#8b5cf6; color:white; border:none; padding:6px 14px; border-radius:999px; font-weight:800; cursor:pointer;">🎯 Kéo chọn vùng cắt</button>
+  <button onclick="cancelSnipMode()" style="background:#334155; color:white; border:none; padding:6px 12px; border-radius:999px; font-weight:700; cursor:pointer;">✖ Hủy</button>
+</div>
+<div id="snip-overlay"></div>
+<div id="snip-rect"></div>
+
+<!-- STICKY HEADER + NAVIGATION TABS -->
+<div class="sticky-top-shell">
+  <header>
+    <div class="logo-title">
+      <h1><span>🧪</span> CHƯƠNG III: KHỐI LƯỢNG RIÊNG VÀ ÁP SUẤT</h1>
+      <p>Khoa học tự nhiên 8 &mdash; Bài 13 & Bài 14: Khối lượng riêng & Thực hành xác định khối lượng riêng</p>
+    </div>
+  </header>
+
+  <nav class="tab-bar">
+    <button class="nav-tab active" onclick="switchTab('tab-units', this)">1. Ôn tập đơn vị đo</button>
+    <button class="nav-tab" onclick="switchTab('tab-theory', this)">2. Khối lượng riêng (Bài 13)</button>
+    <button class="nav-tab" onclick="switchTab('tab-quiz', this)">3. Trắc nghiệm & Đổi đơn vị KLR</button>
+    <button class="nav-tab" onclick="switchTab('tab-calc', this)">4. Bài tập tính KLR, m, V</button>
+    <button class="nav-tab" onclick="switchTab('tab-lab', this)">5. Cách xác định KLR (Bài 14)</button>
+    <button class="nav-tab" onclick="switchTab('tab-homework', this)" style="color: #b45309;">6. Bài tập về nhà 📤</button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: ÔN LẠI ĐƠN VỊ ĐO                                                  -->
+  <!-- ========================================================================= -->
+  <section id="tab-units" class="section-view active">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📏</span> 1. HỆ THỐNG ĐƠN VỊ ĐO ĐỘ DÀI, THỂ TÍCH & KHỐI LƯỢNG</h2>
+          <p>Quy tắc chuyển đổi giữa các đơn vị đo thường gặp</p>
+        </div>
+        <button class="btn-reset" onclick="resetTab1Quiz()">🔄 Làm lại 10 câu đổi đơn vị</button>
+      </div>
+
+      <!-- 1.1 ĐỘ DÀI -->
+      <div class="unit-chain-container" id="block-unit-length">
+        <div class="unit-chain-title">
+          <span>1.1. Bảng đơn vị đo độ dài (Hai đơn vị liền kề hơn/kém nhau 10 lần)</span>
+          <button class="btn-action-soft" onclick="insertPresetChainToWB('wb-tab1', 'length')">📌 Đưa dãy này xuống bảng viết</button>
+        </div>
+        <div class="unit-chain">
+          <div class="unit-box"><div class="sym">km</div><div class="name">kilômét</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">hm</div><div class="name">héctômét</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">dam</div><div class="name">đêkamét</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box" style="border-color: #dc2626; background: #fef2f2;"><div class="sym" style="color: #dc2626;">m</div><div class="name">mét (chuẩn)</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">dm</div><div class="name">đêximét</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">cm</div><div class="name">xăngtimét</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">mm</div><div class="name">milimét</div></div>
+        </div>
+      </div>
+
+      <!-- 1.2 THỂ TÍCH (KM3 -> MM3 & LIÊN HỆ L, ML) -->
+      <div class="unit-chain-container" id="block-unit-volume">
+        <div class="unit-chain-title">
+          <span>1.2. Bảng đơn vị đo thể tích (Hai đơn vị liền kề hơn/kém nhau 1 000 lần) & Liên hệ L, mL</span>
+          <button class="btn-action-soft" onclick="insertPresetChainToWB('wb-tab1', 'volume')">📌 Đưa dãy này xuống bảng viết</button>
+        </div>
+        <div class="unit-chain">
+          <div class="unit-box"><div class="sym">km&sup3;</div><div class="name">kilômét khối</div></div>
+          <div class="arrow-step"><span class="step-val">&times;1000</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">hm&sup3;</div><div class="name">héctômét khối</div></div>
+          <div class="arrow-step"><span class="step-val">&times;1000</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">dam&sup3;</div><div class="name">đêkamét khối</div></div>
+          <div class="arrow-step"><span class="step-val">&times;1000</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box" style="border-color: #dc2626; background: #fef2f2;"><div class="sym" style="color: #dc2626;">m&sup3;</div><div class="name">mét khối</div></div>
+          <div class="arrow-step"><span class="step-val">&times;1000</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box" style="border-color: #ea580c; background: #fff7ed;"><div class="sym" style="color: #c2410c;">dm&sup3;</div><div class="name">= 1 Lít (L)</div></div>
+          <div class="arrow-step"><span class="step-val">&times;1000</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box" style="border-color: #16a34a; background: #f0fdf4;"><div class="sym" style="color: #15803d;">cm&sup3;</div><div class="name">= 1 mililít (mL)</div></div>
+          <div class="arrow-step"><span class="step-val">&times;1000</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">mm&sup3;</div><div class="name">milimét khối</div></div>
+        </div>
+
+        <div class="golden-box">
+          <h4><span>⭐</span> MỐI LIÊN HỆ QUAN TRỌNG GIỮA ĐƠN VỊ THỂ TÍCH VÀ DUNG TÍCH (L, mL):</h4>
+          <div class="golden-grid">
+            <div class="golden-item">1 L = 1 dm&sup3; = 1 000 cm&sup3; = 1 000 mL</div>
+            <div class="golden-item">1 mL = 1 cm&sup3;</div>
+            <div class="golden-item">1 m&sup3; = 1 000 dm&sup3; = 1 000 L</div>
+            <div class="golden-item">1 m&sup3; = 1 000 000 cm&sup3; = 1 000 000 mL</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.3 KHỐI LƯỢNG -->
+      <div class="unit-chain-container" id="block-unit-mass">
+        <div class="unit-chain-title">
+          <span>1.3. Bảng đơn vị đo khối lượng (Tấn đến gam &mdash; mỗi bậc liền kề gấp/kém 10 lần)</span>
+          <button class="btn-action-soft" onclick="insertPresetChainToWB('wb-tab1', 'mass')">📌 Đưa dãy này xuống bảng viết</button>
+        </div>
+        <div class="unit-chain">
+          <div class="unit-box"><div class="sym">tấn</div><div class="name">1 tấn = 1000 kg</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">tạ</div><div class="name">1 tạ = 100 kg</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">yến</div><div class="name">1 yến = 10 kg</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box" style="border-color: #2563eb; background: #eff6ff;"><div class="sym" style="color: #1d4ed8;">kg</div><div class="name">kilôgam (chuẩn)</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">hg</div><div class="name">héctôgam (lạng)</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">dag</div><div class="name">đêkagam</div></div>
+          <div class="arrow-step"><span class="step-val">&times;10</span><span class="arrow-icon">&rarr;</span></div>
+          <div class="unit-box"><div class="sym">g</div><div class="name">gam</div></div>
+        </div>
+      </div>
+
+      <!-- BẢNG VIẾT BÚT CẢM ỨNG MỞ RỘNG (TAB 1) -->
+      <div id="wb-tab1"></div>
+
+      <hr style="margin: 28px 0; border: none; border-top: 2px dashed #cbd5e1;">
+
+      <!-- 1.4 10 BÀI TẬP TRẮC NGHIỆM ĐỔI ĐƠN VỊ (TƯƠNG TÁC TRÒ CHƠI) -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+        <div>
+          <h3 style="font-size: 19px; color: #1e3a8a;">🎮 1.4. Trò chơi củng cố: Thử thách 10 câu đổi đơn vị đo</h3>
+          <p style="font-size: 14px; color: var(--muted);">Điểm hiện tại: <strong id="unit-quiz-score" style="color:#059669;">0 / 10</strong> câu đúng</p>
+        </div>
+        <button class="btn-reset" onclick="resetTab1Quiz()">🔄 Làm lại 10 câu này</button>
+      </div>
+      <div id="unit-quiz-container"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: LÍ THUYẾT KHỐI LƯỢNG RIÊNG (BÀI 13)                                -->
+  <!-- ========================================================================= -->
+  <section id="tab-theory" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>💡</span> 2. KHỐI LƯỢNG RIÊNG (BÀI 13 - KHTN 8)</h2>
+          <p>Khái niệm, công thức tính, đơn vị đo và ý nghĩa vật lí của khối lượng riêng</p>
+        </div>
+      </div>
+
+      <!-- 2.1 BẢN CHẤT TRONG ĐỜI SỐNG -->
+      <div style="background: #f8fafc; border-left: 5px solid var(--primary); padding: 18px 22px; border-radius: 0 14px 14px 0; margin-bottom: 20px;">
+        <h3 style="color: #1e3a8a; font-size: 18px; margin-bottom: 8px;">2.1. Bản chất của khối lượng riêng khi nói vật này "nặng hơn" vật kia</h3>
+        <p style="font-size: 15.5px; line-height: 1.65;">
+          Trong đời sống, ta thường nói: <em>&ldquo;Sắt nặng hơn nhôm&rdquo;</em> hay <em>&ldquo;Sắt nặng hơn gỗ&rdquo;</em>. Tuy nhiên, một chiếc đinh sắt nhỏ chắc chắn nhẹ hơn một khúc gỗ lớn!<br>
+          &rArr; Thực chất, khi nói <em>&ldquo;Sắt nặng hơn gỗ&rdquo;</em> là ta đang so sánh <strong>khối lượng của sắt và của gỗ khi chúng có cùng một thể tích</strong> (ví dụ cùng xét 1 cm&sup3; hoặc cùng 1 m&sup3;). Cụ thể: 1 m&sup3; sắt có khối lượng <strong>7 800 kg</strong>, trong khi 1 m&sup3; gỗ chỉ khoảng <strong>800 kg</strong>. Đại lượng đặc trưng cho tính chất đó gọi là <strong>Khối lượng riêng</strong>.
+        </p>
+      </div>
+
+      <!-- 2.2 ĐỊNH NGHĨA VÀ CÔNG THỨC CHUẨN SGK -->
+      <div class="formula-hero">
+        <div style="font-size: 15px; font-weight: 800; color: #1e40af; text-transform: uppercase; margin-bottom: 8px;">
+          2.2. Định nghĩa & Công thức tính Khối lượng riêng
+        </div>
+        <p style="font-size: 19px; font-weight: 700; color: #0f172a; margin-bottom: 18px; max-width: 820px; margin-left: auto; margin-right: auto; line-height: 1.45;">
+          &ldquo;Khối lượng riêng của một chất được xác định bằng khối lượng của một đơn vị thể tích chất đó.&rdquo;
+        </p>
+        <div class="formula-display">
+          <span>D =</span>
+          <span class="frac"><span class="num">m</span><span class="den">V</span></span>
+        </div>
+        <div style="font-size: 15.5px; color: #334155; margin-top: 12px; font-weight: 600;">
+          Trong đó: <strong>D</strong> là khối lượng riêng &nbsp;|&nbsp; <strong>m</strong> là khối lượng của vật &nbsp;|&nbsp; <strong>V</strong> là thể tích của vật
+        </div>
+
+        <div style="margin-top: 18px; font-size: 14.5px; font-weight: 700; color: #1e3a8a;">
+          Suy ra công thức tính khối lượng (m) và thể tích (V):
+        </div>
+        <div class="triangle-magic">
+          <div class="sub-formula-pill">m = D &middot; V</div>
+          <div class="sub-formula-pill">
+            <span>V =</span>
+            <span class="frac" style="font-size: 18px;"><span class="num" style="border-bottom-width:2px;">m</span><span class="den">D</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.3 ĐƠN VỊ ĐO KLR -->
+      <div class="golden-box" style="background: #f0fdf4; border-color: #10b981;">
+        <h4 style="color: #065f46;"><span>⚖️</span> 2.3. ĐƠN VỊ ĐO KHỐI LƯỢNG RIÊNG</h4>
+        <p style="font-size: 15.5px; color: #064e3b; margin-bottom: 12px; line-height: 1.6;">
+          &bull; Đơn vị thường dùng đo khối lượng riêng là <strong>kilôgam trên mét khối (kg/m&sup3;)</strong>.<br>
+          &bull; Ngoài ra, người ta còn dùng đơn vị <strong>gam trên xăngtimét khối (g/cm&sup3;)</strong> hoặc <strong>gam trên mililít (g/mL)</strong>.
+        </p>
+        <div style="background: white; border: 2px solid #34d399; border-radius: 12px; padding: 14px; text-align: center; font-size: 18px; font-weight: 800; color: #047857;">
+          1 g/cm&sup3; = 1 g/mL = 1 000 kg/m&sup3; &nbsp;&nbsp;&hArr;&nbsp;&nbsp; 1 kg/m&sup3; = 0,001 g/cm&sup3;
+        </div>
+      </div>
+
+      <!-- 2.4 NHẬN ĐỊNH VỀ KLR & BẢNG KLR MỘT SỐ CHẤT -->
+      <div style="margin-top: 22px;">
+        <h3 style="color: #1e3a8a; font-size: 18px; margin-bottom: 8px;">2.4. Ý nghĩa nhận biết chất & Bảng khối lượng riêng của một số chất</h3>
+        <div style="background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 12px; padding: 13px 16px; margin-bottom: 14px; font-size: 15.5px; font-weight: 700; color: #1e3a8a;">
+          📌 Nhận định: Mỗi chất có một khối lượng riêng xác định; vì vậy, <u>khi biết khối lượng riêng của một vật làm bằng chất nguyên chất thì ta có thể biết được vật đó làm bằng chất gì</u> (bằng cách đối chiếu với bảng khối lượng riêng của các chất).
+        </div>
+
+        <table class="compare-table">
+          <tr>
+            <th style="width: 28%;">Chất (ở nhiệt độ phòng)</th>
+            <th style="width: 24%;">Khối lượng riêng (kg/m&sup3;)</th>
+            <th style="width: 24%;">Khối lượng riêng (g/cm&sup3;)</th>
+            <th style="width: 24%;">Trạng thái</th>
+          </tr>
+          <tr>
+            <td><strong>Chì</strong></td>
+            <td>11 300</td>
+            <td>11,3</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Vàng</strong></td>
+            <td>19 300</td>
+            <td>19,3</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Bạc</strong></td>
+            <td>10 500</td>
+            <td>10,5</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Đồng</strong></td>
+            <td>8 900</td>
+            <td>8,9</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Sắt</strong></td>
+            <td>7 800</td>
+            <td>7,8</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Nhôm</strong></td>
+            <td>2 700</td>
+            <td>2,7</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Đá (sỏi, đá hoa cương)</strong></td>
+            <td>~ 2 600</td>
+            <td>~ 2,6</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Nước đá</strong></td>
+            <td>917 (thường lấy ~ 900)</td>
+            <td>0,917 (~ 0,9)</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Gỗ khô</strong></td>
+            <td>~ 800</td>
+            <td>~ 0,8</td>
+            <td>Rắn</td>
+          </tr>
+          <tr>
+            <td><strong>Thủy ngân</strong></td>
+            <td>13 600</td>
+            <td>13,6</td>
+            <td>Lỏng</td>
+          </tr>
+          <tr>
+            <td><strong>Nước nguyên chất</strong></td>
+            <td style="color:#1d4ed8; font-weight:800;">1 000</td>
+            <td style="color:#1d4ed8; font-weight:800;">1,0</td>
+            <td>Lỏng</td>
+          </tr>
+          <tr>
+            <td><strong>Dầu ăn / Dầu hỏa</strong></td>
+            <td>800</td>
+            <td>0,8</td>
+            <td>Lỏng</td>
+          </tr>
+          <tr>
+            <td><strong>Cồn (Ethanol)</strong></td>
+            <td>790</td>
+            <td>0,79</td>
+            <td>Lỏng</td>
+          </tr>
+          <tr>
+            <td><strong>Không khí (ở 0&deg;C)</strong></td>
+            <td>1,29</td>
+            <td>0,00129</td>
+            <td>Khí</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- BẢNG VIẾT MINH HỌA TÙY CHỌN Ở TAB 2 -->
+      <div style="margin-top: 16px;">
+        <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-tab2-wrap', 'wb-tab2')">✍️ Mở / Đóng bảng nháp minh họa</button>
+        <div id="wb-tab2-wrap" style="display: none;">
+          <div id="wb-tab2"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: BÀI TẬP CỦNG CỐ LÍ THUYẾT & ĐỔI ĐƠN VỊ KLR                         -->
+  <!-- ========================================================================= -->
+  <section id="tab-quiz" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🎮</span> 3. BÀI TẬP CỦNG CỐ LÍ THUYẾT & ĐỔI ĐƠN VỊ KHỐI LƯỢNG RIÊNG</h2>
+          <p>Trắc nghiệm tương tác đa dạng và chuyển đổi đơn vị kg/m&sup3; &harr; g/cm&sup3; (g/mL)</p>
+        </div>
+        <button class="btn-reset" onclick="resetAllTab3()">🔄 Đặt lại toàn bộ Phần 3</button>
+      </div>
+
+      <!-- 3.1 10 BÀI TẬP TRẮC NGHIỆM LÍ THUYẾT ĐA DẠNG -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+        <h3 style="font-size: 18.5px; color: #1e3a8a;">3.1. Trắc nghiệm củng cố lí thuyết (10 câu: Chọn đáp án, Điền từ, Ghép cặp)</h3>
+        <button class="btn-reset" onclick="renderTheoryQuiz()">🔄 Làm lại phần 3.1</button>
+      </div>
+
+      <div id="theory-quiz-container"></div>
+
+      <!-- VÙNG VIẾT BÚT CẢM ỨNG PHẦN 3.1 -->
+      <div id="wb-tab3-top"></div>
+
+      <hr style="margin: 28px 0; border: none; border-top: 2px dashed #cbd5e1;">
+
+      <!-- 3.2 10 BÀI TẬP ĐỔI ĐƠN VỊ KLR -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+        <h3 style="font-size: 18.5px; color: #1e3a8a;">3.2. Bài tập đổi đơn vị Khối lượng riêng (10 bài)</h3>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-reset" onclick="resetTab3Conversions()">🔄 Ẩn tất cả đáp án 3.2</button>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px;">
+        <!-- 5 BÀI TỪ KG/M3 SANG G/CM3 HOẶC G/ML -->
+        <div>
+          <h4 style="font-size: 15.5px; color: #b91c1c; margin-bottom: 12px;">A. Đổi từ kg/m&sup3; sang g/cm&sup3; hoặc g/mL (Chia cho 1 000)</h4>
+          <div class="ex-card">
+            <div class="ex-title">Bài 1: 7 800 kg/m&sup3; = ................ g/cm&sup3;</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u1', this)">👁️ Xem đáp án</button>
+            <div id="sol-u1" class="solution-box">7 800 : 1 000 = <strong>7,8 g/cm&sup3;</strong></div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-title">Bài 2: 2 700 kg/m&sup3; = ................ g/cm&sup3;</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u2', this)">👁️ Xem đáp án</button>
+            <div id="sol-u2" class="solution-box">2 700 : 1 000 = <strong>2,7 g/cm&sup3;</strong></div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-title">Bài 3: 13 600 kg/m&sup3; = ................ g/mL</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u3', this)">👁️ Xem đáp án</button>
+            <div id="sol-u3" class="solution-box">13 600 : 1 000 = <strong>13,6 g/mL</strong> (vì 1 g/mL = 1 g/cm&sup3;)</div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-title">Bài 4: 800 kg/m&sup3; = ................ g/mL</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u4', this)">👁️ Xem đáp án</button>
+            <div id="sol-u4" class="solution-box">800 : 1 000 = <strong>0,8 g/mL</strong></div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-title">Bài 5: 19 300 kg/m&sup3; = ................ g/cm&sup3;</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u5', this)">👁️ Xem đáp án</button>
+            <div id="sol-u5" class="solution-box">19 300 : 1 000 = <strong>19,3 g/cm&sup3;</strong></div>
+          </div>
+        </div>
+
+        <!-- 5 BÀI TỪ G/CM3 HOẶC G/ML SANG KG/M3 -->
+        <div>
+          <h4 style="font-size: 15.5px; color: #15803d; margin-bottom: 12px;">B. Đổi từ g/cm&sup3; hoặc g/mL sang kg/m&sup3; (Nhân với 1 000)</h4>
+          <div class="ex-card">
+            <div class="ex-title">Bài 6: 1,0 g/cm&sup3; = ................ kg/m&sup3;</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u6', this)">👁️ Xem đáp án</button>
+            <div id="sol-u6" class="solution-box">1,0 &times; 1 000 = <strong>1 000 kg/m&sup3;</strong></div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-title">Bài 7: 11,3 g/cm&sup3; = ................ kg/m&sup3;</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u7', this)">👁️ Xem đáp án</button>
+            <div id="sol-u7" class="solution-box">11,3 &times; 1 000 = <strong>11 300 kg/m&sup3;</strong></div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-title">Bài 8: 0,9 g/mL = ................ kg/m&sup3;</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u8', this)">👁️ Xem đáp án</button>
+            <div id="sol-u8" class="solution-box">0,9 &times; 1 000 = <strong>900 kg/m&sup3;</strong></div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-title">Bài 9: 8,9 g/cm&sup3; = ................ kg/m&sup3;</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u9', this)">👁️ Xem đáp án</button>
+            <div id="sol-u9" class="solution-box">8,9 &times; 1 000 = <strong>8 900 kg/m&sup3;</strong></div>
+          </div>
+          <div class="ex-card">
+            <div class="ex-title">Bài 10: 0,79 g/mL = ................ kg/m&sup3;</div>
+            <button class="ans-toggle-btn" onclick="toggleAns('sol-u10', this)">👁️ Xem đáp án</button>
+            <div id="sol-u10" class="solution-box">0,79 &times; 1 000 = <strong>790 kg/m&sup3;</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VÙNG VIẾT BÚT CẢM ỨNG PHẦN 3.2 -->
+      <div id="wb-tab3-bottom"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 4: 8 BÀI TẬP XÁC ĐỊNH KLR & TÍNH M, V                                -->
+  <!-- ========================================================================= -->
+  <section id="tab-calc" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🧮</span> 4. CÁC DẠNG BÀI TẬP TÍNH KHỐI LƯỢNG RIÊNG, KHỐI LƯỢNG & THỂ TÍCH</h2>
+          <p>4 dạng bài xác định khối lượng riêng D và 4 bài toán tính đại lượng m, V</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-action-soft" onclick="hideAllTab4Solutions()">🙈 Ẩn tất cả lời giải</button>
+          <button class="btn-reset" onclick="resetAllTab4()">🔄 Đặt lại toàn bộ Phần 4</button>
+        </div>
+      </div>
+
+      <!-- DẠNG 1: 4 BÀI XÁC ĐỊNH KLR -->
+      <h3 style="color: #1e3a8a; font-size: 18.5px; margin-bottom: 14px;">Dạng 1: Xác định Khối lượng riêng D = m / V (4 bài)</h3>
+
+      <!-- BÀI 1 -->
+      <div class="ex-card" id="calc-card-1">
+        <span class="ex-badge">Bài 1 &bull; Vật rắn cho V (cm&sup3;) và m (g)</span>
+        <div class="ex-title">
+          Một hòn sỏi có thể tích V = 40 cm&sup3; và khối lượng m = 104 g. Hãy tính khối lượng riêng của hòn sỏi theo đơn vị g/cm&sup3; và kg/m&sup3;.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-c1-wrap', 'wb-c1')">✍️ Bảng viết giải bài 1</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-c1', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-c1-wrap" style="display:none;"><div id="wb-c1"></div></div>
+        <div id="sol-c1" class="solution-box">
+          <div class="step-line"><strong>Tóm tắt:</strong> V = 40 cm&sup3;; m = 104 g; D = ? (g/cm&sup3; và kg/m&sup3;)</div>
+          <div class="step-line"><strong>Bài giải:</strong></div>
+          <div class="step-line">&bull; Khối lượng riêng của hòn sỏi tính theo đơn vị g/cm&sup3; là:</div>
+          <div class="step-line" style="padding-left: 16px;">D = m / V = 104 / 40 = <strong>2,6 g/cm&sup3;</strong></div>
+          <div class="step-line">&bull; Đổi sang đơn vị kg/m&sup3;:</div>
+          <div class="step-line" style="padding-left: 16px;">D = 2,6 &times; 1 000 = <strong>2 600 kg/m&sup3;</strong></div>
+        </div>
+      </div>
+
+      <!-- BÀI 2 -->
+      <div class="ex-card" id="calc-card-2">
+        <span class="ex-badge">Bài 2 &bull; Chất lỏng cho V (L) và m (kg)</span>
+        <div class="ex-title">
+          Một bình chứa đúng V = 2,5 L dầu hỏa có khối lượng riêng phần dầu là m = 2 kg. Hãy xác định khối lượng riêng của dầu hỏa theo đơn vị kg/m&sup3; và g/mL.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-c2-wrap', 'wb-c2')">✍️ Bảng viết giải bài 2</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-c2', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-c2-wrap" style="display:none;"><div id="wb-c2"></div></div>
+        <div id="sol-c2" class="solution-box">
+          <div class="step-line"><strong>Tóm tắt:</strong> V = 2,5 L = 2,5 dm&sup3; = 0,0025 m&sup3;; m = 2 kg; D = ?</div>
+          <div class="step-line"><strong>Bài giải:</strong></div>
+          <div class="step-line">&bull; Đổi thể tích: V = 2,5 L = 2,5 : 1 000 = <strong>0,0025 m&sup3;</strong></div>
+          <div class="step-line">&bull; Khối lượng riêng của dầu hỏa là:</div>
+          <div class="step-line" style="padding-left: 16px;">D = m / V = 2 / 0,0025 = <strong>800 kg/m&sup3;</strong> = <strong>0,8 g/mL</strong></div>
+        </div>
+      </div>
+
+      <!-- BÀI 3 -->
+      <div class="ex-card" id="calc-card-3">
+        <span class="ex-badge">Bài 3 &bull; Vật hình hộp chữ nhật cho 3 cạnh (cm) và m (g)</span>
+        <div class="ex-title">
+          Một khối gỗ hình hộp chữ nhật có kích thước ba cạnh lần lượt là dài a = 10 cm, rộng b = 5 cm, cao c = 4 cm và có khối lượng m = 160 g. Tính khối lượng riêng của khối gỗ theo g/cm&sup3; và kg/m&sup3;.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-c3-wrap', 'wb-c3')">✍️ Bảng viết giải bài 3</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-c3', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-c3-wrap" style="display:none;"><div id="wb-c3"></div></div>
+        <div id="sol-c3" class="solution-box">
+          <div class="step-line"><strong>Tóm tắt:</strong> a = 10 cm; b = 5 cm; c = 4 cm; m = 160 g; D = ?</div>
+          <div class="step-line"><strong>Bài giải:</strong></div>
+          <div class="step-line">&bull; Thể tích của khối gỗ hình hộp chữ nhật là:</div>
+          <div class="step-line" style="padding-left: 16px;">V = a &middot; b &middot; c = 10 &times; 5 &times; 4 = <strong>200 cm&sup3;</strong></div>
+          <div class="step-line">&bull; Khối lượng riêng của khối gỗ là:</div>
+          <div class="step-line" style="padding-left: 16px;">D = m / V = 160 / 200 = <strong>0,8 g/cm&sup3;</strong> = <strong>800 kg/m&sup3;</strong></div>
+        </div>
+      </div>
+
+      <!-- BÀI 4 -->
+      <div class="ex-card" id="calc-card-4">
+        <span class="ex-badge">Bài 4 &bull; Vật hình lập phương cho cạnh (cm) và m (kg)</span>
+        <div class="ex-title">
+          Một khối kim loại đặc hình lập phương có cạnh a = 5 cm và khối lượng m = 0,975 kg. Hãy xác định khối lượng riêng của khối kim loại đó và đối chiếu bảng để cho biết khối kim loại làm bằng chất gì.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-c4-wrap', 'wb-c4')">✍️ Bảng viết giải bài 4</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-c4', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-c4-wrap" style="display:none;"><div id="wb-c4"></div></div>
+        <div id="sol-c4" class="solution-box">
+          <div class="step-line"><strong>Tóm tắt:</strong> a = 5 cm; m = 0,975 kg = 975 g; D = ?</div>
+          <div class="step-line"><strong>Bài giải:</strong></div>
+          <div class="step-line">&bull; Đổi khối lượng: m = 0,975 kg = 0,975 &times; 1 000 = <strong>975 g</strong></div>
+          <div class="step-line">&bull; Thể tích khối lập phương là: V = a&sup3; = 5 &times; 5 &times; 5 = <strong>125 cm&sup3;</strong></div>
+          <div class="step-line">&bull; Khối lượng riêng của kim loại:</div>
+          <div class="step-line" style="padding-left: 16px;">D = m / V = 975 / 125 = <strong>7,8 g/cm&sup3;</strong> = <strong>7 800 kg/m&sup3;</strong></div>
+          <div class="step-line">&bull; Tra bảng khối lượng riêng, vật có D = 7 800 kg/m&sup3; được làm bằng <strong>Sắt</strong>.</div>
+        </div>
+      </div>
+
+      <hr style="margin: 26px 0; border: none; border-top: 2px dashed #cbd5e1;">
+
+      <!-- DẠNG 2: 4 BÀI TÍNH M HOẶC V -->
+      <h3 style="color: #1e3a8a; font-size: 18.5px; margin-bottom: 14px;">Dạng 2: Tính khối lượng (m) hoặc thể tích (V) khi biết Khối lượng riêng (4 bài)</h3>
+
+      <!-- BÀI 5 -->
+      <div class="ex-card" id="calc-card-5">
+        <span class="ex-badge" style="background: #fef3c7; color: #b45309;">Bài 5 &bull; Tính khối lượng m = D &middot; V (Vật rắn)</span>
+        <div class="ex-title">
+          Một thanh nhôm đặc có thể tích V = 50 cm&sup3;. Biết khối lượng riêng của nhôm là D = 2,7 g/cm&sup3;. Tính khối lượng của thanh nhôm theo đơn vị gam và kilôgam.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-c5-wrap', 'wb-c5')">✍️ Bảng viết giải bài 5</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-c5', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-c5-wrap" style="display:none;"><div id="wb-c5"></div></div>
+        <div id="sol-c5" class="solution-box">
+          <div class="step-line"><strong>Tóm tắt:</strong> V = 50 cm&sup3;; D = 2,7 g/cm&sup3;; m = ?</div>
+          <div class="step-line"><strong>Bài giải:</strong></div>
+          <div class="step-line">&bull; Khối lượng của thanh nhôm là:</div>
+          <div class="step-line" style="padding-left: 16px;">m = D &middot; V = 2,7 &times; 50 = <strong>135 g</strong> = <strong>0,135 kg</strong></div>
+        </div>
+      </div>
+
+      <!-- BÀI 6 -->
+      <div class="ex-card" id="calc-card-6">
+        <span class="ex-badge" style="background: #fef3c7; color: #b45309;">Bài 6 &bull; Tính khối lượng m = D &middot; V (Chất lỏng)</span>
+        <div class="ex-title">
+          Một can nhựa chứa V = 5 L dầu ăn. Biết khối lượng riêng của dầu ăn là D = 800 kg/m&sup3;. Tính khối lượng dầu ăn chứa trong can.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-c6-wrap', 'wb-c6')">✍️ Bảng viết giải bài 6</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-c6', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-c6-wrap" style="display:none;"><div id="wb-c6"></div></div>
+        <div id="sol-c6" class="solution-box">
+          <div class="step-line"><strong>Tóm tắt:</strong> V = 5 L = 5 dm&sup3; = 0,005 m&sup3;; D = 800 kg/m&sup3;; m = ? kg</div>
+          <div class="step-line"><strong>Bài giải:</strong></div>
+          <div class="step-line">&bull; Đổi đơn vị thể tích: V = 5 L = 0,005 m&sup3;</div>
+          <div class="step-line">&bull; Khối lượng dầu ăn trong can là:</div>
+          <div class="step-line" style="padding-left: 16px;">m = D &middot; V = 800 &times; 0,005 = <strong>4 kg</strong></div>
+        </div>
+      </div>
+
+      <!-- BÀI 7 -->
+      <div class="ex-card" id="calc-card-7">
+        <span class="ex-badge" style="background: #e0e7ff; color: #4338ca;">Bài 7 &bull; Tính thể tích V = m / D (Vật rắn)</span>
+        <div class="ex-title">
+          Một chiếc nhẫn bằng vàng nguyên chất có khối lượng m = 38,6 g. Biết khối lượng riêng của vàng là D = 19,3 g/cm&sup3;. Hãy tính thể tích của chiếc nhẫn đó.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-c7-wrap', 'wb-c7')">✍️ Bảng viết giải bài 7</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-c7', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-c7-wrap" style="display:none;"><div id="wb-c7"></div></div>
+        <div id="sol-c7" class="solution-box">
+          <div class="step-line"><strong>Tóm tắt:</strong> m = 38,6 g; D = 19,3 g/cm&sup3;; V = ? cm&sup3;</div>
+          <div class="step-line"><strong>Bài giải:</strong></div>
+          <div class="step-line">&bull; Thể tích của chiếc nhẫn vàng là:</div>
+          <div class="step-line" style="padding-left: 16px;">V = m / D = 38,6 / 19,3 = <strong>2 cm&sup3;</strong></div>
+        </div>
+      </div>
+
+      <!-- BÀI 8 -->
+      <div class="ex-card" id="calc-card-8">
+        <span class="ex-badge" style="background: #e0e7ff; color: #4338ca;">Bài 8 &bull; Tính thể tích V = m / D (Đổi ra Lít)</span>
+        <div class="ex-title">
+          Cần dùng một chiếc bình có dung tích tối thiểu bao nhiêu Lít để chứa hết m = 68 kg thủy ngân? Biết khối lượng riêng của thủy ngân là D = 13 600 kg/m&sup3;.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-c8-wrap', 'wb-c8')">✍️ Bảng viết giải bài 8</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-c8', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-c8-wrap" style="display:none;"><div id="wb-c8"></div></div>
+        <div id="sol-c8" class="solution-box">
+          <div class="step-line"><strong>Tóm tắt:</strong> m = 68 kg; D = 13 600 kg/m&sup3;; V = ? L</div>
+          <div class="step-line"><strong>Bài giải:</strong></div>
+          <div class="step-line">&bull; Thể tích của 68 kg thủy ngân là:</div>
+          <div class="step-line" style="padding-left: 16px;">V = m / D = 68 / 13 600 = <strong>0,005 m&sup3;</strong></div>
+          <div class="step-line">&bull; Đổi sang đơn vị Lít: V = 0,005 &times; 1 000 = <strong>5 L</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BẢNG NHÁP CHUNG CUỐI TAB 4 -->
+      <div id="wb-tab4-main"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 5: CÁCH XÁC ĐỊNH KHỐI LƯỢNG RIÊNG (BÀI 14 - HOẠT HÌNH TƯƠNG TÁC)      -->
+  <!-- ========================================================================= -->
+  <section id="tab-lab" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🔬</span> 5. CÁCH XÁC ĐỊNH KHỐI LƯỢNG RIÊNG (BÀI 14 - KHTN 8)</h2>
+          <p>Mô phỏng thí nghiệm tương tác cho 3 trường hợp thực hành và bảng tổng hợp đối chiếu</p>
+        </div>
+      </div>
+
+      <!-- 5.1 THÍ NGHIỆM 1: VẬT HÌNH HỘP CHỮ NHẬT -->
+      <div class="sim-card">
+        <div class="sim-top-bar">
+          <h3 style="font-size: 18.5px; color: #1e3a8a;">5.1. Trường hợp 1: Xác định khối lượng riêng của vật hình hộp chữ nhật</h3>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span style="font-size:13px; font-weight:700; color:var(--muted);">Mẫu vật:</span>
+            <button class="sim-btn active-step" id="sim1-mat-wood" onclick="setSim1Material('wood')">Khối gỗ (160 g)</button>
+            <button class="sim-btn" id="sim1-mat-alu" onclick="setSim1Material('alu')">Khối nhôm (540 g)</button>
+          </div>
+        </div>
+
+        <div class="sim-layout">
+          <div class="sim-canvas-box">
+            <canvas id="sim1Canvas" width="560" height="290"></canvas>
+            <div class="sim-controls">
+              <button class="sim-btn play" onclick="playSim1Auto()">▶️ Phát hoạt hình đầy đủ</button>
+              <button class="sim-btn" id="s1-b1" onclick="goToSim1Step(1)">Bước 1: Cân m</button>
+              <button class="sim-btn" id="s1-b2" onclick="goToSim1Step(2)">Bước 2: Đo a, b, c</button>
+              <button class="sim-btn" id="s1-b3" onclick="goToSim1Step(3)">Bước 3: Tính V & D</button>
+              <button class="sim-btn" onclick="goToSim1Step(0)">🔄 Đặt lại</button>
+            </div>
+          </div>
+
+          <div class="sim-info-panel">
+            <div>
+              <div class="sim-knowledge-tag">
+                <strong>Kiến thức sử dụng:</strong> Công thức thể tích hình hộp chữ nhật <code>V = a &middot; b &middot; c</code> và công thức khối lượng riêng <code>D = m / V</code>.<br>
+                <strong>Dụng cụ:</strong> Cân điện tử, thước thẳng có ĐCNN tới milimét.
+              </div>
+              <ul class="sim-step-list" id="sim1-steps-ui">
+                <li id="s1-li-1"><strong>Bước 1:</strong> Dùng cân điện tử xác định khối lượng <code>m</code> của khối hộp chữ nhật.</li>
+                <li id="s1-li-2"><strong>Bước 2:</strong> Dùng thước thẳng đo chiều dài <code>a</code>, chiều rộng <code>b</code> và chiều cao <code>c</code>.</li>
+                <li id="s1-li-3"><strong>Bước 3:</strong> Tính thể tích <code>V = a &middot; b &middot; c</code> và xác định khối lượng riêng <code>D = m / V</code>.</li>
+              </ul>
+            </div>
+            <div id="sim1-live-calc" style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:10px 12px; font-size:14px; color:#166534; font-weight:700;">
+              Nhấn &ldquo;▶️ Phát hoạt hình đầy đủ&rdquo; hoặc từng bước để quan sát thí nghiệm.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.2 THÍ NGHIỆM 2: CHẤT LỎNG (NƯỚC / DẦU ĂN) -->
+      <div class="sim-card">
+        <div class="sim-top-bar">
+          <h3 style="font-size: 18.5px; color: #1e3a8a;">5.2. Trường hợp 2: Xác định khối lượng riêng của một lượng chất lỏng (Nước)</h3>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span style="font-size:13px; font-weight:700; color:var(--muted);">Chất lỏng:</span>
+            <button class="sim-btn active-step" id="sim2-liq-water" onclick="setSim2Liquid('water')">Nước tinh khiết</button>
+            <button class="sim-btn" id="sim2-liq-oil" onclick="setSim2Liquid('oil')">Dầu ăn</button>
+          </div>
+        </div>
+
+        <div class="sim-layout">
+          <div class="sim-canvas-box">
+            <canvas id="sim2Canvas" width="560" height="290"></canvas>
+            <div class="sim-controls">
+              <button class="sim-btn play" onclick="playSim2Auto()">▶️ Phát hoạt hình đầy đủ</button>
+              <button class="sim-btn" id="s2-b1" onclick="goToSim2Step(1)">Bước 1: Cân cốc m₁</button>
+              <button class="sim-btn" id="s2-b2" onclick="goToSim2Step(2)">Bước 2: Đong V</button>
+              <button class="sim-btn" id="s2-b3" onclick="goToSim2Step(3)">Bước 3: Cân m₂</button>
+              <button class="sim-btn" id="s2-b4" onclick="goToSim2Step(4)">Bước 4: Tính D</button>
+              <button class="sim-btn" onclick="goToSim2Step(0)">🔄 Đặt lại</button>
+            </div>
+          </div>
+
+          <div class="sim-info-panel">
+            <div>
+              <div class="sim-knowledge-tag">
+                <strong>Kiến thức sử dụng:</strong> Khối lượng chất lỏng bằng tổng khối lượng cả bình trừ khối lượng bình rỗng: <code>m = m<sub>2</sub> &minus; m<sub>1</sub></code>; công thức <code>D = m / V</code>.<br>
+                <strong>Dụng cụ:</strong> Cân điện tử, ống đong (bình chia độ), cốc chứa nước.
+              </div>
+              <ul class="sim-step-list" id="sim2-steps-ui">
+                <li id="s2-li-1"><strong>Bước 1:</strong> Đặt ống đong rỗng, khô lên cân điện tử để đo khối lượng <code>m<sub>1</sub></code>.</li>
+                <li id="s2-li-2"><strong>Bước 2:</strong> Rót một lượng nước vào ống đong, đặt mắt ngang đáy mặt khum đọc thể tích <code>V</code>.</li>
+                <li id="s2-li-3"><strong>Bước 3:</strong> Đặt ống đong chứa nước lên cân điện tử để đo tổng khối lượng <code>m<sub>2</sub></code>.</li>
+                <li id="s2-li-4"><strong>Bước 4:</strong> Tính khối lượng nước <code>m = m<sub>2</sub> &minus; m<sub>1</sub></code> và tính <code>D = m / V</code>.</li>
+              </ul>
+            </div>
+            <div id="sim2-live-calc" style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:10px 12px; font-size:14px; color:#166534; font-weight:700;">
+              Nhấn &ldquo;▶️ Phát hoạt hình đầy đủ&rdquo; để quan sát quá trình rót chất lỏng và cân trừ bì.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.3 THÍ NGHIỆM 3: VẬT HÌNH DẠNG BẤT KÌ KHÔNG THẤM NƯỚC -->
+      <div class="sim-card">
+        <div class="sim-top-bar">
+          <h3 style="font-size: 18.5px; color: #1e3a8a;">5.3. Trường hợp 3: Xác định khối lượng riêng của vật có hình dạng bất kì không thấm nước</h3>
+        </div>
+
+        <div class="sim-layout">
+          <div class="sim-canvas-box">
+            <canvas id="sim3Canvas" width="560" height="290"></canvas>
+            <div class="sim-controls">
+              <button class="sim-btn play" onclick="playSim3Auto()">▶️ Phát hoạt hình đầy đủ</button>
+              <button class="sim-btn" id="s3-b1" onclick="goToSim3Step(1)">Bước 1: Cân sỏi khô m</button>
+              <button class="sim-btn" id="s3-b2" onclick="goToSim3Step(2)">Bước 2: Đọc V₁</button>
+              <button class="sim-btn" id="s3-b3" onclick="goToSim3Step(3)">Bước 3: Thả sỏi đọc V₂</button>
+              <button class="sim-btn" id="s3-b4" onclick="goToSim3Step(4)">Bước 4: Tính V & D</button>
+              <button class="sim-btn" onclick="goToSim3Step(0)">🔄 Đặt lại</button>
+            </div>
+          </div>
+
+          <div class="sim-info-panel">
+            <div>
+              <div class="sim-knowledge-tag">
+                <strong>Kiến thức sử dụng:</strong> Thể tích vật rắn không thấm nước chìm hoàn toàn bằng thể tích nước dâng lên: <code>V = V<sub>2</sub> &minus; V<sub>1</sub></code>; công thức <code>D = m / V</code>.<br>
+                <strong>Dụng cụ:</strong> Cân điện tử, bình chia độ, sợi chỉ nhỏ, hòn sỏi (bỏ lọt bình chia độ).
+              </div>
+              <ul class="sim-step-list" id="sim3-steps-ui">
+                <li id="s3-li-1"><strong>Bước 1:</strong> Cân hòn sỏi khi còn khô ráo trên cân điện tử để xác định khối lượng <code>m</code>.</li>
+                <li id="s3-li-2"><strong>Bước 2:</strong> Rót nước vào bình chia độ, ghi nhận thể tích nước ban đầu <code>V<sub>1</sub></code>.</li>
+                <li id="s3-li-3"><strong>Bước 3:</strong> Buộc chỉ thả từ từ hòn sỏi ngập hẳn trong nước, đọc thể tích mới <code>V<sub>2</sub></code>.</li>
+                <li id="s3-li-4"><strong>Bước 4:</strong> Tính thể tích sỏi <code>V = V<sub>2</sub> &minus; V<sub>1</sub></code> và tính <code>D = m / V</code>.</li>
+              </ul>
+            </div>
+            <div id="sim3-live-calc" style="background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; padding:10px 12px; font-size:14px; color:#166534; font-weight:700;">
+              Nhấn &ldquo;▶️ Phát hoạt hình đầy đủ&rdquo; để xem mực nước dâng lên khi thả chìm hòn sỏi.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.4 BẢNG TỔNG HỢP SO SÁNH 3 TRƯỜNG HỢP -->
+      <div style="margin-top: 24px;">
+        <h3 style="font-size: 19px; color: #b45309; margin-bottom: 10px;">📋 5.4. Bảng tổng hợp so sánh 3 trường hợp xác định Khối lượng riêng</h3>
+        <table class="compare-table">
+          <tr>
+            <th style="width: 18%;">Tiêu chí so sánh</th>
+            <th style="width: 27%;">1. Vật hình hộp chữ nhật</th>
+            <th style="width: 27%;">2. Chất lỏng (Nước)</th>
+            <th style="width: 28%;">3. Vật bất kì không thấm nước</th>
+          </tr>
+          <tr>
+            <td><strong>Dụng cụ cần thiết</strong></td>
+            <td>Cân điện tử, thước thẳng chia tới mm.</td>
+            <td>Cân điện tử, bình chia độ (ống đong), cốc đựng.</td>
+            <td>Cân điện tử, bình chia độ (hoặc bình tràn), sợi chỉ mảnh.</td>
+          </tr>
+          <tr>
+            <td><strong>Cách đo khối lượng (m)</strong></td>
+            <td>Đặt trực tiếp vật khô lên cân để đọc <strong>m</strong>.</td>
+            <td>Cân bình rỗng (<strong>m<sub>1</sub></strong>) và cân bình chứa chất lỏng (<strong>m<sub>2</sub></strong>):<br><code>m = m<sub>2</sub> &minus; m<sub>1</sub></code></td>
+            <td>Đặt vật lên cân <strong>trước khi nhúng nước</strong> để đọc chính xác <strong>m</strong>.</td>
+          </tr>
+          <tr>
+            <td><strong>Cách đo thể tích (V)</strong></td>
+            <td>Đo 3 kích thước dài, rộng, cao rồi tính:<br><code>V = a &middot; b &middot; c</code></td>
+            <td>Đọc trực tiếp thể tích chất lỏng <strong>V</strong> trên vạch chia của bình chia độ.</td>
+            <td>Đo mực nước trước (<strong>V<sub>1</sub></strong>) và sau khi thả vật chìm hoàn toàn (<strong>V<sub>2</sub></strong>):<br><code>V = V<sub>2</sub> &minus; V<sub>1</sub></code></td>
+          </tr>
+          <tr>
+            <td><strong>Công thức tính KLR</strong></td>
+            <td style="text-align:center; font-weight:800; color:#1e3a8a;">D = m / (a &middot; b &middot; c)</td>
+            <td style="text-align:center; font-weight:800; color:#1e3a8a;">D = (m<sub>2</sub> &minus; m<sub>1</sub>) / V</td>
+            <td style="text-align:center; font-weight:800; color:#1e3a8a;">D = m / (V<sub>2</sub> &minus; V<sub>1</sub>)</td>
+          </tr>
+          <tr>
+            <td><strong>Lưu ý tránh sai số</strong></td>
+            <td>Đặt thước dọc sát mép vật; đổi 3 cạnh về cùng một đơn vị (cm hoặc m) trước khi nhân.</td>
+            <td>Đặt bình thẳng đứng; đặt mắt ngang bằng với <strong>đáy mặt khum</strong> của cột nước.</td>
+            <td>Cân vật khi còn khô; thả nhẹ để nước không bắn ra ngoài; không để bọt khí bám quanh vật.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 6: BÀI TẬP VỀ NHÀ TRỰC TUYẾN                                          -->
+  <!-- ========================================================================= -->
+  <section id="tab-homework" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📤</span> 6. BÀI TẬP VỀ NHÀ TRỰC TUYẾN: CHUYÊN ĐỀ KHỐI LƯỢNG RIÊNG</h2>
+          <p>Trang trò chơi ôn tập Khối lượng riêng tự động tráo câu hỏi & gửi kết quả về hộp thư <strong>thaomy1005@gmail.com</strong></p>
+        </div>
+      </div>
+
+      <div class="golden-box" style="background: #fdf4ff; border-color: #c084fc;">
+        <h4 style="color: #6b21a8;"><span>🎯</span> ĐƯỜNG LINK BÀI TẬP KHỐI LƯỢNG RIÊNG (ĐÃ TÁCH RIÊNG VỚI BÀI ĐÒN BẨY)</h4>
+        <p style="font-size: 15px; color: #581c87; margin-bottom: 14px; line-height: 1.55;">
+          Bộ học liệu trực tuyến gồm <strong>32 câu hỏi ngân hàng Khối lượng riêng & Thực hành Bài 13 - 14</strong> (mỗi lượt rút ngẫu nhiên 12 câu, tự đảo đáp án) kèm chế độ <strong>Thám tử Phòng thí nghiệm ảo</strong>.
+        </p>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="https://manduong1502.github.io/khtn8-game/klr.html" target="_blank" class="btn-submit" style="background: linear-gradient(135deg, #2563eb, #4f46e5);">🔗 Mở trang Bài tập Khối lượng riêng</a>
+          <button class="btn-submit" onclick="copyHomeworkLink()">📋 Sao chép tin nhắn gửi nhóm Zalo</button>
+        </div>
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 14px; padding: 20px; margin-top: 20px;">
+        <h3 style="font-size: 16.5px; color: #1e3a8a; margin-bottom: 10px;">Mẫu tin nhắn gửi Zalo (có thể chỉnh sửa trực tiếp nếu muốn):</h3>
+        <textarea id="zalo-msg-box" style="width: 100%; height: 185px; padding: 14px; border: 2px solid #cbd5e1; border-radius: 10px; font-size: 14.5px; line-height: 1.55; outline: none;">Cô gửi các bạn bài tập thực hành & ôn tập trực tuyến Chương III - Khối lượng riêng (Bài 13 & 14 KHTN 8):
+🔗 Link làm bài: https://manduong1502.github.io/khtn8-game/klr.html
+
+Yêu cầu về nhà:
+1. Nhập họ tên đầy đủ và hoàn thành phần Thi đấu (12 câu hỏi trắc nghiệm & bài toán Khối lượng riêng) cùng phần Thám tử phòng thí nghiệm.
+2. Các bạn có thể bấm làm lại nhiều lượt để luyện phản xạ đổi đơn vị và công thức D = m/V.
+3. Điểm số và chi tiết bài làm sẽ được gửi tự động về email thaomy1005@gmail.com để cô kiểm tra và nhận xét vào buổi học tới. Chúc các bạn làm bài thật tốt!</textarea>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// =============================================================================
+// 1. ĐIỀU HƯỚNG TAB CỐ ĐỊNH
+// =============================================================================
+function switchTab(tabId, btnEl) {
+  document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Resize visible canvases properly after display:block
+  setTimeout(() => {
+    Object.keys(WB_REGISTRY).forEach(id => resizeWB(id));
+    if (tabId === 'tab-lab') {
+      drawSim1();
+      drawSim2();
+      drawSim3();
+    }
+  }, 40);
+}
+
+function toggleAns(solId, btnEl) {
+  const box = document.getElementById(solId);
+  if (!box) return;
+  const isDefaultShort = btnEl && btnEl.innerText.includes('đáp án');
+  if (box.style.display === 'block') {
+    box.style.display = 'none';
+    if (btnEl) btnEl.innerHTML = isDefaultShort ? '👁️ Xem đáp án' : '👁️ Hiển thị lời giải chi tiết';
+  } else {
+    box.style.display = 'block';
+    if (btnEl) btnEl.innerHTML = isDefaultShort ? '🙈 Ẩn đáp án' : '🙈 Ẩn lời giải chi tiết';
+  }
+}
+
+// =============================================================================
+// 2. HỆ THỐNG BẢNG VIẾT BÚT CẢM ỨNG ĐA LỚP + CẮT ẢNH MÀN HÌNH (SNIPPING TOOL)
+// =============================================================================
+const WB_REGISTRY = {};
+let activeSnipTargetWB = null;
+
+function createSmartWhiteboard(mountId, titleText = "Bảng viết & Ghi chú", initialHeight = 460) {
+  const mount = document.getElementById(mountId);
+  if (!mount || WB_REGISTRY[mountId]) return;
+
+  mount.innerHTML = `
+    <div class="smart-wb-wrapper">
+      <div class="smart-wb-toolbar">
+        <div class="wb-tool-group">
+          <span class="wb-title-tag">✍️ ${titleText}</span>
+          <button type="button" class="wb-btn active" id="${mountId}-tool-pen" onclick="setWBTool('${mountId}', 'pen')">🖊️ Bút viết</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-hl" onclick="setWBTool('${mountId}', 'hl')">🖍️ Dạ quang</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-eraser" onclick="setWBTool('${mountId}', 'eraser')">🧽 Tẩy nét</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-move" onclick="setWBTool('${mountId}', 'move')">✋ Chỉnh ảnh cắt</button>
+        </div>
+
+        <div class="wb-tool-group">
+          <div class="color-dot active" style="background:#dc2626;" onclick="setWBColor('${mountId}', '#dc2626', this)" title="Đỏ"></div>
+          <div class="color-dot" style="background:#2563eb;" onclick="setWBColor('${mountId}', '#2563eb', this)" title="Xanh dương"></div>
+          <div class="color-dot" style="background:#059669;" onclick="setWBColor('${mountId}', '#059669', this)" title="Xanh lá"></div>
+          <div class="color-dot" style="background:#0f172a;" onclick="setWBColor('${mountId}', '#0f172a', this)" title="Đen"></div>
+          <select onchange="setWBSize('${mountId}', this.value)" style="padding:5px 8px; border-radius:8px; border:1.5px solid #cbd5e1; font-size:12.5px; font-weight:700;">
+            <option value="2.5">Nét mảnh</option>
+            <option value="4" selected>Nét vừa</option>
+            <option value="7">Nét đậm</option>
+          </select>
+        </div>
+
+        <div class="wb-tool-group">
+          <button type="button" class="wb-btn snip-btn" onclick="startSnipForWB('${mountId}')">✂️ Cắt ảnh màn hình đưa xuống đây</button>
+          <label class="wb-btn" style="margin:0;">
+            🖼️ Chèn ảnh
+            <input type="file" accept="image/*" style="display:none;" onchange="uploadImgToWB('${mountId}', this)">
+          </label>
+          <button type="button" class="wb-btn" onclick="undoWB('${mountId}')">↩️ Hoàn tác</button>
+          <button type="button" class="wb-btn" onclick="changeWBHeight('${mountId}', 200)">➕ Mở rộng bảng</button>
+          <button type="button" class="wb-btn" onclick="toggleWBGrid('${mountId}')">📄 Nền ô</button>
+          <button type="button" class="wb-btn" onclick="clearWBInk('${mountId}')">🧹 Xóa nét</button>
+          <button type="button" class="wb-btn" style="color:#be123c;" onclick="clearWBAll('${mountId}')">🗑️ Xóa hết</button>
+        </div>
+      </div>
+
+      <div class="wb-stage" id="${mountId}-stage" style="height:${initialHeight}px;">
+        <canvas class="wb-bg-canvas" id="${mountId}-bg"></canvas>
+        <canvas class="wb-ink-canvas" id="${mountId}-ink"></canvas>
+      </div>
+    </div>
+  `;
+
+  const stage = document.getElementById(`${mountId}-stage`);
+  const bgCanvas = document.getElementById(`${mountId}-bg`);
+  const inkCanvas = document.getElementById(`${mountId}-ink`);
+
+  const state = {
+    id: mountId,
+    stage,
+    bgCanvas,
+    inkCanvas,
+    bgCtx: bgCanvas.getContext('2d'),
+    inkCtx: inkCanvas.getContext('2d'),
+    tool: 'pen', // pen | hl | eraser | move
+    color: '#dc2626',
+    size: 4,
+    drawing: false,
+    lastPt: null,
+    history: [],
+    images: [], // { img, x, y, w, h }
+    dragImg: null,
+    resizingImg: null,
+    dragOffset: { x: 0, y: 0 }
+  };
+
+  WB_REGISTRY[mountId] = state;
+  resizeWB(mountId);
+  bindWBEvents(state);
+}
+
+function resizeWB(id) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  const rect = st.stage.getBoundingClientRect();
+  if (rect.width < 10 || rect.height < 10) return;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const targetW = Math.round(rect.width * dpr);
+  const targetH = Math.round(rect.height * dpr);
+
+  if (st.inkCanvas.width === targetW && st.inkCanvas.height === targetH) return;
+
+  // Preserve existing ink bitmap
+  const tempInk = document.createElement('canvas');
+  tempInk.width = st.inkCanvas.width;
+  tempInk.height = st.inkCanvas.height;
+  if (tempInk.width > 0 && tempInk.height > 0) {
+    tempInk.getContext('2d').drawImage(st.inkCanvas, 0, 0);
+  }
+
+  st.bgCanvas.width = targetW;
+  st.bgCanvas.height = targetH;
+  st.inkCanvas.width = targetW;
+  st.inkCanvas.height = targetH;
+
+  st.bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  st.inkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  if (tempInk.width > 0 && tempInk.height > 0) {
+    st.inkCtx.save();
+    st.inkCtx.setTransform(1, 0, 0, 1, 0, 0);
+    st.inkCtx.drawImage(tempInk, 0, 0);
+    st.inkCtx.restore();
+  }
+  redrawWBImages(st);
+}
+
+function redrawWBImages(st) {
+  const rect = st.stage.getBoundingClientRect();
+  st.bgCtx.clearRect(0, 0, rect.width || 2000, rect.height || 2000);
+  st.images.forEach(item => {
+    st.bgCtx.drawImage(item.img, item.x, item.y, item.w, item.h);
+    if (st.tool === 'move') {
+      st.bgCtx.save();
+      st.bgCtx.strokeStyle = '#2563eb';
+      st.bgCtx.lineWidth = 2;
+      st.bgCtx.setLineDash([6, 4]);
+      st.bgCtx.strokeRect(item.x, item.y, item.w, item.h);
+      st.bgCtx.setLineDash([]);
+      st.bgCtx.fillStyle = '#2563eb';
+      st.bgCtx.fillRect(item.x + item.w - 14, item.y + item.h - 14, 14, 14);
+      st.bgCtx.restore();
+    }
+  });
+}
+
+function saveWBHistory(st) {
+  if (st.inkCanvas.width === 0) return;
+  if (st.history.length >= 15) st.history.shift();
+  const snap = document.createElement('canvas');
+  snap.width = st.inkCanvas.width;
+  snap.height = st.inkCanvas.height;
+  snap.getContext('2d').drawImage(st.inkCanvas, 0, 0);
+  st.history.push(snap);
+}
+
+function bindWBEvents(st) {
+  const cv = st.inkCanvas;
+
+  function getLocalPos(e) {
+    const r = cv.getBoundingClientRect();
+    const pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    return {
+      x: pt.clientX - r.left,
+      y: pt.clientY - r.top
+    };
+  }
+
+  function pointerDown(e) {
+    if (e.button !== undefined && e.button !== 0) return;
+    e.preventDefault();
+    const pos = getLocalPos(e);
+
+    if (st.tool === 'move') {
+      for (let i = st.images.length - 1; i >= 0; i--) {
+        const it = st.images[i];
+        // Check bottom-right resize handle
+        if (pos.x >= it.x + it.w - 22 && pos.x <= it.x + it.w + 8 &&
+            pos.y >= it.y + it.h - 22 && pos.y <= it.y + it.h + 8) {
+          st.resizingImg = it;
+          return;
+        }
+        if (pos.x >= it.x && pos.x <= it.x + it.w && pos.y >= it.y && pos.y <= it.y + it.h) {
+          st.dragImg = it;
+          st.dragOffset = { x: pos.x - it.x, y: pos.y - it.y };
+          return;
+        }
+      }
+      return;
+    }
+
+    saveWBHistory(st);
+    st.drawing = true;
+    st.lastPt = pos;
+
+    const ctx = st.inkCtx;
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    if (st.tool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = 26;
+      ctx.strokeStyle = 'rgba(0,0,0,1)';
+    } else if (st.tool === 'hl') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = 20;
+      ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)';
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = st.size;
+      ctx.strokeStyle = st.color;
+    }
+    ctx.lineTo(pos.x + 0.1, pos.y + 0.1);
+    ctx.stroke();
+  }
+
+  function pointerMove(e) {
+    if (st.tool === 'move') {
+      if (!st.dragImg && !st.resizingImg) return;
+      e.preventDefault();
+      const pos = getLocalPos(e);
+      if (st.resizingImg) {
+        const ratio = st.resizingImg.aspect || (st.resizingImg.w / st.resizingImg.h);
+        const newW = Math.max(80, pos.x - st.resizingImg.x);
+        st.resizingImg.w = newW;
+        st.resizingImg.h = newW / ratio;
+      } else if (st.dragImg) {
+        st.dragImg.x = pos.x - st.dragOffset.x;
+        st.dragImg.y = pos.y - st.dragOffset.y;
+      }
+      redrawWBImages(st);
+      return;
+    }
+
+    if (!st.drawing) return;
+    e.preventDefault();
+    const pos = getLocalPos(e);
+    const ctx = st.inkCtx;
+    const midX = (st.lastPt.x + pos.x) / 2;
+    const midY = (st.lastPt.y + pos.y) / 2;
+    ctx.quadraticCurveTo(st.lastPt.x, st.lastPt.y, midX, midY);
+    ctx.stroke();
+    st.lastPt = pos;
+  }
+
+  function pointerUp() {
+    st.drawing = false;
+    st.dragImg = null;
+    st.resizingImg = null;
+    st.inkCtx.globalCompositeOperation = 'source-over';
+  }
+
+  cv.addEventListener('pointerdown', pointerDown);
+  cv.addEventListener('pointermove', pointerMove);
+  window.addEventListener('pointerup', pointerUp);
+}
+
+function setWBTool(id, tool) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  st.tool = tool;
+  ['pen', 'hl', 'eraser', 'move'].forEach(t => {
+    const btn = document.getElementById(`${id}-tool-${t}`);
+    if (btn) btn.classList.toggle('active', t === tool);
+  });
+  st.inkCanvas.style.cursor = tool === 'move' ? 'move' : (tool === 'eraser' ? 'cell' : 'crosshair');
+  redrawWBImages(st);
+}
+
+function setWBColor(id, color, dotEl) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  st.color = color;
+  if (st.tool === 'eraser' || st.tool === 'move') setWBTool(id, 'pen');
+  dotEl.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+  dotEl.classList.add('active');
+}
+
+function setWBSize(id, val) {
+  const st = WB_REGISTRY[id];
+  if (st) st.size = parseFloat(val);
+}
+
+function undoWB(id) {
+  const st = WB_REGISTRY[id];
+  if (!st || st.history.length === 0) return;
+  const prev = st.history.pop();
+  st.inkCtx.save();
+  st.inkCtx.setTransform(1, 0, 0, 1, 0, 0);
+  st.inkCtx.clearRect(0, 0, st.inkCanvas.width, st.inkCanvas.height);
+  st.inkCtx.drawImage(prev, 0, 0);
+  st.inkCtx.restore();
+}
+
+function clearWBInk(id) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  saveWBHistory(st);
+  st.inkCtx.save();
+  st.inkCtx.setTransform(1, 0, 0, 1, 0, 0);
+  st.inkCtx.clearRect(0, 0, st.inkCanvas.width, st.inkCanvas.height);
+  st.inkCtx.restore();
+}
+
+function clearWBAll(id) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  clearWBInk(id);
+  st.images = [];
+  redrawWBImages(st);
+}
+
+function changeWBHeight(id, delta) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  const curH = st.stage.offsetHeight;
+  st.stage.style.height = `${Math.max(300, curH + delta)}px`;
+  resizeWB(id);
+}
+
+function toggleWBGrid(id) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  st.stage.classList.toggle('plain-bg');
+}
+
+function toggleInlineWB(wrapId, wbId) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  if (wrap.style.display === 'none' || !wrap.style.display) {
+    wrap.style.display = 'block';
+    createSmartWhiteboard(wbId, "Bảng viết giải chi tiết", 420);
+    setTimeout(() => resizeWB(wbId), 30);
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function addImageElementToWB(id, imgObj) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  resizeWB(id);
+  const stageRect = st.stage.getBoundingClientRect();
+  const maxW = Math.max(260, stageRect.width - 40);
+  let drawW = Math.min(imgObj.width, maxW);
+  let ratio = imgObj.width / imgObj.height;
+  let drawH = drawW / ratio;
+
+  if (drawH > stageRect.height * 0.68) {
+    // Auto-expand whiteboard height so there is plenty of writing space below the cropped image!
+    const neededH = Math.round(drawH + 220);
+    if (neededH > stageRect.height) {
+      st.stage.style.height = `${neededH}px`;
+      resizeWB(id);
+    }
+  }
+
+  const posX = Math.max(16, (st.stage.getBoundingClientRect().width - drawW) / 2);
+  const posY = 16;
+
+  st.images.push({
+    img: imgObj,
+    x: posX,
+    y: posY,
+    w: drawW,
+    h: drawH,
+    aspect: ratio
+  });
+  setWBTool(id, 'pen');
+  redrawWBImages(st);
+}
+
+function uploadImgToWB(id, inputEl) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => addImageElementToWB(id, img);
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  inputEl.value = '';
+}
+
+// CHÈN NHANH DÃY ĐƠN VỊ TỶ LỆ NÉT CAO VÀO BẢNG VIẾT (TAB 1)
+function insertPresetChainToWB(wbId, chainType) {
+  const configs = {
+    length: {
+      title: "Dãy đơn vị đo độ dài (mỗi bậc ×10 hoặc :10)",
+      units: ["km", "hm", "dam", "m", "dm", "cm", "mm"],
+      step: "10"
+    },
+    volume: {
+      title: "Dãy đơn vị đo thể tích (mỗi bậc ×1000 hoặc :1000)",
+      units: ["km³", "hm³", "dam³", "m³", "dm³ (L)", "cm³ (mL)", "mm³"],
+      step: "1000"
+    },
+    mass: {
+      title: "Dãy đơn vị đo khối lượng (mỗi bậc ×10 hoặc :10)",
+      units: ["tấn", "tạ", "yến", "kg", "hg", "dag", "g"],
+      step: "10"
+    }
+  };
+  const cfg = configs[chainType];
+  if (!cfg) return;
+
+  const off = document.createElement('canvas');
+  off.width = 960;
+  off.height = 145;
+  const c = off.getContext('2d');
+  c.fillStyle = '#ffffff';
+  c.fillRect(0, 0, off.width, off.height);
+  c.strokeStyle = '#93c5fd';
+  c.lineWidth = 2;
+  c.strokeRect(4, 4, off.width - 8, off.height - 8);
+
+  c.fillStyle = '#1e3a8a';
+  c.font = 'bold 16px Segoe UI, sans-serif';
+  c.fillText(cfg.title, 20, 30);
+
+  const startX = 24;
+  const stepX = 134;
+  cfg.units.forEach((u, idx) => {
+    const bx = startX + idx * stepX;
+    const by = 52;
+    c.fillStyle = '#eff6ff';
+    c.strokeStyle = '#2563eb';
+    c.lineWidth = 2;
+    c.beginPath();
+    c.roundRect(bx, by, 92, 54, 10);
+    c.fill();
+    c.stroke();
+
+    c.fillStyle = '#1e3a8a';
+    c.font = 'bold 18px Segoe UI, sans-serif';
+    c.textAlign = 'center';
+    c.fillText(u, bx + 46, by + 33);
+
+    if (idx < cfg.units.length - 1) {
+      c.fillStyle = '#64748b';
+      c.font = 'bold 16px sans-serif';
+      c.fillText('→', bx + 113, by + 32);
+    }
+  });
+
+  const img = new Image();
+  img.onload = () => {
+    addImageElementToWB(wbId, img);
+    document.getElementById(wbId).scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+  img.src = off.toDataURL('image/png');
+}
+
+// CÔNG CỤ KÉO CẮT VÙNG MÀN HÌNH BẤT KÌ ĐƯA VÀO BẢNG VIẾT
+function startSnipForWB(wbId) {
+  activeSnipTargetWB = wbId;
+  const bar = document.getElementById('snip-floating-bar');
+  bar.style.display = 'flex';
+}
+
+function cancelSnipMode() {
+  activeSnipTargetWB = null;
+  document.getElementById('snip-floating-bar').style.display = 'none';
+  document.getElementById('snip-overlay').style.display = 'none';
+  document.getElementById('snip-rect').style.display = 'none';
+}
+
+function beginSnipDragMode() {
+  document.getElementById('snip-floating-bar').style.display = 'none';
+  const overlay = document.getElementById('snip-overlay');
+  const rectEl = document.getElementById('snip-rect');
+  overlay.style.display = 'block';
+  rectEl.style.display = 'none';
+
+  let startX = 0, startY = 0, dragging = false;
+
+  function onDown(e) {
+    e.preventDefault();
+    const pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    startX = pt.clientX;
+    startY = pt.clientY;
+    dragging = true;
+    rectEl.style.left = `${startX}px`;
+    rectEl.style.top = `${startY}px`;
+    rectEl.style.width = `0px`;
+    rectEl.style.height = `0px`;
+    rectEl.style.display = 'block';
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    const pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    const x = Math.min(startX, pt.clientX);
+    const y = Math.min(startY, pt.clientY);
+    const w = Math.abs(pt.clientX - startX);
+    const h = Math.abs(pt.clientY - startY);
+    rectEl.style.left = `${x}px`;
+    rectEl.style.top = `${y}px`;
+    rectEl.style.width = `${w}px`;
+    rectEl.style.height = `${h}px`;
+  }
+
+  async function onUp(e) {
+    if (!dragging) return;
+    dragging = false;
+    overlay.removeEventListener('pointerdown', onDown);
+    overlay.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+
+    const cropBox = rectEl.getBoundingClientRect();
+    overlay.style.display = 'none';
+    rectEl.style.display = 'none';
+
+    if (cropBox.width < 20 || cropBox.height < 20 || !activeSnipTargetWB) {
+      cancelSnipMode();
+      return;
+    }
+
+    const targetWB = activeSnipTargetWB;
+    activeSnipTargetWB = null;
+
+    if (window.html2canvas) {
+      try {
+        const snap = await window.html2canvas(document.body, {
+          x: cropBox.left + window.scrollX,
+          y: cropBox.top + window.scrollY,
+          width: cropBox.width,
+          height: cropBox.height,
+          scale: Math.min(window.devicePixelRatio || 2, 2),
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false
+        });
+        const img = new Image();
+        img.onload = () => {
+          addImageElementToWB(targetWB, img);
+          document.getElementById(targetWB).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+        img.src = snap.toDataURL('image/png');
+      } catch (err) {
+        alert("Không thể chụp vùng này. Bạn có thể dùng nút Chèn ảnh hoặc dán ảnh chụp màn hình (Ctrl+V).");
+      }
+    } else {
+      alert("Trình duyệt đang ngoại tuyến chưa tải thư viện cắt trực tiếp. Bạn có thể chụp màn hình máy tính bảng và dùng nút '🖼️ Chèn ảnh' để đưa vào bảng viết.");
+    }
+  }
+
+  overlay.addEventListener('pointerdown', onDown);
+  overlay.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+}
+
+// HỖ TRỢ DÁN ẢNH CHỤP MÀN HÌNH (CTRL+V / PASTE) VÀO BẢNG VIẾT ĐANG MỞ
+window.addEventListener('paste', e => {
+  if (!e.clipboardData || !e.clipboardData.items) return;
+  for (const item of e.clipboardData.items) {
+    if (item.type.indexOf('image') !== -1) {
+      const blob = item.getAsFile();
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => {
+          // Find visible whiteboard in active tab
+          const activeSec = document.querySelector('.section-view.active');
+          if (!activeSec) return;
+          for (const wbId of Object.keys(WB_REGISTRY)) {
+            const el = document.getElementById(wbId);
+            if (el && activeSec.contains(el) && el.offsetParent !== null) {
+              addImageElementToWB(wbId, img);
+              break;
+            }
+          }
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(blob);
+      break;
+    }
+  }
+});
+
+// =============================================================================
+// 3. TAB 1: 10 CÂU TRẮC NGHIỆM ĐỔI ĐƠN VỊ ĐO (CÓ NÚT RESET)
+// =============================================================================
+const UNIT_QUIZ_DATA = [
+  { q: "Câu 1. Đổi đơn vị độ dài: 2,5 km = ............ m", opts: ["250 m", "2 500 m", "25 000 m", "25 m"], ans: 1, exp: "Từ km sang m cách 3 bậc (×1 000): 2,5 × 1 000 = 2 500 m." },
+  { q: "Câu 2. Đổi đơn vị độ dài: 45 cm = ............ m", opts: ["4,5 m", "0,045 m", "0,45 m", "450 m"], ans: 2, exp: "Từ cm về m lùi 2 bậc (:100): 45 : 100 = 0,45 m." },
+  { q: "Câu 3. Đổi đơn vị độ dài: 120 mm = ............ cm", opts: ["12 cm", "1,2 cm", "1 200 cm", "0,12 cm"], ans: 0, exp: "1 cm = 10 mm ⇒ 120 mm = 120 : 10 = 12 cm." },
+  { q: "Câu 4. Mối liên hệ nào dưới đây là ĐÚNG?", opts: ["1 L = 1 m³", "1 L = 1 dm³", "1 L = 1 cm³", "1 L = 100 mL"], ans: 1, exp: "1 Lít (L) chính xác bằng 1 đêximét khối (1 dm³)." },
+  { q: "Câu 5. Một chai nước suối có dung tích 500 mL, tương ứng với thể tích bao nhiêu cm³?", opts: ["50 cm³", "5 cm³", "500 cm³", "5 000 cm³"], ans: 2, exp: "Vì 1 mL = 1 cm³ nên 500 mL = 500 cm³." },
+  { q: "Câu 6. Đổi đơn vị thể tích: 3 L = ............ m³", opts: ["0,3 m³", "0,03 m³", "0,003 m³", "3 000 m³"], ans: 2, exp: "Vì 1 m³ = 1 000 L nên 3 L = 3 : 1 000 = 0,003 m³." },
+  { q: "Câu 7. Đổi đơn vị thể tích: 0,02 m³ = ............ cm³", opts: ["200 cm³", "2 000 cm³", "20 000 cm³", "200 000 cm³"], ans: 2, exp: "1 m³ = 1 000 000 cm³ ⇒ 0,02 × 1 000 000 = 20 000 cm³." },
+  { q: "Câu 8. Đổi đơn vị khối lượng: 0,65 tấn = ............ kg", opts: ["65 kg", "650 kg", "6 500 kg", "6,5 kg"], ans: 1, exp: "1 tấn = 1 000 kg ⇒ 0,65 × 1 000 = 650 kg." },
+  { q: "Câu 9. Đổi đơn vị khối lượng: 350 g = ............ kg", opts: ["3,5 kg", "0,35 kg", "0,035 kg", "35 kg"], ans: 1, exp: "1 kg = 1 000 g ⇒ 350 g = 350 : 1 000 = 0,35 kg." },
+  { q: "Câu 10. Đổi đơn vị thể tích: 2 500 cm³ = ............ L", opts: ["2,5 L", "25 L", "0,25 L", "250 L"], ans: 0, exp: "Vì 1 L = 1 000 cm³ nên 2 500 cm³ = 2 500 : 1 000 = 2,5 L." }
+];
+
+let unitScore = 0;
+
+function renderTab1Quiz() {
+  unitScore = 0;
+  document.getElementById('unit-quiz-score').innerText = `0 / 10`;
+  const box = document.getElementById('unit-quiz-container');
+  box.innerHTML = '';
+
+  UNIT_QUIZ_DATA.forEach((item, qIdx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.style.background = '#f8fafc';
+    let html = `<div class="ex-title" style="font-size:16.5px;">${item.q}</div><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:8px;">`;
+    item.opts.forEach((opt, oIdx) => {
+      html += `
+        <button class="quiz-opt-btn" id="uq-${qIdx}-${oIdx}" onclick="answerUnitQuiz(${qIdx}, ${oIdx})">
+          <span class="quiz-letter">${['A','B','C','D'][oIdx]}</span>
+          <span>${opt}</span>
+        </button>
+      `;
+    });
+    html += `</div><div id="uq-exp-${qIdx}" style="display:none; margin-top:10px; padding:10px 14px; border-radius:8px; font-size:14px;"></div>`;
+    card.innerHTML = html;
+    box.appendChild(card);
+  });
+}
+
+function answerUnitQuiz(qIdx, chosen) {
+  const item = UNIT_QUIZ_DATA[qIdx];
+  for (let i = 0; i < 4; i++) {
+    const b = document.getElementById(`uq-${qIdx}-${i}`);
+    b.disabled = true;
+    if (i === item.ans) {
+      b.style.borderColor = '#10b981';
+      b.style.background = '#ecfdf5';
+      b.style.color = '#065f46';
+    } else if (i === chosen) {
+      b.style.borderColor = '#ef4444';
+      b.style.background = '#fef2f2';
+      b.style.color = '#991b1b';
+    }
+  }
+  const exp = document.getElementById(`uq-exp-${qIdx}`);
+  exp.style.display = 'block';
+  if (chosen === item.ans) {
+    unitScore++;
+    document.getElementById('unit-quiz-score').innerText = `${unitScore} / 10`;
+    exp.style.background = '#ecfdf5';
+    exp.style.borderLeft = '4px solid #10b981';
+    exp.style.color = '#065f46';
+    exp.innerHTML = `✅ <strong>Chính xác!</strong> ${item.exp}`;
+  } else {
+    exp.style.background = '#fef2f2';
+    exp.style.borderLeft = '4px solid #ef4444';
+    exp.style.color = '#991b1b';
+    exp.innerHTML = `❌ <strong>Chưa đúng.</strong> ${item.exp}`;
+  }
+}
+
+function resetTab1Quiz() {
+  renderTab1Quiz();
+}
+
+// =============================================================================
+// 4. TAB 3: 10 BÀI TẬP LÍ THUYẾT ĐA DẠNG (CHỌN ĐÁP ÁN, ĐIỀN TỪ, GHÉP CẶP) + RESET
+// =============================================================================
+const THEORY_MC_DATA = [
+  {
+    q: "Câu 1 (Chọn đáp án đúng). Khối lượng riêng của một chất được xác định bằng:",
+    opts: [
+      "Khối lượng của một vật bất kì làm bằng chất đó",
+      "Khối lượng của một đơn vị thể tích chất đó",
+      "Thể tích của một đơn vị khối lượng chất đó",
+      "Tích giữa khối lượng và thể tích của vật"
+    ],
+    ans: 1,
+    exp: "Theo định nghĩa SGK KHTN 8: Khối lượng riêng của một chất được xác định bằng khối lượng của một đơn vị thể tích chất đó."
+  },
+  {
+    q: "Câu 2 (Chọn đáp án đúng). Công thức đúng để tính khối lượng riêng là:",
+    opts: ["D = m · V", "D = V / m", "D = m / V", "D = m - V"],
+    ans: 2,
+    exp: "Công thức chuẩn: D = m / V."
+  },
+  {
+    q: "Câu 3 (Chọn đáp án đúng). Nói khối lượng riêng của sắt là 7 800 kg/m³ có nghĩa là:",
+    opts: [
+      "Mọi thanh sắt đều có khối lượng 7 800 kg",
+      "1 m³ sắt nguyên chất có khối lượng là 7 800 kg",
+      "7 800 m³ sắt có khối lượng là 1 kg",
+      "1 cm³ sắt có khối lượng 7 800 g"
+    ],
+    ans: 1,
+    exp: "7 800 kg/m³ cho biết cứ 1 m³ sắt đặc nguyên chất thì có khối lượng là 7 800 kg."
+  },
+  {
+    q: "Câu 4 (Chọn đáp án đúng). Từ công thức D = m / V, muốn tìm thể tích V của vật ta dùng công thức:",
+    opts: ["V = m · D", "V = D / m", "V = m / D", "V = m + D"],
+    ans: 2,
+    exp: "Từ D = m / V suy ra m = D · V và V = m / D."
+  },
+  {
+    q: "Câu 5 (Chọn đáp án đúng). Dầu ăn có KLR khoảng 800 kg/m³, nước có KLR là 1 000 kg/m³. Hiện tượng xảy ra khi đổ dầu ăn vào nước là:",
+    opts: [
+      "Dầu ăn chìm xuống đáy cốc nước",
+      "Dầu ăn nổi lên trên mặt nước vì có khối lượng riêng nhỏ hơn nước",
+      "Nước nổi lên trên dầu ăn",
+      "Hai chất tạo thành dung dịch đồng nhất"
+    ],
+    ans: 1,
+    exp: "Dầu ăn không tan trong nước và có D nhỏ hơn nước (800 < 1 000) nên nổi lên trên."
+  },
+  {
+    q: "Câu 6 (Chọn đáp án đúng). Nếu ta cưa đôi một thỏi nhôm đặc thành 2 phần bằng nhau thì khối lượng riêng của mỗi nửa thỏi nhôm sẽ:",
+    opts: [
+      "Giảm đi 2 lần",
+      "Tăng lên 2 lần",
+      "Không thay đổi, vẫn bằng 2 700 kg/m³",
+      "Bằng 0"
+    ],
+    ans: 2,
+    exp: "Khối lượng riêng là đặc tính riêng của chất làm vật; khi chia đôi thì cả m và V cùng giảm 2 lần nên tỉ số D = m/V không đổi."
+  }
+];
+
+let matchSelectedLeft = null;
+
+function renderTheoryQuiz() {
+  matchSelectedLeft = null;
+  const container = document.getElementById('theory-quiz-container');
+  container.innerHTML = '';
+
+  // Câu 1 - 6: Chọn đáp án đúng
+  THEORY_MC_DATA.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.style.background = '#f8fafc';
+    let html = `<div class="ex-title" style="font-size:16.5px;">${item.q}</div><div style="display:flex; flex-direction:column; gap:8px;">`;
+    item.opts.forEach((opt, oIdx) => {
+      html += `
+        <button class="quiz-opt-btn" id="tq-${idx}-${oIdx}" onclick="checkTheoryMC(${idx}, ${oIdx})">
+          <span class="quiz-letter">${['A','B','C','D'][oIdx]}</span>
+          <span>${opt}</span>
+        </button>
+      `;
+    });
+    html += `</div><div id="tq-exp-${idx}" style="display:none; margin-top:10px; padding:10px 14px; border-radius:8px; font-size:14px;"></div>`;
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+
+  // Câu 7: Điền từ còn thiếu (Chạm chọn từ)
+  const q7 = document.createElement('div');
+  q7.className = 'ex-card';
+  q7.style.background = '#f8fafc';
+  q7.innerHTML = `
+    <span class="ex-badge" style="background:#ede9fe; color:#6d28d9;">Dạng điền khuyết</span>
+    <div class="ex-title" style="font-size:16.5px;">
+      Câu 7. Chọn cụm từ thích hợp điền vào chỗ trống:<br>
+      &ldquo;Khi biết <span class="blank-slot" id="blank-q7">............</span> của một vật làm bằng chất nguyên chất, ta có thể đối chiếu với bảng số liệu để biết được vật đó làm bằng chất gì.&rdquo;
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;" id="chips-q7">
+      <button class="word-chip" onclick="fillBlankQ(7, 'chiều dài', false, this)">chiều dài</button>
+      <button class="word-chip" onclick="fillBlankQ(7, 'khối lượng riêng', true, this)">khối lượng riêng</button>
+      <button class="word-chip" onclick="fillBlankQ(7, 'thể tích', false, this)">thể tích</button>
+      <button class="word-chip" onclick="fillBlankQ(7, 'hình dạng', false, this)">hình dạng</button>
+    </div>
+    <div id="blank-exp-7" style="display:none; margin-top:10px; padding:10px 14px; border-radius:8px; font-size:14px;"></div>
+  `;
+  container.appendChild(q7);
+
+  // Câu 8: Điền số quy đổi còn thiếu
+  const q8 = document.createElement('div');
+  q8.className = 'ex-card';
+  q8.style.background = '#f8fafc';
+  q8.innerHTML = `
+    <span class="ex-badge" style="background:#ede9fe; color:#6d28d9;">Dạng điền khuyết</span>
+    <div class="ex-title" style="font-size:16.5px;">
+      Câu 8. Chọn giá trị đúng điền vào chỗ trống:<br>
+      Đơn vị thông dụng: <strong>1 g/cm&sup3; = 1 g/mL = <span class="blank-slot" id="blank-q8">............</span> kg/m&sup3;</strong>.
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;" id="chips-q8">
+      <button class="word-chip" onclick="fillBlankQ(8, '10', false, this)">10</button>
+      <button class="word-chip" onclick="fillBlankQ(8, '100', false, this)">100</button>
+      <button class="word-chip" onclick="fillBlankQ(8, '1 000', true, this)">1 000</button>
+      <button class="word-chip" onclick="fillBlankQ(8, '0,001', false, this)">0,001</button>
+    </div>
+    <div id="blank-exp-8" style="display:none; margin-top:10px; padding:10px 14px; border-radius:8px; font-size:14px;"></div>
+  `;
+  container.appendChild(q8);
+
+  // Câu 9 & 10: Trò chơi ghép cặp tương ứng
+  const q910 = document.createElement('div');
+  q910.className = 'ex-card';
+  q910.style.background = '#f8fafc';
+  q910.innerHTML = `
+    <span class="ex-badge" style="background:#fef3c7; color:#b45309;">Trò chơi Ghép cặp</span>
+    <div class="ex-title" style="font-size:16.5px;">
+      Câu 9 & Câu 10. Chạm vào một ô ở Cột A rồi chạm vào ô tương ứng ở Cột B để ghép thành cặp đúng:
+    </div>
+    <div class="match-grid">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:13px; font-weight:800; color:#1e3a8a;">CỘT A (ĐẠI LƯỢNG / CHẤT)</div>
+        <div class="match-item" id="mL-1" onclick="clickMatchLeft(1)">1) Công thức tính khối lượng m từ D và V</div>
+        <div class="match-item" id="mL-2" onclick="clickMatchLeft(2)">2) Khối lượng riêng của nước nguyên chất</div>
+        <div class="match-item" id="mL-3" onclick="clickMatchLeft(3)">3) Đơn vị của khối lượng riêng trong hệ SI</div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="font-size:13px; font-weight:800; color:#15803d;">CỘT B (GIÁ TRỊ / BIỂU THỨC)</div>
+        <div class="match-item" id="mR-3" onclick="clickMatchRight(3)">A. kg/m&sup3;</div>
+        <div class="match-item" id="mR-1" onclick="clickMatchRight(1)">B. m = D &middot; V</div>
+        <div class="match-item" id="mR-2" onclick="clickMatchRight(2)">C. 1 000 kg/m&sup3; (1 g/cm&sup3;)</div>
+      </div>
+    </div>
+    <div id="match-status" style="margin-top:10px; font-size:14px; font-weight:700; color:#059669;"></div>
+  `;
+  container.appendChild(q910);
+}
+
+function checkTheoryMC(qIdx, chosen) {
+  const item = THEORY_MC_DATA[qIdx];
+  for (let i = 0; i < 4; i++) {
+    const b = document.getElementById(`tq-${qIdx}-${i}`);
+    b.disabled = true;
+    if (i === item.ans) {
+      b.style.borderColor = '#10b981';
+      b.style.background = '#ecfdf5';
+      b.style.color = '#065f46';
+    } else if (i === chosen) {
+      b.style.borderColor = '#ef4444';
+      b.style.background = '#fef2f2';
+      b.style.color = '#991b1b';
+    }
+  }
+  const exp = document.getElementById(`tq-exp-${qIdx}`);
+  exp.style.display = 'block';
+  exp.style.background = chosen === item.ans ? '#ecfdf5' : '#fef2f2';
+  exp.style.borderLeft = chosen === item.ans ? '4px solid #10b981' : '4px solid #ef4444';
+  exp.style.color = chosen === item.ans ? '#065f46' : '#991b1b';
+  exp.innerHTML = `${chosen === item.ans ? '✅ <strong>Chính xác!</strong>' : '❌ <strong>Chưa đúng!</strong>'} ${item.exp}`;
+}
+
+function fillBlankQ(num, word, isCorrect, btnEl) {
+  const slot = document.getElementById(`blank-q${num}`);
+  slot.innerText = word;
+  const chips = document.querySelectorAll(`#chips-q${num} .word-chip`);
+  chips.forEach(c => c.disabled = true);
+
+  const exp = document.getElementById(`blank-exp-${num}`);
+  exp.style.display = 'block';
+  if (isCorrect) {
+    slot.style.color = '#059669';
+    slot.style.borderColor = '#10b981';
+    btnEl.style.background = '#ecfdf5';
+    btnEl.style.borderColor = '#10b981';
+    exp.style.background = '#ecfdf5';
+    exp.style.color = '#065f46';
+    exp.innerHTML = `✅ <strong>Hoàn toàn chính xác!</strong>`;
+  } else {
+    slot.style.color = '#dc2626';
+    slot.style.borderColor = '#ef4444';
+    btnEl.style.background = '#fef2f2';
+    btnEl.style.borderColor = '#ef4444';
+    exp.style.background = '#fef2f2';
+    exp.style.color = '#991b1b';
+    exp.innerHTML = `❌ <strong>Chưa chính xác.</strong> Bấm nút &ldquo;Làm lại phần 3.1&rdquo; để thử lại nhé!`;
+  }
+}
+
+let matchedCount = 0;
+function clickMatchLeft(id) {
+  const el = document.getElementById(`mL-${id}`);
+  if (el.classList.contains('matched')) return;
+  document.querySelectorAll('[id^="mL-"]').forEach(x => x.classList.remove('selected'));
+  el.classList.add('selected');
+  matchSelectedLeft = id;
+}
+
+function clickMatchRight(id) {
+  if (!matchSelectedLeft) return;
+  const rEl = document.getElementById(`mR-${id}`);
+  if (rEl.classList.contains('matched')) return;
+  const lEl = document.getElementById(`mL-${matchSelectedLeft}`);
+  const st = document.getElementById('match-status');
+
+  if (matchSelectedLeft === id) {
+    lEl.classList.remove('selected');
+    lEl.classList.add('matched');
+    rEl.classList.add('matched');
+    matchSelectedLeft = null;
+    const done = document.querySelectorAll('#theory-quiz-container .match-item.matched').length;
+    st.style.color = '#059669';
+    st.innerText = done === 6 ? '🎉 Xuất sắc! Đã ghép đúng toàn bộ các cặp!' : '✅ Ghép đúng! Tiếp tục chọn cặp còn lại.';
+  } else {
+    st.style.color = '#dc2626';
+    st.innerText = '❌ Hai ô này chưa khớp nhau, hãy thử ghép lại!';
+    lEl.classList.remove('selected');
+    matchSelectedLeft = null;
+  }
+}
+
+function resetTab3Conversions() {
+  for (let i = 1; i <= 10; i++) {
+    const box = document.getElementById(`sol-u${i}`);
+    if (box) {
+      box.style.display = 'none';
+      const btn = box.previousElementSibling;
+      if (btn) btn.innerHTML = '👁️ Xem đáp án';
+    }
+  }
+}
+
+function resetAllTab3() {
+  renderTheoryQuiz();
+  resetTab3Conversions();
+  clearWBInk('wb-tab3-top');
+  clearWBInk('wb-tab3-bottom');
+}
+
+// =============================================================================
+// 5. TAB 4: RESET LỜI GIẢI & BẢNG NHÁP
+// =============================================================================
+function hideAllTab4Solutions() {
+  for (let i = 1; i <= 8; i++) {
+    const sol = document.getElementById(`sol-c${i}`);
+    if (sol) sol.style.display = 'none';
+    const card = document.getElementById(`calc-card-${i}`);
+    if (card) {
+      const btn = card.querySelector('.ans-toggle-btn');
+      if (btn) btn.innerHTML = '👁️ Hiển thị lời giải chi tiết';
+    }
+  }
+}
+
+function resetAllTab4() {
+  hideAllTab4Solutions();
+  for (let i = 1; i <= 8; i++) {
+    const wrap = document.getElementById(`wb-c${i}-wrap`);
+    if (wrap) wrap.style.display = 'none';
+    if (WB_REGISTRY[`wb-c${i}`]) clearWBAll(`wb-c${i}`);
+  }
+  clearWBAll('wb-tab4-main');
+}
+
+// =============================================================================
+// 6. TAB 5: BA MÔ PHỎNG HOẠT HÌNH TƯƠNG TÁC MƯỢT (60FPS CANVAS ANIMATION)
+// =============================================================================
+function lerp(a, b, t) { return a + (b - a) * t; }
+function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+// ----------------- MÔ PHỎNG 1: KHỐI HỘP CHỮ NHẬT -----------------
+let sim1Mat = 'wood'; // wood (160g, 0.8) | alu (540g, 2.7)
+let sim1State = {
+  step: 0,
+  blockX: 85,
+  blockY: 168,
+  scaleVal: 0,
+  rulerProgress: 0,
+  animId: null,
+  autoTimer: null
+};
+
+function setSim1Material(m) {
+  sim1Mat = m;
+  document.getElementById('sim1-mat-wood').classList.toggle('active-step', m === 'wood');
+  document.getElementById('sim1-mat-alu').classList.toggle('active-step', m === 'alu');
+  goToSim1Step(0);
+}
+
+function getSim1Data() {
+  return sim1Mat === 'wood'
+    ? { name: 'Khối gỗ', colorTop: '#f59e0b', colorFront: '#d97706', colorSide: '#b45309', m: 160, a: 10, b: 5, c: 4, v: 200, d: '0,8', dSI: '800' }
+    : { name: 'Khối nhôm', colorTop: '#cbd5e1', colorFront: '#94a3b8', colorSide: '#64748b', m: 540, a: 10, b: 5, c: 4, v: 200, d: '2,7', dSI: '2 700' };
+}
+
+function updateSim1UI(step) {
+  for (let i = 1; i <= 3; i++) {
+    const li = document.getElementById(`s1-li-${i}`);
+    const bt = document.getElementById(`s1-b${i}`);
+    if (li) li.classList.toggle('current', i === step);
+    if (bt) bt.classList.toggle('active-step', i === step);
+  }
+  const d = getSim1Data();
+  const box = document.getElementById('sim1-live-calc');
+  if (step === 0) box.innerHTML = `Sẵn sàng thí nghiệm với <strong>${d.name}</strong>.`;
+  if (step === 1) box.innerHTML = `✅ <strong>Bước 1:</strong> Đặt ${d.name.toLowerCase()} lên cân điện tử &rArr; Đọc số chỉ khối lượng: <strong>m = ${d.m} g</strong>.`;
+  if (step === 2) box.innerHTML = `✅ <strong>Bước 2:</strong> Dùng thước thẳng đo 3 cạnh &rArr; <strong>a = ${d.a} cm, b = ${d.b} cm, c = ${d.c} cm</strong>.`;
+  if (step === 3) box.innerHTML = `🎯 <strong>Kết quả:</strong> V = ${d.a} &times; ${d.b} &times; ${d.c} = <strong>${d.v} cm&sup3;</strong> &rArr; D = ${d.m} / ${d.v} = <strong>${d.d} g/cm&sup3; (${d.dSI} kg/m&sup3;)</strong>.`;
+}
+
+function animateSim1To(targetX, targetY, targetScale, targetRuler, duration = 700, onDone) {
+  cancelAnimationFrame(sim1State.animId);
+  const sX = sim1State.blockX, sY = sim1State.blockY, sVal = sim1State.scaleVal, sR = sim1State.rulerProgress;
+  const start = performance.now();
+
+  function frame(now) {
+    const raw = Math.min(1, (now - start) / duration);
+    const t = easeInOut(raw);
+    sim1State.blockX = lerp(sX, targetX, t);
+    sim1State.blockY = lerp(sY, targetY, t);
+    sim1State.scaleVal = lerp(sVal, targetScale, t);
+    sim1State.rulerProgress = lerp(sR, targetRuler, t);
+    drawSim1();
+    if (raw < 1) sim1State.animId = requestAnimationFrame(frame);
+    else if (onDone) onDone();
+  }
+  sim1State.animId = requestAnimationFrame(frame);
+}
+
+function goToSim1Step(step, keepAuto = false) {
+  if (!keepAuto) clearTimeout(sim1State.autoTimer);
+  sim1State.step = step;
+  updateSim1UI(step);
+  const d = getSim1Data();
+
+  if (step === 0) animateSim1To(75, 168, 0, 0, 450);
+  else if (step === 1) animateSim1To(225, 134, d.m, 0, 750);
+  else if (step === 2) animateSim1To(405, 162, 0, 1, 800);
+  else if (step === 3) animateSim1To(405, 162, 0, 1, 400);
+}
+
+function playSim1Auto() {
+  clearTimeout(sim1State.autoTimer);
+  goToSim1Step(0, true);
+  sim1State.autoTimer = setTimeout(() => {
+    goToSim1Step(1, true);
+    sim1State.autoTimer = setTimeout(() => {
+      goToSim1Step(2, true);
+      sim1State.autoTimer = setTimeout(() => {
+        goToSim1Step(3, true);
+      }, 1700);
+    }, 1700);
+  }, 550);
+}
+
+function drawSim1() {
+  const cv = document.getElementById('sim1Canvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const d = getSim1Data();
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  // Background & Lab bench
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(0, 232, cv.width, 58);
+  ctx.strokeStyle = '#94a3b8';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, 232); ctx.lineTo(cv.width, 232); ctx.stroke();
+
+  // Digital Scale (Center-Left)
+  const scX = 185, scY = 192;
+  const press = sim1State.scaleVal > 5 ? 3 : 0;
+  ctx.fillStyle = '#64748b';
+  ctx.fillRect(scX + 18, scY - 12 + press, 114, 8);
+  ctx.fillStyle = '#cbd5e1';
+  ctx.fillRect(scX + 64, scY - 4 + press, 22, 8);
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath(); ctx.roundRect(scX, scY, 150, 40, 8); ctx.fill();
+  ctx.fillStyle = '#020617';
+  ctx.fillRect(scX + 26, scY + 9, 98, 22);
+  ctx.fillStyle = '#22c55e';
+  ctx.font = 'bold 15px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${sim1State.scaleVal.toFixed(1)} g`, scX + 75, scY + 25);
+  ctx.fillStyle = '#475569';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Cân điện tử', scX + 75, 252);
+
+  // Measurement zone label (Right)
+  ctx.fillText('Vùng đo kích thước', 445, 252);
+
+  // Draw 3D Rectangular Block
+  const bx = sim1State.blockX, by = sim1State.blockY + (sim1State.step === 1 ? press : 0);
+  const w = 92, h = 44, dx = 24, dy = -16;
+
+  // Front face
+  ctx.fillStyle = d.colorFront;
+  ctx.fillRect(bx, by, w, h);
+  ctx.strokeStyle = '#1e293b';
+  ctx.lineWidth = 1.8;
+  ctx.strokeRect(bx, by, w, h);
+
+  // Top face
+  ctx.beginPath();
+  ctx.moveTo(bx, by);
+  ctx.lineTo(bx + dx, by + dy);
+  ctx.lineTo(bx + w + dx, by + dy);
+  ctx.lineTo(bx + w, by);
+  ctx.closePath();
+  ctx.fillStyle = d.colorTop;
+  ctx.fill();
+  ctx.stroke();
+
+  // Side face
+  ctx.beginPath();
+  ctx.moveTo(bx + w, by);
+  ctx.lineTo(bx + w + dx, by + dy);
+  ctx.lineTo(bx + w + dx, by + h + dy);
+  ctx.lineTo(bx + w, by + h);
+  ctx.closePath();
+  ctx.fillStyle = d.colorSide;
+  ctx.fill();
+  ctx.stroke();
+
+  // Animated Ruler & Dimension Arrows when rulerProgress > 0
+  if (sim1State.rulerProgress > 0.05) {
+    const p = sim1State.rulerProgress;
+    ctx.save();
+    ctx.globalAlpha = p;
+
+    // Yellow Ruler below block
+    const rW = w * p;
+    ctx.fillStyle = '#fde047';
+    ctx.strokeStyle = '#ca8a04';
+    ctx.fillRect(bx, by + h + 8, rW, 16);
+    ctx.strokeRect(bx, by + h + 8, rW, 16);
+    for (let tx = 0; tx <= rW; tx += 9.2) {
+      ctx.beginPath();
+      ctx.moveTo(bx + tx, by + h + 8);
+      ctx.lineTo(bx + tx, by + h + 14);
+      ctx.stroke();
+    }
+
+    // Labels a, b, c
+    ctx.fillStyle = '#dc2626';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`a = ${d.a} cm`, bx + w / 2, by + h + 38);
+
+    ctx.fillStyle = '#2563eb';
+    ctx.textAlign = 'left';
+    ctx.fillText(`c = ${d.c} cm`, bx - 64, by + h / 2 + 4);
+    ctx.fillStyle = '#059669';
+    ctx.fillText(`b = ${d.b} cm`, bx + w + dx + 6, by + dy + 16);
+    ctx.restore();
+  }
+
+  // Step 3 Summary Floating Board
+  if (sim1State.step === 3) {
+    ctx.fillStyle = '#eff6ff';
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(22, 20, 315, 92, 12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = 'bold 14px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`• Khối lượng đo được: m = ${d.m} g`, 36, 44);
+    ctx.fillText(`• Thể tích: V = ${d.a} × ${d.b} × ${d.c} = ${d.v} cm³`, 36, 68);
+    ctx.fillStyle = '#b91c1c';
+    ctx.fillText(`⇒ KLR: D = ${d.m} / ${d.v} = ${d.d} g/cm³`, 36, 94);
+  }
+}
+
+// ----------------- MÔ PHỎNG 2: CHẤT LỎNG (CÂN TRỪ BÌ) -----------------
+let sim2Liq = 'water'; // water (150g / 150cm3) | oil (120g / 150cm3)
+let sim2State = {
+  step: 0,
+  cylX: 90,
+  cylY: 96,
+  liquidFill: 0, // 0..1
+  pouring: 0,    // 0..1
+  scaleVal: 0,
+  animId: null,
+  autoTimer: null
+};
+
+function setSim2Liquid(lq) {
+  sim2Liq = lq;
+  document.getElementById('sim2-liq-water').classList.toggle('active-step', lq === 'water');
+  document.getElementById('sim2-liq-oil').classList.toggle('active-step', lq === 'oil');
+  goToSim2Step(0);
+}
+
+function getSim2Data() {
+  return sim2Liq === 'water'
+    ? { name: 'Nước tinh khiết', color: 'rgba(56, 189, 248, 0.55)', stream: '#38bdf8', m1: 80, v: 150, m2: 230, m: 150, d: '1,0', dSI: '1 000' }
+    : { name: 'Dầu ăn', color: 'rgba(250, 204, 21, 0.62)', stream: '#eab308', m1: 80, v: 150, m2: 200, m: 120, d: '0,8', dSI: '800' };
+}
+
+function updateSim2UI(step) {
+  for (let i = 1; i <= 4; i++) {
+    const li = document.getElementById(`s2-li-${i}`);
+    const bt = document.getElementById(`s2-b${i}`);
+    if (li) li.classList.toggle('current', i === step);
+    if (bt) bt.classList.toggle('active-step', i === step);
+  }
+  const d = getSim2Data();
+  const box = document.getElementById('sim2-live-calc');
+  if (step === 0) box.innerHTML = `Sẵn sàng thí nghiệm xác định KLR của <strong>${d.name}</strong>.`;
+  if (step === 1) box.innerHTML = `✅ <strong>Bước 1:</strong> Cân ống đong rỗng khô &rArr; <strong>m<sub>1</sub> = ${d.m1} g</strong>.`;
+  if (step === 2) box.innerHTML = `✅ <strong>Bước 2:</strong> Rót ${d.name.toLowerCase()} vào ống đong, đặt mắt ngang đáy mặt khum &rArr; <strong>V = ${d.v} cm&sup3; (150 mL)</strong>.`;
+  if (step === 3) box.innerHTML = `✅ <strong>Bước 3:</strong> Cân cả ống đong và ${d.name.toLowerCase()} &rArr; <strong>m<sub>2</sub> = ${d.m2} g</strong>.`;
+  if (step === 4) box.innerHTML = `🎯 <strong>Kết quả:</strong> m = ${d.m2} &minus; ${d.m1} = <strong>${d.m} g</strong> &rArr; D = ${d.m} / ${d.v} = <strong>${d.d} g/cm&sup3; (${d.dSI} kg/m&sup3;)</strong>.`;
+}
+
+function animateSim2To(tX, tY, tFill, tPour, tScale, dur = 750, onDone) {
+  cancelAnimationFrame(sim2State.animId);
+  const sX = sim2State.cylX, sY = sim2State.cylY, sF = sim2State.liquidFill, sP = sim2State.pouring, sV = sim2State.scaleVal;
+  const start = performance.now();
+
+  function frame(now) {
+    const raw = Math.min(1, (now - start) / dur);
+    const t = easeInOut(raw);
+    sim2State.cylX = lerp(sX, tX, t);
+    sim2State.cylY = lerp(sY, tY, t);
+    sim2State.liquidFill = lerp(sF, tFill, t);
+    sim2State.pouring = raw < 0.85 ? tPour : 0;
+    sim2State.scaleVal = lerp(sV, tScale, t);
+    drawSim2();
+    if (raw < 1) sim2State.animId = requestAnimationFrame(frame);
+    else {
+      sim2State.pouring = 0;
+      drawSim2();
+      if (onDone) onDone();
+    }
+  }
+  sim2State.animId = requestAnimationFrame(frame);
+}
+
+function goToSim2Step(step, keepAuto = false) {
+  if (!keepAuto) clearTimeout(sim2State.autoTimer);
+  sim2State.step = step;
+  updateSim2UI(step);
+  const d = getSim2Data();
+
+  if (step === 0) animateSim2To(85, 97, 0, 0, 0, 450);
+  else if (step === 1) animateSim2To(222, 57, 0, 0, d.m1, 750);
+  else if (step === 2) {
+    sim2State.cylX = 395; sim2State.cylY = 97; sim2State.scaleVal = 0; sim2State.liquidFill = 0;
+    animateSim2To(395, 97, 1, 1, 0, 1100);
+  }
+  else if (step === 3) animateSim2To(222, 57, 1, 0, d.m2, 800);
+  else if (step === 4) animateSim2To(222, 57, 1, 0, d.m2, 400);
+}
+
+function playSim2Auto() {
+  clearTimeout(sim2State.autoTimer);
+  goToSim2Step(0, true);
+  sim2State.autoTimer = setTimeout(() => {
+    goToSim2Step(1, true);
+    sim2State.autoTimer = setTimeout(() => {
+      goToSim2Step(2, true);
+      sim2State.autoTimer = setTimeout(() => {
+        goToSim2Step(3, true);
+        sim2State.autoTimer = setTimeout(() => {
+          goToSim2Step(4, true);
+        }, 1600);
+      }, 1800);
+    }, 1500);
+  }, 500);
+}
+
+function drawSim2() {
+  const cv = document.getElementById('sim2Canvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const d = getSim2Data();
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  // Lab bench
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(0, 232, cv.width, 58);
+
+  // Digital Scale
+  const scX = 180, scY = 192;
+  ctx.fillStyle = '#64748b';
+  ctx.fillRect(scX + 18, scY - 10, 114, 8);
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath(); ctx.roundRect(scX, scY, 150, 40, 8); ctx.fill();
+  ctx.fillStyle = '#020617';
+  ctx.fillRect(scX + 26, scY + 9, 98, 22);
+  ctx.fillStyle = '#22c55e';
+  ctx.font = 'bold 15px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${sim2State.scaleVal.toFixed(1)} g`, scX + 75, scY + 25);
+  ctx.fillStyle = '#475569';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Cân điện tử', scX + 75, 252);
+
+  // Graduated Cylinder
+  const cx = sim2State.cylX, cy = sim2State.cylY, cw = 68, ch = 134;
+
+  // Pouring stream in Step 2
+  if (sim2State.pouring > 0.1) {
+    ctx.save();
+    ctx.fillStyle = '#475569';
+    ctx.translate(cx + 65, cy - 35);
+    ctx.rotate(-0.55);
+    ctx.fillRect(-18, -14, 46, 26);
+    ctx.restore();
+
+    ctx.strokeStyle = d.stream;
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(cx + 42, cy - 22);
+    ctx.lineTo(cx + cw / 2, cy + ch - 8);
+    ctx.stroke();
+  }
+
+  // Liquid inside cylinder
+  const maxLiqH = 92; // corresponds to 150 mL
+  const curLiqH = maxLiqH * sim2State.liquidFill;
+  if (curLiqH > 1) {
+    ctx.fillStyle = d.color;
+    ctx.fillRect(cx + 2, cy + ch - curLiqH, cw - 4, curLiqH);
+    // Curved meniscus
+    ctx.strokeStyle = d.stream;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx + cw / 2, cy + ch - curLiqH - 3, cw / 2 - 4, 0.12 * Math.PI, 0.88 * Math.PI);
+    ctx.stroke();
+  }
+
+  // Cylinder glass walls & base
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx, cy + ch);
+  ctx.lineTo(cx + cw, cy + ch);
+  ctx.lineTo(cx + cw, cy);
+  ctx.stroke();
+  ctx.fillStyle = '#94a3b8';
+  ctx.fillRect(cx - 8, cy + ch, cw + 16, 5);
+
+  // Graduation ticks
+  ctx.fillStyle = '#475569';
+  ctx.font = '10.5px sans-serif';
+  ctx.textAlign = 'left';
+  for (let v = 50; v <= 200; v += 50) {
+    const ty = cy + ch - (v / 150) * maxLiqH;
+    ctx.beginPath();
+    ctx.moveTo(cx + cw - 12, ty);
+    ctx.lineTo(cx + cw, ty);
+    ctx.stroke();
+    ctx.fillText(`${v}`, cx + cw + 4, ty + 3);
+  }
+
+  // Eye-level sightline at Step 2
+  if (sim2State.step === 2 && sim2State.liquidFill > 0.85) {
+    const readY = cy + ch - maxLiqH;
+    ctx.save();
+    ctx.strokeStyle = '#dc2626';
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(cx - 80, readY);
+    ctx.lineTo(cx + cw, readY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#dc2626';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('👁️ V = 150 cm³', cx - 84, readY + 4);
+    ctx.restore();
+  }
+
+  // Summary card at Step 4
+  if (sim2State.step === 4) {
+    ctx.fillStyle = '#eff6ff';
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(350, 24, 195, 110, 12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(`m₁ = ${d.m1} g; m₂ = ${d.m2} g`, 362, 48);
+    ctx.fillText(`m = ${d.m2} - ${d.m1} = ${d.m} g`, 362, 72);
+    ctx.fillText(`V = ${d.v} cm³`, 362, 95);
+    ctx.fillStyle = '#b91c1c';
+    ctx.fillText(`⇒ D = ${d.d} g/cm³`, 362, 119);
+  }
+}
+
+// ----------------- MÔ PHỎNG 3: HÒN SỎI BẤT KÌ -----------------
+let sim3State = {
+  step: 0,
+  stoneX: 70,
+  stoneY: 205,
+  scaleVal: 0,
+  waterVol: 0, // cm3 (0 -> 100 -> 140)
+  animId: null,
+  autoTimer: null
+};
+
+function updateSim3UI(step) {
+  for (let i = 1; i <= 4; i++) {
+    const li = document.getElementById(`s3-li-${i}`);
+    const bt = document.getElementById(`s3-b${i}`);
+    if (li) li.classList.toggle('current', i === step);
+    if (bt) bt.classList.toggle('active-step', i === step);
+  }
+  const box = document.getElementById('sim3-live-calc');
+  if (step === 0) box.innerHTML = `Sẵn sàng thí nghiệm đo khối lượng riêng của <strong>Hòn sỏi</strong>.`;
+  if (step === 1) box.innerHTML = `✅ <strong>Bước 1:</strong> Cân hòn sỏi khi còn khô ráo &rArr; <strong>m = 104 g</strong>.`;
+  if (step === 2) box.innerHTML = `✅ <strong>Bước 2:</strong> Đổ nước vào bình chia độ &rArr; Đọc mực nước ban đầu <strong>V<sub>1</sub> = 100 cm&sup3;</strong>.`;
+  if (step === 3) box.innerHTML = `✅ <strong>Bước 3:</strong> Thả chìm hoàn toàn hòn sỏi vào nước &rArr; Mực nước dâng lên vạch <strong>V<sub>2</sub> = 140 cm&sup3;</strong>.`;
+  if (step === 4) box.innerHTML = `🎯 <strong>Kết quả:</strong> V = V<sub>2</sub> &minus; V<sub>1</sub> = 140 &minus; 100 = <strong>40 cm&sup3;</strong> &rArr; D = 104 / 40 = <strong>2,6 g/cm&sup3; (2 600 kg/m&sup3;)</strong>.`;
+}
+
+function animateSim3To(tX, tY, tScale, tWater, dur = 800, onDone) {
+  cancelAnimationFrame(sim3State.animId);
+  const sX = sim3State.stoneX, sY = sim3State.stoneY, sS = sim3State.scaleVal, sW = sim3State.waterVol;
+  const start = performance.now();
+
+  function frame(now) {
+    const raw = Math.min(1, (now - start) / dur);
+    const t = easeInOut(raw);
+    sim3State.stoneX = lerp(sX, tX, t);
+    sim3State.stoneY = lerp(sY, tY, t);
+    sim3State.scaleVal = lerp(sS, tScale, t);
+    sim3State.waterVol = lerp(sW, tWater, t);
+    drawSim3();
+    if (raw < 1) sim3State.animId = requestAnimationFrame(frame);
+    else if (onDone) onDone();
+  }
+  sim3State.animId = requestAnimationFrame(frame);
+}
+
+function goToSim3Step(step, keepAuto = false) {
+  if (!keepAuto) clearTimeout(sim3State.autoTimer);
+  sim3State.step = step;
+  updateSim3UI(step);
+
+  if (step === 0) animateSim3To(70, 210, 0, 0, 450);
+  else if (step === 1) animateSim3To(215, 165, 104, 0, 750);
+  else if (step === 2) animateSim3To(215, 165, 104, 100, 750);
+  else if (step === 3) {
+    // Lift stone up over cylinder, then lower into water so water rises 100 -> 140
+    animateSim3To(424, 42, 0, 100, 500, () => {
+      animateSim3To(424, 206, 0, 140, 900);
+    });
+  }
+  else if (step === 4) animateSim3To(424, 206, 0, 140, 400);
+}
+
+function playSim3Auto() {
+  clearTimeout(sim3State.autoTimer);
+  goToSim3Step(0, true);
+  sim3State.autoTimer = setTimeout(() => {
+    goToSim3Step(1, true);
+    sim3State.autoTimer = setTimeout(() => {
+      goToSim3Step(2, true);
+      sim3State.autoTimer = setTimeout(() => {
+        goToSim3Step(3, true);
+        sim3State.autoTimer = setTimeout(() => {
+          goToSim3Step(4, true);
+        }, 1800);
+      }, 1500);
+    }, 1500);
+  }, 500);
+}
+
+function drawSim3() {
+  const cv = document.getElementById('sim3Canvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  // Lab bench
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(0, 232, cv.width, 58);
+
+  // Digital Scale
+  const scX = 140, scY = 192;
+  ctx.fillStyle = '#64748b';
+  ctx.fillRect(scX + 18, scY - 10, 114, 8);
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath(); ctx.roundRect(scX, scY, 150, 40, 8); ctx.fill();
+  ctx.fillStyle = '#020617';
+  ctx.fillRect(scX + 26, scY + 9, 98, 22);
+  ctx.fillStyle = '#22c55e';
+  ctx.font = 'bold 15px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${sim3State.scaleVal.toFixed(1)} g`, scX + 75, scY + 25);
+  ctx.fillStyle = '#475569';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Cân điện tử', scX + 75, 252);
+
+  // Graduated Cylinder on Right
+  const cx = 385, cy = 62, cw = 78, ch = 166;
+  // Water height mapping: 200 cm3 = 148px => 0.74 px per cm3
+  const wH = sim3State.waterVol * 0.74;
+  if (wH > 1) {
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.5)';
+    ctx.fillRect(cx + 2, cy + ch - wH, cw - 4, wH);
+  }
+
+  // V1 marker line
+  if (sim3State.waterVol >= 99) {
+    const yV1 = cy + ch - 100 * 0.74;
+    ctx.save();
+    ctx.strokeStyle = '#0284c7';
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(cx - 48, yV1); ctx.lineTo(cx + cw, yV1); ctx.stroke();
+    ctx.fillStyle = '#0369a1';
+    ctx.font = 'bold 11.5px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('V₁ = 100', cx - 6, yV1 + 4);
+    ctx.restore();
+  }
+
+  // V2 marker line when stone submerged
+  if (sim3State.waterVol >= 135) {
+    const yV2 = cy + ch - 140 * 0.74;
+    ctx.save();
+    ctx.strokeStyle = '#dc2626';
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(cx - 48, yV2); ctx.lineTo(cx + cw, yV2); ctx.stroke();
+    ctx.fillStyle = '#dc2626';
+    ctx.font = 'bold 11.5px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('V₂ = 140', cx - 6, yV2 - 2);
+    ctx.restore();
+  }
+
+  // Irregular Stone + Thread
+  const sx = sim3State.stoneX, sy = sim3State.stoneY;
+  if (sx > 350) {
+    ctx.strokeStyle = '#475569';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(sx, 18);
+    ctx.lineTo(sx, sy - 12);
+    ctx.stroke();
+  }
+
+  ctx.save();
+  ctx.translate(sx, sy);
+  ctx.fillStyle = '#78716c';
+  ctx.strokeStyle = '#292524';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-18, -6);
+  ctx.lineTo(-10, -16);
+  ctx.lineTo(8, -15);
+  ctx.lineTo(19, -4);
+  ctx.lineTo(15, 11);
+  ctx.lineTo(-4, 14);
+  ctx.lineTo(-17, 8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  // Cylinder walls & ticks
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(cx, cy + ch);
+  ctx.lineTo(cx + cw, cy + ch);
+  ctx.lineTo(cx + cw, cy);
+  ctx.stroke();
+  ctx.fillStyle = '#94a3b8';
+  ctx.fillRect(cx - 8, cy + ch, cw + 16, 5);
+
+  ctx.fillStyle = '#475569';
+  ctx.font = '10.5px sans-serif';
+  ctx.textAlign = 'left';
+  for (let v = 50; v <= 200; v += 50) {
+    const ty = cy + ch - v * 0.74;
+    ctx.beginPath(); ctx.moveTo(cx + cw - 10, ty); ctx.lineTo(cx + cw, ty); ctx.stroke();
+    ctx.fillText(`${v} cm³`, cx + cw + 5, ty + 3);
+  }
+  ctx.textAlign = 'center';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Bình chia độ', cx + cw / 2, 252);
+
+  // Step 4 Summary Box
+  if (sim3State.step === 4) {
+    ctx.fillStyle = '#eff6ff';
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(18, 22, 275, 96, 12); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1e3a8a';
+    ctx.font = 'bold 13.5px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('• Khối lượng sỏi khô: m = 104 g', 30, 46);
+    ctx.fillText('• Thể tích sỏi: V = 140 - 100 = 40 cm³', 30, 70);
+    ctx.fillStyle = '#b91c1c';
+    ctx.fillText('⇒ KLR: D = 104 / 40 = 2,6 g/cm³', 30, 96);
+  }
+}
+
+// =============================================================================
+// 7. SAO CHÉP TIN NHẮN ZALO (TAB 6) & KHỞI TẠO TOÀN TRANG
+// =============================================================================
+function copyHomeworkLink() {
+  const text = document.getElementById('zalo-msg-box').value;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("✅ Đã sao chép tin nhắn! Cô có thể mở nhóm Zalo và dán gửi cho các bạn.");
+  });
+}
+
+window.addEventListener('resize', () => {
+  Object.keys(WB_REGISTRY).forEach(id => resizeWB(id));
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  // Khởi tạo các bảng viết cảm ứng rộng ở Tab 1, Tab 3, Tab 4
+  createSmartWhiteboard('wb-tab1', 'Bảng viết & Tương tác đơn vị đo', 460);
+  createSmartWhiteboard('wb-tab3-top', 'Bảng nháp giải thích câu hỏi lí thuyết', 430);
+  createSmartWhiteboard('wb-tab3-bottom', 'Bảng nháp quy đổi đơn vị KLR', 430);
+  createSmartWhiteboard('wb-tab4-main', 'Bảng viết nháp chung Phần 4', 450);
+
+  // Khởi tạo toàn bộ bài tập tương tác
+  renderTab1Quiz();
+  renderTheoryQuiz();
+
+  // Vẽ trạng thái ban đầu 3 mô phỏng thí nghiệm Bài 14
+  drawSim1();
+  drawSim2();
+  drawSim3();
+});
+</script>
+
+</body>
+</html>
