@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thử Thách KHTN 8: Khối Lượng Riêng & Thực Hành</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #7c3aed;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg-grad: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #312e81 100%);
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+
+  body {
+    background: var(--bg-grad);
+    min-height: 100vh;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .game-wrapper {
+    width: 100%;
+    max-width: 780px;
+    margin: auto;
+  }
+
+  .hud-bar {
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 18px;
+    padding: 12px 18px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hud-pill {
+    background: rgba(15, 23, 42, 0.45);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .screen {
+    display: none;
+    background: var(--card);
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    animation: popIn 0.3s ease;
+  }
+
+  .screen.active {
+    display: block;
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+
+  h1.game-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .input-group {
+    margin-bottom: 18px;
+  }
+
+  .input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #334155;
+  }
+
+  .text-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .text-input:focus {
+    border-color: var(--primary);
+  }
+
+  .avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  .avatar-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 10px 4px;
+    font-size: 26px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.18s;
+    background: #f8fafc;
+  }
+
+  .avatar-card.selected {
+    border-color: var(--primary);
+    background: #eff6ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  @media (max-width: 600px) {
+    .mode-grid { grid-template-columns: 1fr; }
+    .avatar-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+    width: 100%;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.15s;
+    box-shadow: 0 6px 18px rgba(16, 185, 129, 0.3);
+    width: 100%;
+  }
+
+  /* QUIZ UI */
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .timer-badge {
+    background: #fef3c7;
+    color: #b45309;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  .q-box {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 18px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #0f172a;
+    margin-bottom: 16px;
+  }
+
+  .opts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .opt-btn {
+    background: white;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.15s;
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    background: #eff6ff;
+  }
+
+  .opt-letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: #e2e8f0;
+    color: #1e293b;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .opt-btn.correct {
+    border-color: #10b981;
+    background: #ecfdf5;
+    color: #065f46;
+  }
+
+  .opt-btn.correct .opt-letter {
+    background: #10b981;
+    color: white;
+  }
+
+  .opt-btn.wrong {
+    border-color: #ef4444;
+    background: #fef2f2;
+    color: #991b1b;
+  }
+
+  .opt-btn.wrong .opt-letter {
+    background: #ef4444;
+    color: white;
+  }
+
+  .explain-panel {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #1e3a8a;
+  }
+
+  /* DETECTIVE LAB */
+  .lab-stage {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 18px;
+    padding: 18px;
+    margin: 14px 0;
+    text-align: center;
+  }
+
+  .lab-readouts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 14px 0;
+  }
+
+  .readout-card {
+    background: white;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 10px;
+  }
+
+  .readout-card .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .readout-card .val {
+    font-size: 19px;
+    font-weight: 900;
+    color: #1d4ed8;
+    margin-top: 4px;
+  }
+
+  /* RESULT SCREEN */
+  .result-center {
+    text-align: center;
+  }
+
+  .trophy-big {
+    font-size: 64px;
+    margin-bottom: 8px;
+  }
+
+  .score-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .stat-card {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px 10px;
+  }
+
+  .stat-card .num {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+
+  .stat-card .txt {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .email-notice {
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    color: #166534;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 14.5px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="game-wrapper">
+  <!-- HUD BAR -->
+  <div class="hud-bar">
+    <div class="hud-pill" id="hud-player">🦁 Học sinh</div>
+    <div class="hud-pill" id="hud-score">⭐ Điểm: 0 XP</div>
+    <div class="hud-pill" id="hud-streak">🔥 Chuỗi đúng: 0</div>
+  </div>
+
+  <!-- SCREEN 1: HOME -->
+  <div id="screen-home" class="screen active">
+    <span class="hero-badge">🧪 KHTN 8 - CHƯƠNG III: KHỐI LƯỢNG RIÊNG</span>
+    <h1 class="game-title">Đấu Trường Khối Lượng Riêng & Thực Hành Đo</h1>
+    <p class="subtitle">Ôn luyện đổi đơn vị, công thức D = m/V và thí nghiệm xác định khối lượng riêng. Mỗi lượt chơi hệ thống tự động rút ngẫu nhiên 12 câu hỏi và đảo đáp án!</p>
+
+    <div class="input-group">
+      <label for="student-name">1. Nhập họ và tên của em để nộp kết quả cho cô:</label>
+      <input type="text" id="student-name" class="text-input" placeholder="Ví dụ: Nguyễn Minh Anh...">
+    </div>
+
+    <div class="input-group">
+      <label>2. Chọn linh vật đồng hành:</label>
+      <div class="avatar-grid">
+        <div class="avatar-card selected" onclick="pickAvatar('🦁', this)">🦁</div>
+        <div class="avatar-card" onclick="pickAvatar('🐼', this)">🐼</div>
+        <div class="avatar-card" onclick="pickAvatar('🦊', this)">🦊</div>
+        <div class="avatar-card" onclick="pickAvatar('🐬', this)">🐬</div>
+        <div class="avatar-card" onclick="pickAvatar('🦄', this)">🦄</div>
+        <div class="avatar-card" onclick="pickAvatar('🚀', this)">🚀</div>
+      </div>
+    </div>
+
+    <div class="mode-grid">
+      <button class="btn-primary" onclick="startQuizGame()">🎯 Vào Thi Đấu (12 Câu)</button>
+      <button class="btn-secondary" onclick="startDetectiveLab()">🔬 Thám Tử Phòng Thí Nghiệm</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-top">
+      <span id="q-counter" style="font-weight: 800; color: #1e3a8a; font-size: 15px;">Câu 1 / 12</span>
+      <span class="timer-badge" id="q-timer">⏱️ 45s</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="q-progress"></div>
+    </div>
+
+    <div class="q-box" id="q-text">Đang tải câu hỏi...</div>
+    <div class="opts-list" id="q-options"></div>
+
+    <div class="explain-panel" id="q-explain"></div>
+    <button class="btn-primary" id="btn-next-q" style="display: none; margin-top: 16px;" onclick="nextQuestion()">Câu tiếp theo &rarr;</button>
+  </div>
+
+  <!-- SCREEN 3: DETECTIVE LAB -->
+  <div id="screen-lab" class="screen">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <span class="hero-badge" style="margin:0;">🔬 THÁM TỬ ĐO KHỐI LƯỢNG RIÊNG</span>
+      <button onclick="showScreen('screen-home')" style="background:#e2e8f0; border:none; padding:6px 12px; border-radius:10px; font-weight:700; cursor:pointer;">🏠 Về trang chính</button>
+    </div>
+    <h2 id="lab-case-title" style="font-size: 20px; color:#0f172a; margin-bottom: 6px;">Vụ án 1: Kiểm tra chiếc nhẫn có phải Vàng nguyên chất?</h2>
+    <p id="lab-case-desc" style="font-size: 14.5px; color: var(--muted); margin-bottom: 12px;">Hãy lần lượt cân vật khi còn khô, sau đó thả chìm vào bình chia độ để tìm thể tích V và tính khối lượng riêng D!</p>
+
+    <div class="lab-stage">
+      <canvas id="detectiveCanvas" width="540" height="210" style="max-width: 100%; background: white; border-radius: 12px; border: 1px solid #e2e8f0;"></canvas>
+      <div class="lab-readouts">
+        <div class="readout-card">
+          <div class="lbl">Khối lượng (m)</div>
+          <div class="val" id="lab-m-val">-- g</div>
+        </div>
+        <div class="readout-card">
+          <div class="lbl">Mực nước V₁ &rarr; V₂</div>
+          <div class="val" id="lab-v-val">100 &rarr; -- cm³</div>
+        </div>
+        <div class="readout-card">
+          <div class="lbl">Thể tích vật (V)</div>
+          <div class="val" id="lab-dv-val">-- cm³</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+        <button onclick="labStepWeigh()" id="btn-lab-weigh" style="background:#2563eb; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:700; cursor:pointer;">1️⃣ Cân vật khô (m)</button>
+        <button onclick="labStepSubmerge()" id="btn-lab-sub" disabled style="background:#0ea5e9; color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:700; cursor:pointer; opacity:0.5;">2️⃣ Thả vào bình chia độ (V)</button>
+      </div>
+    </div>
+
+    <div style="background:#fffbeb; border:1.5px solid #fde68a; border-radius:12px; padding:10px 14px; font-size:13.5px; color:#92400e; margin-bottom:12px;">
+      <strong>Bảng tra cứu KLR:</strong> Nhôm: <strong>2,7 g/cm³</strong> | Sắt: <strong>7,8 g/cm³</strong> | Đồng: <strong>8,9 g/cm³</strong> | Bạc: <strong>10,5 g/cm³</strong> | Vàng: <strong>19,3 g/cm³</strong>
+    </div>
+
+    <div id="lab-question-area" style="display:none;">
+      <p style="font-weight:700; margin-bottom:8px; color:#0f172a;">Kết luận của em: Vật này làm bằng chất gì?</p>
+      <div class="opts-list" id="lab-choices"></div>
+      <div class="explain-panel" id="lab-feedback"></div>
+      <button class="btn-secondary" id="btn-next-case" style="display:none; margin-top:12px;" onclick="nextLabCase()">Thử thách tiếp theo &rarr;</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: RESULT -->
+  <div id="screen-result" class="screen result-center">
+    <div class="trophy-big" id="res-trophy">🏆</div>
+    <span class="hero-badge" id="res-badge">NHÀ KHOA HỌC XUẤT SẮC</span>
+    <h2 id="res-title" style="font-size: 22px; margin-bottom: 6px;">Chúc mừng em đã hoàn thành!</h2>
+    <p style="color: var(--muted); font-size: 14.5px;">Chi tiết kết quả bài làm của em:</p>
+
+    <div class="score-stats">
+      <div class="stat-card">
+        <div class="num" id="res-xp">0</div>
+        <div class="txt">Tổng điểm XP</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="res-correct">0/12</div>
+        <div class="txt">Số câu đúng</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="res-acc">0%</div>
+        <div class="txt">Độ chính xác</div>
+      </div>
+    </div>
+
+    <div class="email-notice" id="email-status">
+      ⏳ Đang gửi kết quả bài làm về hộp thư của cô...
+    </div>
+
+    <div class="mode-grid">
+      <button class="btn-primary" onclick="startQuizGame()">🔄 Làm đề ngẫu nhiên mới</button>
+      <button class="btn-secondary" onclick="showScreen('screen-home')">🏠 Về màn hình chính</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TEACHER_EMAIL = "thaomy1005@gmail.com";
+
+// NGÂN HÀNG 32 CÂU HỎI KHỐI LƯỢNG RIÊNG & THỰC HÀNH (BÀI 13 & 14 KHTN 8)
+const QUESTION_BANK = [
+  // PHẦN 1: ĐỔI ĐƠN VỊ ĐO (Độ dài, Thể tích, Khối lượng, KLR)
+  {
+    q: "Đổi đơn vị thể tích: 1 Lít (L) tương ứng với giá trị nào sau đây?",
+    correct: "1 dm³ (hoặc 1 000 cm³)",
+    wrongs: ["1 m³", "100 cm³", "10 dm³"],
+    explain: "💡 Ghi nhớ: 1 L = 1 dm³ = 1 000 cm³ = 1 000 mL."
+  },
+  {
+    q: "Trên hộp sữa ghi dung tích 180 mL. Thể tích sữa này bằng bao nhiêu xăngtimét khối (cm³)?",
+    correct: "180 cm³",
+    wrongs: ["18 cm³", "1 800 cm³", "0,18 cm³"],
+    explain: "💡 Vì 1 mL = 1 cm³ nên 180 mL = 180 cm³."
+  },
+  {
+    q: "Đổi đơn vị thể tích: 2,5 Lít nước bằng bao nhiêu mét khối (m³)?",
+    correct: "0,0025 m³",
+    wrongs: ["0,25 m³", "0,025 m³", "2 500 m³"],
+    explain: "💡 Ta có 1 m³ = 1 000 Lít, nên 2,5 Lít = 2,5 : 1 000 = 0,0025 m³."
+  },
+  {
+    q: "Đổi đơn vị thể tích: 500 cm³ bằng bao nhiêu Lít (L)?",
+    correct: "0,5 L",
+    wrongs: ["5 L", "0,05 L", "50 L"],
+    explain: "💡 Vì 1 L = 1 000 cm³ nên 500 cm³ = 500 : 1 000 = 0,5 L."
+  },
+  {
+    q: "Đổi đơn vị khối lượng: 0,45 kg bằng bao nhiêu gam (g)?",
+    correct: "450 g",
+    wrongs: ["45 g", "4 500 g", "4,5 g"],
+    explain: "💡 1 kg = 1 000 g nên 0,45 kg = 0,45 × 1 000 = 450 g."
+  },
+  {
+    q: "Đổi đơn vị khối lượng: Một xe hàng chở 1,2 tấn gạo, tức là chở bao nhiêu kilôgam (kg)?",
+    correct: "1 200 kg",
+    wrongs: ["120 kg", "12 000 kg", "12 kg"],
+    explain: "💡 1 tấn = 1 000 kg nên 1,2 tấn = 1 200 kg."
+  },
+  {
+    q: "Biết khối lượng riêng của nhôm là 2 700 kg/m³. Giá trị này đổi sang đơn vị g/cm³ là:",
+    correct: "2,7 g/cm³",
+    wrongs: ["27 g/cm³", "0,27 g/cm³", "270 g/cm³"],
+    explain: "💡 Đổi từ kg/m³ sang g/cm³ ta chia cho 1 000: 2 700 : 1 000 = 2,7 g/cm³."
+  },
+  {
+    q: "Khối lượng riêng của đồng là 8,9 g/cm³. Khi đổi ra đơn vị kg/m³ ta được:",
+    correct: "8 900 kg/m³",
+    wrongs: ["890 kg/m³", "89 kg/m³", "0,0089 kg/m³"],
+    explain: "💡 Đổi từ g/cm³ sang kg/m³ ta nhân với 1 000: 8,9 × 1 000 = 8 900 kg/m³."
+  },
+  {
+    q: "Khối lượng riêng của cồn y tế là 790 kg/m³. Nếu viết theo đơn vị g/mL thì bằng:",
+    correct: "0,79 g/mL",
+    wrongs: ["7,9 g/mL", "79 g/mL", "790 g/mL"],
+    explain: "💡 Vì 1 g/mL = 1 g/cm³ = 1 000 kg/m³, nên 790 kg/m³ = 790 : 1 000 = 0,79 g/mL."
+  },
+
+  // PHẦN 2: LÍ THUYẾT KHỐI LƯỢNG RIÊNG (BÀI 13)
+  {
+    q: "Phát biểu nào sau đây đúng với định nghĩa Khối lượng riêng trong SGK KHTN 8?",
+    correct: "Khối lượng riêng của một chất là khối lượng của một đơn vị thể tích chất đó",
+    wrongs: [
+      "Khối lượng riêng của một chất là khối lượng của mọi vật làm từ chất đó",
+      "Khối lượng riêng là thể tích của một kilôgam chất đó",
+      "Khối lượng riêng là lực hút của Trái Đất tác dụng lên vật"
+    ],
+    explain: "💡 Định nghĩa SGK KHTN 8: Khối lượng riêng của một chất là khối lượng của một đơn vị thể tích chất đó."
+  },
+  {
+    q: "Trong đời sống khi nói 'Sắt nặng hơn nhôm', về mặt khoa học ta đang so sánh:",
+    correct: "Khối lượng của sắt lớn hơn khối lượng của nhôm khi xét cùng một thể tích",
+    wrongs: [
+      "Mọi vật bằng sắt đều nặng hơn mọi vật bằng nhôm",
+      "Một chiếc đinh sắt luôn nặng hơn một cánh cửa nhôm",
+      "Thể tích của sắt luôn lớn hơn thể tích của nhôm"
+    ],
+    explain: "💡 Nói sắt nặng hơn nhôm nghĩa là cùng 1 đơn vị thể tích (ví dụ 1 cm³ hay 1 m³) thì sắt có khối lượng lớn hơn nhôm (KLR của sắt lớn hơn nhôm)."
+  },
+  {
+    q: "Công thức tính khối lượng riêng D của một chất có khối lượng m và thể tích V là:",
+    correct: "D = m / V",
+    wrongs: ["D = m · V", "D = V / m", "D = m + V"],
+    explain: "💡 Công thức chuẩn: D = m / V."
+  },
+  {
+    q: "Từ công thức tính khối lượng riêng D = m / V, ta suy ra công thức tính khối lượng m và thể tích V là:",
+    correct: "m = D · V và V = m / D",
+    wrongs: [
+      "m = D / V và V = m · D",
+      "m = V / D và V = D / m",
+      "m = D · V và V = D / m"
+    ],
+    explain: "💡 Quy tắc tam giác: m nằm trên nên m = D · V; V nằm dưới nên V = m / D."
+  },
+  {
+    q: "Đơn vị đo khối lượng riêng thường dùng trong chương trình KHTN 8 là:",
+    correct: "kg/m³ và g/cm³ (hoặc g/mL)",
+    wrongs: ["N/m³ và kg/m²", "kg·m³ và g·cm³", "N/cm² và Pa"],
+    explain: "💡 Đơn vị của m là kg (hoặc g), đơn vị của V là m³ (hoặc cm³, mL) nên đơn vị KLR là kg/m³, g/cm³ hoặc g/mL."
+  },
+  {
+    q: "Khi xác định được khối lượng riêng của một vật rắn đồng chất, ta có thể biết được điều gì?",
+    correct: "Biết được chất cấu tạo nên vật bằng cách đối chiếu với bảng khối lượng riêng",
+    wrongs: [
+      "Biết được hình dạng bên ngoài của vật",
+      "Biết được nhiệt độ nóng chảy mà không cần tra bảng",
+      "Biết được chiều dài và chiều rộng của vật"
+    ],
+    explain: "💡 Mỗi chất có KLR đặc trưng nên khi biết KLR ta đối chiếu bảng để biết vật làm bằng chất gì."
+  },
+  {
+    q: "Nước nguyên chất có KLR là 1 000 kg/m³, dầu ăn có KLR khoảng 800 kg/m³. Khi đổ dầu ăn vào cốc nước thì:",
+    correct: "Dầu ăn nổi lên trên mặt nước vì dầu ăn có KLR nhỏ hơn nước",
+    wrongs: [
+      "Dầu ăn chìm xuống đáy cốc vì dầu ăn đặc hơn",
+      "Nước nổi lên trên lớp dầu ăn",
+      "Dầu ăn hòa tan hoàn toàn vào nước"
+    ],
+    explain: "💡 Chất lỏng nào có khối lượng riêng nhỏ hơn (800 < 1 000) sẽ nổi lên phía trên!"
+  },
+  {
+    q: "Một thỏi đồng nguyên chất được cắt đôi thành hai nửa bằng nhau. Khối lượng riêng của mỗi nửa sẽ:",
+    correct: "Không thay đổi, vẫn bằng khối lượng riêng ban đầu của đồng (8,9 g/cm³)",
+    wrongs: [
+      "Giảm đi một nửa còn 4,45 g/cm³",
+      "Tăng lên gấp đôi",
+      "Giảm đi 4 lần"
+    ],
+    explain: "💡 Khi cắt đôi, cả khối lượng m và thể tích V đều giảm một nửa nên tỉ số D = m/V của chất đó KHÔNG ĐỔI!"
+  },
+
+  // PHẦN 3: BÀI TOÁN TÍNH KLR, KHỐI LƯỢNG m, THỂ TÍCH V
+  {
+    q: "Một vật rắn có thể tích V = 50 cm³ và khối lượng m = 135 g. Khối lượng riêng của vật là:",
+    correct: "2,7 g/cm³",
+    wrongs: ["0,37 g/cm³", "6 750 g/cm³", "27 g/cm³"],
+    explain: "💡 Áp dụng D = m / V = 135 / 50 = 2,7 g/cm³ (vật làm bằng nhôm)."
+  },
+  {
+    q: "Một hòn đá có khối lượng 104 g và thể tích 40 cm³. Khối lượng riêng của hòn đá tính theo kg/m³ là:",
+    correct: "2 600 kg/m³",
+    wrongs: ["2,6 kg/m³", "260 kg/m³", "4 160 kg/m³"],
+    explain: "💡 D = m / V = 104 / 40 = 2,6 g/cm³. Đổi sang kg/m³: 2,6 × 1 000 = 2 600 kg/m³."
+  },
+  {
+    q: "Một can chứa đúng 2 Lít dầu ăn, phần dầu ăn có khối lượng 1,6 kg. Khối lượng riêng của dầu ăn là:",
+    correct: "800 kg/m³",
+    wrongs: ["0,8 kg/m³", "3 200 kg/m³", "1 250 kg/m³"],
+    explain: "💡 Đổi V = 2 L = 0,002 m³. Ta có D = m / V = 1,6 / 0,002 = 800 kg/m³."
+  },
+  {
+    q: "Một khối gỗ hình hộp chữ nhật có 3 cạnh lần lượt là 10 cm, 5 cm, 4 cm và khối lượng 160 g. Khối lượng riêng của gỗ là:",
+    correct: "0,8 g/cm³",
+    wrongs: ["1,25 g/cm³", "8 g/cm³", "8,4 g/cm³"],
+    explain: "💡 Thể tích khối gỗ V = 10 × 5 × 4 = 200 cm³. KLR: D = m / V = 160 / 200 = 0,8 g/cm³."
+  },
+  {
+    q: "Một khối kim loại hình lập phương có cạnh a = 2 cm, cân nặng m = 0,0624 kg. Khối lượng riêng của kim loại này là:",
+    correct: "7,8 g/cm³ (7 800 kg/m³)",
+    wrongs: ["3,12 g/cm³", "15,6 g/cm³", "2,7 g/cm³"],
+    explain: "💡 Thể tích V = 2³ = 8 cm³. Đổi m = 0,0624 kg = 62,4 g. Ta có D = 62,4 / 8 = 7,8 g/cm³ (Sắt)."
+  },
+  {
+    q: "Biết khối lượng riêng của sắt là 7,8 g/cm³. Một thanh sắt đặc có thể tích 100 cm³ sẽ nặng bao nhiêu?",
+    correct: "780 g (0,78 kg)",
+    wrongs: ["78 g", "7 800 g", "12,8 g"],
+    explain: "💡 Áp dụng m = D · V = 7,8 × 100 = 780 g = 0,78 kg."
+  },
+  {
+    q: "Một bình chứa 5 Lít nước tinh khiết (biết KLR của nước là 1 000 kg/m³). Khối lượng nước trong bình là:",
+    correct: "5 kg",
+    wrongs: ["0,5 kg", "50 kg", "500 g"],
+    explain: "💡 Đổi V = 5 L = 0,005 m³. Khối lượng nước: m = D · V = 1 000 × 0,005 = 5 kg."
+  },
+  {
+    q: "Một bức tượng đồng đặc nặng m = 890 g. Biết KLR của đồng là 8,9 g/cm³. Thể tích của bức tượng là:",
+    correct: "100 cm³",
+    wrongs: ["10 cm³", "1 000 cm³", "7 921 cm³"],
+    explain: "💡 Áp dụng công thức V = m / D = 890 / 8,9 = 100 cm³."
+  },
+  {
+    q: "Cần lấy bao nhiêu Lít dầu hỏa (có D = 800 kg/m³) để có khối lượng dầu đúng bằng 4 kg?",
+    correct: "5 Lít",
+    wrongs: ["3,2 Lít", "4 Lít", "0,5 Lít"],
+    explain: "💡 Thể tích dầu: V = m / D = 4 / 800 = 0,005 m³ = 5 dm³ = 5 Lít."
+  },
+
+  // PHẦN 4: THỰC HÀNH XÁC ĐỊNH KLR (BÀI 14)
+  {
+    q: "Để xác định khối lượng riêng của một khối gỗ hình hộp chữ nhật trong phòng thí nghiệm, ta cần bộ dụng cụ nào?",
+    correct: "Cân điện tử và thước thẳng có chia độ",
+    wrongs: [
+      "Chỉ cần một chiếc thước thẳng",
+      "Chỉ cần một bình chia độ",
+      "Lực kế và nhiệt kế"
+    ],
+    explain: "💡 Dùng cân để đo khối lượng m, dùng thước đo 3 kích thước a, b, c để tính thể tích V = a·b·c."
+  },
+  {
+    q: "Trong thí nghiệm đo KLR của nước: cân cốc đong rỗng được m₁ = 65 g; rót 100 mL nước vào cốc rồi cân được m₂ = 165 g. Khối lượng của riêng lượng nước là:",
+    correct: "100 g (tính bằng m₂ - m₁)",
+    wrongs: ["165 g", "230 g", "65 g"],
+    explain: "💡 Phải trừ khối lượng vỏ cốc rỗng: m = m₂ - m₁ = 165 - 65 = 100 g."
+  },
+  {
+    q: "Khi đo KLR của một hòn sỏi bằng cân và bình chia độ, tại sao phải cân hòn sỏi TRƯỚC KHI thả vào bình nước?",
+    correct: "Để hòn sỏi khô ráo, không bị dính thêm nước làm tăng sai lệch khối lượng",
+    wrongs: [
+      "Vì sau khi nhúng nước hòn sỏi sẽ bị teo nhỏ lại",
+      "Vì nước làm hòn sỏi nhẹ đi",
+      "Để bình chia độ không bị vỡ"
+    ],
+    explain: "💡 Nếu thả vào nước trước rồi mới đem cân, nước bám trên bề mặt sỏi sẽ làm khối lượng đo được lớn hơn thực tế!"
+  },
+  {
+    q: "Bình chia độ ban đầu chứa V₁ = 80 cm³ nước. Khi thả chìm hoàn toàn một viên sỏi vào bình, mực nước dâng lên tới vạch V₂ = 115 cm³. Thể tích viên sỏi là:",
+    correct: "35 cm³",
+    wrongs: ["115 cm³", "195 cm³", "80 cm³"],
+    explain: "💡 Thể tích viên sỏi bằng phần nước dâng lên: V = V₂ - V₁ = 115 - 80 = 35 cm³."
+  },
+  {
+    q: "Khi đọc thể tích chất lỏng như nước trong bình chia độ, ta phải đặt mắt như thế nào để kết quả chính xác nhất?",
+    correct: "Đặt mắt nhìn ngang với đáy mặt khum của cột chất lỏng",
+    wrongs: [
+      "Nhìn từ trên cao chéo xuống mặt thoáng",
+      "Nhìn từ dưới thấp chéo lên mặt thoáng",
+      "Đặt mắt ở vị trí bất kì đều chính xác"
+    ],
+    explain: "💡 Nguyên tắc thực hành: Đặt bình thẳng đứng và đặt mắt ngang bằng với đáy mặt khum của chất lỏng."
+  },
+  {
+    q: "Một bạn cân hòn đá khô được 78 g. Thả chìm hòn đá vào bình chia độ chứa 50 mL nước thì nước dâng lên vạch 80 mL. Khối lượng riêng của hòn đá là:",
+    correct: "2,6 g/cm³",
+    wrongs: ["1,56 g/cm³", "0,975 g/cm³", "2,4 g/cm³"],
+    explain: "💡 Thể tích đá: V = 80 - 50 = 30 mL = 30 cm³. Khối lượng riêng: D = m / V = 78 / 30 = 2,6 g/cm³."
+  }
+];
+
+function shuffle(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+let studentName = "Học sinh";
+let avatar = "🦁";
+let xp = 0;
+let streak = 0;
+let correctTotal = 0;
+let qIdx = 0;
+let roundQuestions = [];
+let wrongLog = [];
+let timerId = null;
+let secLeft = 45;
+
+function pickAvatar(emo, el) {
+  avatar = emo;
+  document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  updateHud();
+}
+
+function updateHud() {
+  document.getElementById('hud-player').innerText = `${avatar} ${studentName}`;
+  document.getElementById('hud-score').innerText = `⭐ Điểm: ${xp} XP`;
+  document.getElementById('hud-streak').innerText = `🔥 Chuỗi đúng: ${streak}`;
+}
+
+function showScreen(id) {
+  clearInterval(timerId);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuizGame() {
+  const inp = document.getElementById('student-name').value.trim();
+  if (!inp) {
+    alert("Em hãy nhập họ và tên của mình trước khi bắt đầu để cô ghi nhận điểm nhé!");
+    document.getElementById('student-name').focus();
+    return;
+  }
+  studentName = inp;
+  xp = 0;
+  streak = 0;
+  correctTotal = 0;
+  qIdx = 0;
+  wrongLog = [];
+  updateHud();
+
+  const picked = shuffle(QUESTION_BANK).slice(0, 12);
+  roundQuestions = picked.map(item => {
+    const opts = shuffle([item.correct, ...item.wrongs]);
+    return {
+      q: item.q,
+      opts,
+      ans: opts.indexOf(item.correct),
+      correctText: item.correct,
+      explain: item.explain
+    };
+  });
+
+  showScreen('screen-quiz');
+  renderCurrentQ();
+}
+
+function renderCurrentQ() {
+  clearInterval(timerId);
+  const total = roundQuestions.length;
+  const item = roundQuestions[qIdx];
+
+  document.getElementById('q-counter').innerText = `Câu ${qIdx + 1} / ${total}`;
+  document.getElementById('q-progress').style.width = `${((qIdx) / total) * 100}%`;
+  document.getElementById('q-text').innerText = item.q;
+  document.getElementById('q-explain').style.display = 'none';
+  document.getElementById('btn-next-q').style.display = 'none';
+
+  const optContainer = document.getElementById('q-options');
+  optContainer.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+
+  item.opts.forEach((optText, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${optText}</span>`;
+    btn.onclick = () => selectOption(i);
+    optContainer.appendChild(btn);
+  });
+
+  secLeft = 45;
+  document.getElementById('q-timer').innerText = `⏱️ ${secLeft}s`;
+  timerId = setInterval(() => {
+    secLeft--;
+    document.getElementById('q-timer').innerText = `⏱️ ${secLeft}s`;
+    if (secLeft <= 0) {
+      clearInterval(timerId);
+      selectOption(-1);
+    }
+  }, 1000);
+}
+
+function selectOption(chosen) {
+  clearInterval(timerId);
+  const item = roundQuestions[qIdx];
+  const buttons = document.querySelectorAll('#q-options .opt-btn');
+
+  buttons.forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === item.ans) b.classList.add('correct');
+    else if (idx === chosen) b.classList.add('wrong');
+  });
+
+  const expBox = document.getElementById('q-explain');
+  expBox.style.display = 'block';
+
+  if (chosen === item.ans) {
+    streak++;
+    correctTotal++;
+    const bonus = Math.min(streak * 10, 50);
+    xp += 100 + bonus;
+    expBox.innerHTML = `✅ <strong>Chính xác! (+${100 + bonus} XP)</strong><br>${item.explain}`;
+  } else {
+    streak = 0;
+    const pickedStr = chosen === -1 ? "Hết giờ (Chưa chọn)" : item.opts[chosen];
+    wrongLog.push({
+      cauHoi: item.q,
+      daChon: pickedStr,
+      dapAnDung: item.correctText
+    });
+    expBox.innerHTML = `❌ <strong>Chưa chính xác!</strong> Đáp án đúng là: <strong>${item.correctText}</strong><br>${item.explain}`;
+  }
+
+  updateHud();
+  const nextBtn = document.getElementById('btn-next-q');
+  nextBtn.style.display = 'block';
+  nextBtn.innerText = (qIdx === roundQuestions.length - 1) ? "🏁 Xem kết quả & Nộp bài cho cô" : "Câu tiếp theo →";
+}
+
+function nextQuestion() {
+  qIdx++;
+  if (qIdx >= roundQuestions.length) {
+    finishQuiz();
+  } else {
+    renderCurrentQ();
+  }
+}
+
+function finishQuiz() {
+  showScreen('screen-result');
+  const total = roundQuestions.length;
+  const acc = Math.round((correctTotal / total) * 100);
+
+  document.getElementById('res-xp').innerText = xp;
+  document.getElementById('res-correct').innerText = `${correctTotal}/${total}`;
+  document.getElementById('res-acc').innerText = `${acc}%`;
+  document.getElementById('res-title').innerText = `${avatar} ${studentName} đã hoàn thành bài luyện tập!`;
+
+  let badge = "CHIẾN BINH CHĂM CHỈ 🌱";
+  let trophy = "🎖️";
+  if (acc >= 90) { badge = "CHUYÊN GIA KHỐI LƯỢNG RIÊNG 🥇"; trophy = "🏆"; }
+  else if (acc >= 75) { badge = "NHÀ KHOA HỌC TRẺ 🥈"; trophy = "🌟"; }
+  else if (acc >= 50) { badge = "BẠN HỌC TIẾN BỘ 🥉"; trophy = "👍"; }
+
+  document.getElementById('res-badge').innerText = badge;
+  document.getElementById('res-trophy').innerText = trophy;
+
+  submitToTeacherEmail(acc, total);
+}
+
+function submitToTeacherEmail(acc, total) {
+  const statusEl = document.getElementById('email-status');
+  statusEl.innerHTML = `⏳ Đang gửi kết quả bài làm về email của cô...`;
+
+  let wrongDetails = "Không có câu sai (Làm đúng 100% xuất sắc!)";
+  if (wrongLog.length > 0) {
+    wrongDetails = wrongLog.map((w, i) =>
+      `${i + 1}. ${w.cauHoi}\n   - Học sinh chọn: ${w.daChon}\n   - Đáp án đúng: ${w.dapAnDung}`
+    ).join("\n\n");
+  }
+
+  const payload = {
+    _subject: `🧪 BÀI TẬP KLR (KHTN 8): ${studentName} - Đúng ${correctTotal}/${total} câu (${xp} XP)`,
+    "Chuyên đề": "Chương III - Khối lượng riêng & Cách xác định (Bài 13 & 14)",
+    "Họ và tên học sinh": studentName,
+    "Số câu đúng": `${correctTotal} / ${total}`,
+    "Tỉ lệ chính xác": `${acc}%`,
+    "Điểm thưởng": `${xp} XP`,
+    "Thời gian hoàn thành": new Date().toLocaleString("vi-VN"),
+    "Chi tiết các câu cần lưu ý": wrongDetails
+  };
+
+  fetch(`https://formsubmit.co/ajax/${TEACHER_EMAIL}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(r => r.json())
+  .then(() => {
+    statusEl.innerHTML = `✅ <strong>Đã nộp bài thành công!</strong> Kết quả và chi tiết bài làm của <strong>${studentName}</strong> đã được gửi về email cho cô.`;
+  })
+  .catch(() => {
+    statusEl.innerHTML = `✅ Đã ghi nhận kết quả (${correctTotal}/${total} câu đúng)! Em có thể chụp màn hình kết quả này gửi qua Zalo cho cô nhé.`;
+  });
+}
+
+// =========================================================================
+// CHẾ ĐỘ 2: THÁM TỬ PHÒNG THÍ NGHIỆM (3 VỤ ÁN TƯƠNG TÁC)
+// =========================================================================
+const LAB_CASES = [
+  {
+    title: "Thử thách 1: Kiểm tra chiếc vương miện cổ có phải Vàng nguyên chất?",
+    objName: "Vương miện nhỏ",
+    color: "#eab308",
+    mass: 178,
+    v1: 100,
+    v2: 120,
+    opts: ["Vàng nguyên chất (D = 19,3 g/cm³)", "Đồng mạ vàng (D = 8,9 g/cm³)", "Nhôm sơn vàng (D = 2,7 g/cm³)"],
+    ans: 1,
+    explain: "Ta có V = 120 - 100 = 20 cm³. Khối lượng riêng D = m / V = 178 / 20 = 8,9 g/cm³ ⇒ Chiếc vương miện này làm bằng Đồng mạ vàng chứ không phải vàng nguyên chất!"
+  },
+  {
+    title: "Thử thách 2: Xác định chất làm nên thỏi kim loại trắng bạc",
+    objName: "Thỏi kim loại",
+    color: "#94a3b8",
+    mass: 81,
+    v1: 100,
+    v2: 130,
+    opts: ["Nhôm (D = 2,7 g/cm³)", "Sắt (D = 7,8 g/cm³)", "Bạc (D = 10,5 g/cm³)"],
+    ans: 0,
+    explain: "Thể tích V = 130 - 100 = 30 cm³. Khối lượng riêng D = m / V = 81 / 30 = 2,7 g/cm³ ⇒ Đây chính là kim loại Nhôm!"
+  },
+  {
+    title: "Thử thách 3: Chiếc nhẫn kỉ vật có đúng là Vàng thật?",
+    objName: "Chiếc nhẫn",
+    color: "#f59e0b",
+    mass: 193,
+    v1: 100,
+    v2: 110,
+    opts: ["Đồng (D = 8,9 g/cm³)", "Bạc (D = 10,5 g/cm³)", "Vàng nguyên chất (D = 19,3 g/cm³)"],
+    ans: 2,
+    explain: "Thể tích V = 110 - 100 = 10 cm³. Khối lượng riêng D = 193 / 10 = 19,3 g/cm³ ⇒ Chính xác là Vàng nguyên chất!"
+  }
+];
+
+let caseIdx = 0;
+let labState = 0; // 0: start, 1: weighed, 2: submerged
+
+function startDetectiveLab() {
+  const inp = document.getElementById('student-name').value.trim();
+  if (inp) studentName = inp;
+  updateHud();
+  caseIdx = 0;
+  showScreen('screen-lab');
+  loadLabCase();
+}
+
+function loadLabCase() {
+  const c = LAB_CASES[caseIdx];
+  labState = 0;
+  document.getElementById('lab-case-title').innerText = c.title;
+  document.getElementById('lab-m-val').innerText = "-- g";
+  document.getElementById('lab-v-val').innerText = `${c.v1} → -- cm³`;
+  document.getElementById('lab-dv-val').innerText = "-- cm³";
+
+  document.getElementById('btn-lab-weigh').disabled = false;
+  document.getElementById('btn-lab-weigh').style.opacity = "1";
+  document.getElementById('btn-lab-sub').disabled = true;
+  document.getElementById('btn-lab-sub').style.opacity = "0.5";
+
+  document.getElementById('lab-question-area').style.display = "none";
+  document.getElementById('lab-feedback').style.display = "none";
+  document.getElementById('btn-next-case').style.display = "none";
+
+  drawDetectiveScene(0);
+}
+
+function labStepWeigh() {
+  const c = LAB_CASES[caseIdx];
+  labState = 1;
+  document.getElementById('lab-m-val').innerText = `${c.mass} g`;
+  document.getElementById('btn-lab-weigh').disabled = true;
+  document.getElementById('btn-lab-weigh').style.opacity = "0.5";
+  document.getElementById('btn-lab-sub').disabled = false;
+  document.getElementById('btn-lab-sub').style.opacity = "1";
+  drawDetectiveScene(1);
+}
+
+function labStepSubmerge() {
+  const c = LAB_CASES[caseIdx];
+  labState = 2;
+  const dv = c.v2 - c.v1;
+  document.getElementById('lab-v-val').innerText = `${c.v1} → ${c.v2} cm³`;
+  document.getElementById('lab-dv-val').innerText = `${dv} cm³`;
+  document.getElementById('btn-lab-sub').disabled = true;
+  document.getElementById('btn-lab-sub').style.opacity = "0.5";
+  drawDetectiveScene(2);
+
+  // Show choices
+  const area = document.getElementById('lab-question-area');
+  const list = document.getElementById('lab-choices');
+  area.style.display = "block";
+  list.innerHTML = "";
+  c.opts.forEach((txt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.innerHTML = `<span class="opt-letter">${['A','B','C'][i]}</span><span>${txt}</span>`;
+    b.onclick = () => checkLabChoice(i);
+    list.appendChild(b);
+  });
+}
+
+function checkLabChoice(picked) {
+  const c = LAB_CASES[caseIdx];
+  const btns = document.querySelectorAll('#lab-choices .opt-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === c.ans) b.classList.add('correct');
+    else if (i === picked) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('lab-feedback');
+  fb.style.display = "block";
+  if (picked === c.ans) {
+    xp += 150;
+    updateHud();
+    fb.innerHTML = `🎉 <strong>Thám tử suy luận chuẩn xác! (+150 XP)</strong><br>${c.explain}`;
+  } else {
+    fb.innerHTML = `💡 <strong>Gợi ý tính toán:</strong> ${c.explain}`;
+  }
+  document.getElementById('btn-next-case').style.display = "block";
+}
+
+function nextLabCase() {
+  caseIdx = (caseIdx + 1) % LAB_CASES.length;
+  loadLabCase();
+}
+
+function drawDetectiveScene(step) {
+  const c = LAB_CASES[caseIdx];
+  const cv = document.getElementById('detectiveCanvas');
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  // Table line
+  ctx.fillStyle = "#e2e8f0";
+  ctx.fillRect(0, 180, cv.width, 30);
+
+  // Digital Scale on Left
+  ctx.fillStyle = "#334155";
+  ctx.fillRect(70, 145, 130, 35);
+  ctx.fillStyle = "#94a3b8";
+  ctx.fillRect(85, 135, 100, 10);
+  ctx.fillStyle = "#0f172a";
+  ctx.fillRect(95, 153, 80, 20);
+  ctx.fillStyle = "#22c55e";
+  ctx.font = "bold 13px monospace";
+  ctx.textAlign = "center";
+  ctx.fillText(step === 1 ? `${c.mass}.0 g` : "0.0 g", 135, 168);
+
+  // Graduated Cylinder on Right
+  const cylX = 340, cylY = 35, cylW = 74, cylH = 145;
+  const waterLevel = step === 2 ? 95 : 70;
+  ctx.fillStyle = "rgba(56, 189, 248, 0.45)";
+  ctx.fillRect(cylX, cylY + cylH - waterLevel, cylW, waterLevel);
+
+  ctx.strokeStyle = "#475569";
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(cylX, cylY, cylW, cylH);
+
+  // Tick marks
+  ctx.fillStyle = "#475569";
+  ctx.font = "11px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("150 mL", cylX + cylW + 6, cylY + 35);
+  ctx.fillText(`${c.v2} mL`, cylX + cylW + 6, cylY + cylH - 95 + 4);
+  ctx.fillText(`${c.v1} mL`, cylX + cylW + 6, cylY + cylH - 70 + 4);
+
+  // Object position
+  let objX = 250, objY = 160;
+  if (step === 1) { objX = 135; objY = 118; }
+  if (step === 2) { objX = cylX + cylW / 2; objY = cylY + cylH - 22; }
+
+  ctx.fillStyle = c.color;
+  ctx.beginPath();
+  ctx.arc(objX, objY, 16, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#1e293b";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = "#1e293b";
+  ctx.font = "bold 12px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(c.objName, objX, objY - 22);
+}
+</script>
+</body>
+</html>
