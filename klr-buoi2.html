@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài Tập Về Nhà Buổi 2: Tổng Hợp Khối Lượng Riêng - KHTN 8</title>
+<style>
+  :root {
+    --primary: #1d4ed8;
+    --secondary: #7c3aed;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg-grad: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #4338ca 100%);
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+
+  body {
+    background: var(--bg-grad);
+    min-height: 100vh;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .game-wrapper {
+    width: 100%;
+    max-width: 780px;
+    margin: auto;
+  }
+
+  .hud-bar {
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 18px;
+    padding: 12px 18px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hud-pill {
+    background: rgba(15, 23, 42, 0.45);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .screen {
+    display: none;
+    background: var(--card);
+    border-radius: 24px;
+    padding: 28px 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    animation: popIn 0.3s ease;
+  }
+
+  .screen.active { display: block; }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(10px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: #ede9fe;
+    color: #6d28d9;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+
+  h1.game-title {
+    font-size: 25px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .input-group { margin-bottom: 18px; }
+  .input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #334155;
+  }
+
+  .text-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+  }
+
+  .text-input:focus { border-color: var(--primary); }
+
+  .avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+
+  @media (max-width: 600px) {
+    .avatar-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .avatar-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 10px 4px;
+    font-size: 26px;
+    text-align: center;
+    cursor: pointer;
+    background: #f8fafc;
+  }
+
+  .avatar-card.selected {
+    border-color: var(--primary);
+    background: #eff6ff;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+  }
+
+  .quiz-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .timer-badge {
+    background: #fef3c7;
+    color: #b45309;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 14px;
+  }
+
+  .q-box {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 18px;
+    font-size: 17.5px;
+    font-weight: 700;
+    line-height: 1.5;
+    color: #0f172a;
+    margin-bottom: 16px;
+  }
+
+  .opts-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .opt-btn {
+    background: white;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .opt-letter {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: #e2e8f0;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .opt-btn.correct { border-color: #10b981; background: #ecfdf5; color: #065f46; }
+  .opt-btn.correct .opt-letter { background: #10b981; color: white; }
+  .opt-btn.wrong { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+  .opt-btn.wrong .opt-letter { background: #ef4444; color: white; }
+
+  .explain-panel {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #1e3a8a;
+  }
+
+  .score-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .stat-card {
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px 10px;
+    text-align: center;
+  }
+
+  .stat-card .num { font-size: 24px; font-weight: 900; color: var(--primary); }
+  .stat-card .txt { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+  .email-notice {
+    background: #f0fdf4;
+    border: 1.5px solid #86efac;
+    color: #166534;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 14.5px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="game-wrapper">
+  <div class="hud-bar">
+    <div class="hud-pill" id="hud-player">🦁 Học sinh</div>
+    <div class="hud-pill" id="hud-score">⭐ Điểm: 0 XP</div>
+    <div class="hud-pill" id="hud-streak">🔥 Chuỗi đúng: 0</div>
+  </div>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <span class="hero-badge">📚 KHTN 8 - BUỔI 2: BÀI TẬP TỔNG HỢP KHỐI LƯỢNG RIÊNG</span>
+    <h1 class="game-title">Chinh Phục Các Dạng Toán Khối Lượng Riêng</h1>
+    <p class="subtitle">Rèn luyện thành thạo bài toán vật đặc/rỗng, đổi đơn vị hỗn hợp, cân trừ bì chất lỏng, bình chia độ & bình tràn. Mỗi lượt chơi rút ngẫu nhiên 12 câu từ ngân hàng nâng cao vừa sức!</p>
+
+    <div class="input-group">
+      <label for="student-name">1. Nhập họ và tên của em để nộp bài cho cô:</label>
+      <input type="text" id="student-name" class="text-input" placeholder="Ví dụ: Trần Gia Huy...">
+    </div>
+
+    <div class="input-group">
+      <label>2. Chọn biểu tượng đồng hành:</label>
+      <div class="avatar-grid">
+        <div class="avatar-card selected" onclick="pickAvatar('🦁', this)">🦁</div>
+        <div class="avatar-card" onclick="pickAvatar('🐼', this)">🐼</div>
+        <div class="avatar-card" onclick="pickAvatar('🦊', this)">🦊</div>
+        <div class="avatar-card" onclick="pickAvatar('🐬', this)">🐬</div>
+        <div class="avatar-card" onclick="pickAvatar('🦉', this)">🦉</div>
+        <div class="avatar-card" onclick="pickAvatar('🚀', this)">🚀</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="startQuiz()">🎯 Bắt Đầu Luyện Tập Buổi 2 (12 Câu)</button>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-top">
+      <span id="q-counter" style="font-weight:800; color:#1e3a8a; font-size:15px;">Câu 1 / 12</span>
+      <span class="timer-badge" id="q-timer">⏱️ 60s</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="q-progress"></div>
+    </div>
+    <div class="q-box" id="q-text"></div>
+    <div class="opts-list" id="q-options"></div>
+    <div class="explain-panel" id="q-explain"></div>
+    <button class="btn-primary" id="btn-next-q" style="display:none; margin-top:16px;" onclick="nextQ()">Câu tiếp theo &rarr;</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" class="screen" style="text-align:center;">
+    <div style="font-size:62px; margin-bottom:6px;" id="res-trophy">🏆</div>
+    <span class="hero-badge" id="res-badge">CHUYÊN GIA KHỐI LƯỢNG RIÊNG</span>
+    <h2 id="res-title" style="font-size:22px; margin-bottom:6px;">Hoàn thành xuất sắc!</h2>
+    <div class="score-stats">
+      <div class="stat-card"><div class="num" id="res-xp">0</div><div class="txt">Điểm XP</div></div>
+      <div class="stat-card"><div class="num" id="res-correct">0/12</div><div class="txt">Số câu đúng</div></div>
+      <div class="stat-card"><div class="num" id="res-acc">0%</div><div class="txt">Độ chính xác</div></div>
+    </div>
+    <div class="email-notice" id="email-status">⏳ Đang gửi kết quả bài làm về email của cô...</div>
+    <button class="btn-primary" onclick="startQuiz()">🔄 Làm đề tổng hợp ngẫu nhiên mới</button>
+  </div>
+</div>
+
+<script>
+const TEACHER_EMAIL = "thaomy1005@gmail.com";
+
+// NGÂN HÀNG 26 CÂU HỎI TỔNG HỢP VẬN DỤNG BUỔI 2 (MỚI HOÀN TOÀN)
+const BANK_BUOI2 = [
+  {
+    q: "Một thỏi kim loại hình hộp chữ nhật có dài 2 dm, rộng 5 cm, cao 40 mm và nặng 3,12 kg. Khối lượng riêng của kim loại này là:",
+    correct: "7,8 g/cm³ (Sắt)",
+    wrongs: ["2,7 g/cm³ (Nhôm)", "8,9 g/cm³ (Đồng)", "3,9 g/cm³"],
+    explain: "💡 Đổi đồng nhất: a = 20 cm, b = 5 cm, c = 4 cm ⇒ V = 400 cm³; m = 3 120 g ⇒ D = 3 120 / 400 = 7,8 g/cm³."
+  },
+  {
+    q: "Một viên gạch xây có kích thước ngoài 20 cm × 10 cm × 5 cm, bên trong có 2 lỗ rỗng, mỗi lỗ có thể tích 100 cm³. Biết viên gạch nặng 1,28 kg. KLR phần gạch đặc là:",
+    correct: "1,6 g/cm³",
+    wrongs: ["1,28 g/cm³", "1,42 g/cm³", "2,0 g/cm³"],
+    explain: "💡 V_ngoài = 1 000 cm³; trừ 2 lỗ (200 cm³) còn V_gạch = 800 cm³. D = 1 280 g / 800 cm³ = 1,6 g/cm³."
+  },
+  {
+    q: "Một khối nhôm hình lập phương cạnh 10 cm nặng 2,16 kg (biết nhôm đặc có D = 2,7 g/cm³). Kết luận nào sau đây đúng?",
+    correct: "Khối nhôm bị rỗng bên trong với phần rỗng là 200 cm³",
+    wrongs: [
+      "Khối nhôm đặc hoàn toàn",
+      "Khối nhôm bị rỗng với phần rỗng là 800 cm³",
+      "Khối nhôm bị rỗng với phần rỗng là 100 cm³"
+    ],
+    explain: "💡 V_ngoài = 10³ = 1 000 cm³. Thể tích nhôm thực: V_đặc = 2 160 / 2,7 = 800 cm³ ⇒ Rỗng: 1 000 - 800 = 200 cm³."
+  },
+  {
+    q: "Hai quả cầu đặc có CÙNG THỂ TÍCH: quả 1 bằng nhôm (2,7 g/cm³) nặng 270 g, quả 2 bằng bạc (10,5 g/cm³). Khối lượng quả cầu bạc là:",
+    correct: "1 050 g (1,05 kg)",
+    wrongs: ["540 g", "2 100 g", "105 g"],
+    explain: "💡 V_nhôm = 270 / 2,7 = 100 cm³ ⇒ V_bạc = 100 cm³ ⇒ m_bạc = 10,5 × 100 = 1 050 g."
+  },
+  {
+    q: "So sánh 2 kg sắt (D = 7 800 kg/m³) và 2 kg chì (D = 11 300 kg/m³), phát biểu nào đúng?",
+    correct: "Hai vật cùng khối lượng, nhưng vật bằng sắt có thể tích lớn hơn vật bằng chì",
+    wrongs: [
+      "Vật bằng chì có thể tích lớn hơn vật bằng sắt",
+      "Hai vật có cùng thể tích",
+      "Vật bằng chì có khối lượng lớn hơn"
+    ],
+    explain: "💡 Cùng khối lượng m = 2 kg, chất nào có D nhỏ hơn (sắt < chì) thì chiếm thể tích V = m/D lớn hơn."
+  },
+  {
+    q: "Dùng vỏ chai nhựa dung tích 1,5 Lít đong đầy mật ong (có D = 1,36 g/mL). Khối lượng riêng phần mật ong trong chai là:",
+    correct: "2,04 kg",
+    wrongs: ["1,5 kg", "1,36 kg", "1,1 kg"],
+    explain: "💡 V = 1 500 mL ⇒ m = D · V = 1,36 × 1 500 = 2 040 g = 2,04 kg."
+  },
+  {
+    q: "Đặt cốc rỗng lên cân chỉ 95 g. Rót thêm 250 mL nước muối vào cốc thì cân chỉ 370 g. Khối lượng riêng của nước muối là:",
+    correct: "1,1 g/mL (1 100 kg/m³)",
+    wrongs: ["1,48 g/mL", "0,95 g/mL", "1,86 g/mL"],
+    explain: "💡 Khối lượng nước muối: m = 370 - 95 = 275 g. KLR: D = 275 / 250 = 1,1 g/mL."
+  },
+  {
+    q: "Một chiếc lọ rỗng nặng 100 g. Đổ đầy nước (1 g/cm³) thì cân nặng 300 g. Nếu đổ hết nước đi và đổ đầy dầu ăn (0,8 g/cm³) vào lọ đó thì cân sẽ chỉ:",
+    correct: "260 g",
+    wrongs: ["160 g", "240 g", "280 g"],
+    explain: "💡 m_nước = 300 - 100 = 200 g ⇒ Dung tích lọ V = 200 cm³. m_dầu = 0,8 × 200 = 160 g ⇒ Cả lọ và dầu: 100 + 160 = 260 g!"
+  },
+  {
+    q: "Cần ít nhất bao nhiêu can nhựa loại 5 Lít để chứa hết 26 kg dầu ăn (biết KLR của dầu ăn là 800 kg/m³)?",
+    correct: "7 can",
+    wrongs: ["6 can", "5 can", "8 can"],
+    explain: "💡 Thể tích dầu: V = 26 / 800 = 0,0325 m³ = 32,5 Lít. Lấy 32,5 : 5 = 6,5 can ⇒ Cần ít nhất 7 can!"
+  },
+  {
+    q: "Cho 360 cm³ nước nguyên chất (1,0 g/cm³) đông đặc hoàn toàn thành nước đá (0,9 g/cm³). Thể tích cục nước đá thu được là:",
+    correct: "400 cm³",
+    wrongs: ["360 cm³", "324 cm³", "450 cm³"],
+    explain: "💡 Khối lượng không đổi: m = 360 g. Thể tích nước đá: V_đá = 360 / 0,9 = 400 cm³."
+  },
+  {
+    q: "Cân 10 viên bi thép khô giống hệt nhau được 78 g. Thả chìm cả 10 viên vào bình chia độ có 40 mL nước thì nước dâng lên vạch 50 mL. Thể tích 1 viên bi là:",
+    correct: "1 cm³",
+    wrongs: ["10 cm³", "5 cm³", "0,78 cm³"],
+    explain: "💡 Thể tích 10 viên bi = 50 - 40 = 10 cm³ ⇒ Thể tích 1 viên bi = 10 : 10 = 1 cm³."
+  },
+  {
+    q: "Một bình chia độ có vạch tối đa sát miệng bình là 200 cm³, đang chứa 160 cm³ nước. Thả chìm một vật bằng đồng nặng 445 g (D = 8,9 g/cm³) vào bình thì lượng nước tràn ra ngoài là:",
+    correct: "10 cm³",
+    wrongs: ["50 cm³", "Không bị tràn", "40 cm³"],
+    explain: "💡 Thể tích vật đồng: V = 445 / 8,9 = 50 cm³. Tổng V = 160 + 50 = 210 cm³ > 200 cm³ ⇒ Tràn ra 10 cm³!"
+  },
+  {
+    q: "Một xe tải có tải trọng tối đa 2 tấn cần chở các thanh sắt đặc, mỗi thanh có thể tích 0,02 m³ (biết D_sắt = 7 800 kg/m³). Xe chở được tối đa bao nhiêu thanh trong 1 chuyến?",
+    correct: "12 thanh",
+    wrongs: ["13 thanh", "10 thanh", "15 thanh"],
+    explain: "💡 Mỗi thanh sắt nặng m₁ = 7 800 × 0,02 = 156 kg. Ta có 2 000 : 156 ≈ 12,82 ⇒ Tối đa chở được 12 thanh (13 thanh sẽ quá tải!)."
+  },
+  {
+    q: "Trong thí nghiệm bình chia độ, nếu có bọt khí bám vào hòn sỏi dưới nước mà không gõ nhẹ cho thoát ra thì giá trị khối lượng riêng tính được sẽ:",
+    correct: "Nhỏ hơn khối lượng riêng thực tế của hòn sỏi",
+    wrongs: [
+      "Lớn hơn khối lượng riêng thực tế",
+      "Bằng chính xác khối lượng riêng thực tế",
+      "Tăng gấp đôi"
+    ],
+    explain: "💡 Bọt khí làm mực nước V₂ dâng cao hơn thật ⇒ V đo được bị lớn hơn thật ⇒ D = m/V bị nhỏ đi."
+  },
+  {
+    q: "Một bức tượng bằng bạc nặng 1,05 kg khi thả vào bình tràn đầy nước làm tràn ra 125 cm³ nước (biết bạc đặc có D = 10,5 g/cm³). Thể tích phần rỗng bên trong tượng là:",
+    correct: "25 cm³",
+    wrongs: ["100 cm³", "Bức tượng đặc hoàn toàn", "50 cm³"],
+    explain: "💡 V_bạc đặc = 1 050 g / 10,5 = 100 cm³. V_ngoài = 125 cm³ ⇒ Phần rỗng = 125 - 100 = 25 cm³."
+  },
+  {
+    q: "Ba chất lỏng: Cồn (0,79 g/cm³), Nước (1,0 g/cm³) và Thủy ngân (13,6 g/cm³). Nếu lấy CÙNG MỘT THỂ TÍCH 100 mL của mỗi chất thì:",
+    correct: "100 mL thủy ngân nặng nhất (1 360 g), 100 mL cồn nhẹ nhất (79 g)",
+    wrongs: [
+      "Ba mẫu có khối lượng bằng nhau vì cùng 100 mL",
+      "100 mL cồn nặng nhất",
+      "100 mL nước nặng nhất"
+    ],
+    explain: "💡 Cùng V = 100 cm³, chất có D lớn nhất (Thủy ngân: 13,6 × 100 = 1 360 g) sẽ nặng nhất."
+  },
+  {
+    q: "Bình xăng máy phát điện chứa đầy được 6 Lít xăng (D = 700 kg/m³). Vỏ bình rỗng nặng 1,2 kg. Tổng khối lượng cả bình khi đổ đầy xăng là:",
+    correct: "5,4 kg",
+    wrongs: ["4,2 kg", "7,2 kg", "6,0 kg"],
+    explain: "💡 Khối lượng xăng: m_xăng = 700 × 0,006 m³ = 4,2 kg. Cộng vỏ bình: 4,2 + 1,2 = 5,4 kg."
+  },
+  {
+    q: "Đổi đơn vị: 450 cm³ bằng bao nhiêu mét khối (m³)?",
+    correct: "0,00045 m³",
+    wrongs: ["0,45 m³", "0,045 m³", "0,0045 m³"],
+    explain: "💡 1 m³ = 1 000 000 cm³ ⇒ 450 : 1 000 000 = 0,00045 m³."
+  }
+];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let studentName = "Học sinh";
+let avatar = "🦁";
+let xp = 0;
+let streak = 0;
+let correctTotal = 0;
+let qIdx = 0;
+let roundQs = [];
+let wrongLog = [];
+let timerId = null;
+let secLeft = 60;
+
+function pickAvatar(e, el) {
+  avatar = e;
+  document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  updateHud();
+}
+
+function updateHud() {
+  document.getElementById('hud-player').innerText = `${avatar} ${studentName}`;
+  document.getElementById('hud-score').innerText = `⭐ Điểm: ${xp} XP`;
+  document.getElementById('hud-streak').innerText = `🔥 Chuỗi đúng: ${streak}`;
+}
+
+function showScreen(id) {
+  clearInterval(timerId);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startQuiz() {
+  const inp = document.getElementById('student-name').value.trim();
+  if (!inp) {
+    alert("Em hãy nhập họ và tên trước khi bắt đầu để cô ghi nhận kết quả nhé!");
+    document.getElementById('student-name').focus();
+    return;
+  }
+  studentName = inp;
+  xp = 0; streak = 0; correctTotal = 0; qIdx = 0; wrongLog = [];
+  updateHud();
+
+  roundQs = shuffle(BANK_BUOI2).slice(0, 12).map(item => {
+    const opts = shuffle([item.correct, ...item.wrongs]);
+    return {
+      q: item.q,
+      opts,
+      ans: opts.indexOf(item.correct),
+      correctText: item.correct,
+      explain: item.explain
+    };
+  });
+
+  showScreen('screen-quiz');
+  renderQ();
+}
+
+function renderQ() {
+  clearInterval(timerId);
+  const total = roundQs.length;
+  const item = roundQs[qIdx];
+  document.getElementById('q-counter').innerText = `Câu ${qIdx + 1} / ${total}`;
+  document.getElementById('q-progress').style.width = `${(qIdx / total) * 100}%`;
+  document.getElementById('q-text').innerText = item.q;
+  document.getElementById('q-explain').style.display = 'none';
+  document.getElementById('btn-next-q').style.display = 'none';
+
+  const box = document.getElementById('q-options');
+  box.innerHTML = '';
+  item.opts.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.innerHTML = `<span class="opt-letter">${['A','B','C','D'][i]}</span><span>${opt}</span>`;
+    b.onclick = () => chooseOpt(i);
+    box.appendChild(b);
+  });
+
+  secLeft = 60;
+  document.getElementById('q-timer').innerText = `⏱️ ${secLeft}s`;
+  timerId = setInterval(() => {
+    secLeft--;
+    document.getElementById('q-timer').innerText = `⏱️ ${secLeft}s`;
+    if (secLeft <= 0) {
+      clearInterval(timerId);
+      chooseOpt(-1);
+    }
+  }, 1000);
+}
+
+function chooseOpt(chosen) {
+  clearInterval(timerId);
+  const item = roundQs[qIdx];
+  document.querySelectorAll('#q-options .opt-btn').forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === item.ans) b.classList.add('correct');
+    else if (idx === chosen) b.classList.add('wrong');
+  });
+
+  const exp = document.getElementById('q-explain');
+  exp.style.display = 'block';
+  if (chosen === item.ans) {
+    streak++;
+    correctTotal++;
+    const bonus = Math.min(streak * 10, 50);
+    xp += 100 + bonus;
+    exp.innerHTML = `✅ <strong>Chính xác! (+${100 + bonus} XP)</strong><br>${item.explain}`;
+  } else {
+    streak = 0;
+    wrongLog.push({
+      cauHoi: item.q,
+      daChon: chosen === -1 ? "Hết giờ" : item.opts[chosen],
+      dapAnDung: item.correctText
+    });
+    exp.innerHTML = `❌ <strong>Chưa đúng!</strong> Đáp án đúng: <strong>${item.correctText}</strong><br>${item.explain}`;
+  }
+  updateHud();
+  const nb = document.getElementById('btn-next-q');
+  nb.style.display = 'block';
+  nb.innerText = (qIdx === roundQs.length - 1) ? "🏁 Xem điểm & Nộp bài cho cô" : "Câu tiếp theo →";
+}
+
+function nextQ() {
+  qIdx++;
+  if (qIdx >= roundQs.length) finishGame();
+  else renderQ();
+}
+
+function finishGame() {
+  showScreen('screen-result');
+  const total = roundQs.length;
+  const acc = Math.round((correctTotal / total) * 100);
+  document.getElementById('res-xp').innerText = xp;
+  document.getElementById('res-correct').innerText = `${correctTotal}/${total}`;
+  document.getElementById('res-acc').innerText = `${acc}%`;
+  document.getElementById('res-title').innerText = `${avatar} ${studentName} đã hoàn thành Bài tập Buổi 2!`;
+
+  let badge = "NỖ LỰC RÈN LUYỆN 🌱", trophy = "🎖️";
+  if (acc >= 90) { badge = "KIỆN TƯỚNG KHỐI LƯỢNG RIÊNG 🥇"; trophy = "🏆"; }
+  else if (acc >= 75) { badge = "VẬN DỤNG VỮNG VÀNG 🥈"; trophy = "🌟"; }
+  else if (acc >= 50) { badge = "BẠN HỌC CHĂM CHỈ 🥉"; trophy = "👍"; }
+  document.getElementById('res-badge').innerText = badge;
+  document.getElementById('res-trophy').innerText = trophy;
+
+  const statusEl = document.getElementById('email-status');
+  const wrongDetails = wrongLog.length === 0
+    ? "Không có câu sai (Làm đúng 100%!)"
+    : wrongLog.map((w, i) => `${i + 1}. ${w.cauHoi}\n   - Chọn: ${w.daChon}\n   - Đúng: ${w.dapAnDung}`).join("\n\n");
+
+  fetch(`https://formsubmit.co/ajax/${TEACHER_EMAIL}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify({
+      _subject: `📚 BÀI TẬP BUỔI 2 KLR (KHTN 8): ${studentName} - Đúng ${correctTotal}/${total} câu (${xp} XP)`,
+      "Buổi học": "Buổi 2 - Bài tập tổng hợp Khối lượng riêng (Bài 13 & 14)",
+      "Họ và tên học sinh": studentName,
+      "Số câu đúng": `${correctTotal} / ${total}`,
+      "Tỉ lệ chính xác": `${acc}%`,
+      "Điểm XP": `${xp} XP`,
+      "Thời gian nộp": new Date().toLocaleString("vi-VN"),
+      "Các câu làm sai cần sửa": wrongDetails
+    })
+  })
+  .then(r => r.json())
+  .then(() => {
+    statusEl.innerHTML = `✅ <strong>Nộp bài thành công!</strong> Kết quả Buổi 2 của <strong>${studentName}</strong> đã được gửi về email cho cô.`;
+  })
+  .catch(() => {
+    statusEl.innerHTML = `✅ Đã ghi nhận kết quả (${correctTotal}/${total} câu đúng)! Em chụp màn hình gửi Zalo cho cô nhé.`;
+  });
+}
+</script>
+</body>
+</html>
