@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buổi 2: Bài Tập Tổng Hợp Khối Lượng Riêng - KHTN 8</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+  :root {
+    --primary: #1d4ed8;
+    --primary-light: #2563eb;
+    --secondary: #7c3aed;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --dark: #0f172a;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  body {
+    background-color: #f1f5f9;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* STICKY TOP HEADER + NAVIGATION TABS */
+  .sticky-top-shell {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+  }
+
+  header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e40af 55%, #4338ca 100%);
+    color: white;
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .logo-title h1 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-title p {
+    font-size: 12.5px;
+    opacity: 0.92;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .quick-ref-btn {
+    background: rgba(255, 255, 255, 0.18);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 6px 13px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .quick-ref-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  nav.tab-bar {
+    background: #ffffff;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    padding: 0 14px;
+    scrollbar-width: thin;
+  }
+
+  .nav-tab {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    border: none;
+    background: transparent;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .nav-tab:hover {
+    color: var(--primary);
+    background: #f8fafc;
+  }
+
+  .nav-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: #eff6ff;
+  }
+
+  /* QUICK DENSITY TABLE DRAWER */
+  #density-drawer {
+    display: none;
+    background: #fffbeb;
+    border-bottom: 2px solid #f59e0b;
+    padding: 12px 24px;
+    font-size: 13.5px;
+  }
+
+  .drawer-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .d-chip {
+    background: white;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-weight: 700;
+    color: #78350f;
+  }
+
+  /* MAIN AREA */
+  main {
+    flex: 1;
+    max-width: 1220px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 22px 18px 80px;
+  }
+
+  .section-view {
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .section-view.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .section-header {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 22.5px;
+    font-weight: 800;
+    color: #1e3a8a;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-header p {
+    font-size: 14.5px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* BUTTONS */
+  .btn-reset {
+    background: #fff1f2;
+    color: #be123c;
+    border: 1.5px solid #fda4af;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.18s;
+  }
+
+  .btn-reset:hover {
+    background: #ffe4e6;
+    border-color: #f43f5e;
+  }
+
+  .btn-action-soft {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1.5px solid #bfdbfe;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.18s;
+  }
+
+  .btn-action-soft:hover {
+    background: #dbeafe;
+  }
+
+  /* METHOD SUMMARY STRIP */
+  .method-box {
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+    border: 1.5px solid #93c5fd;
+    border-radius: 16px;
+    padding: 15px 18px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1e3a8a;
+  }
+
+  .method-box strong {
+    color: #1d4ed8;
+  }
+
+  /* EXERCISE CARDS */
+  .ex-card {
+    background: #ffffff;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 18px;
+    transition: border-color 0.2s;
+  }
+
+  .ex-card:hover {
+    border-color: #93c5fd;
+  }
+
+  .ex-badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 12.5px;
+    font-weight: 800;
+    padding: 4px 11px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .ex-title {
+    font-size: 17.5px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+
+  .ex-btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .ans-toggle-btn {
+    background: #f1f5f9;
+    color: #334155;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s;
+  }
+
+  .ans-toggle-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .wb-toggle-btn {
+    background: #f5f3ff;
+    color: #6d28d9;
+    border: 2px solid #ddd6fe;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    transition: all 0.2s;
+  }
+
+  .wb-toggle-btn:hover {
+    background: #ede9fe;
+  }
+
+  .solution-box {
+    display: none;
+    background: #f0fdf4;
+    border-left: 5px solid #10b981;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin-top: 14px;
+    font-size: 16px;
+    line-height: 1.65;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .solution-box .step-line {
+    margin-bottom: 7px;
+  }
+
+  /* QUIZ BUTTONS */
+  .quiz-opt-btn {
+    padding: 11px 14px;
+    text-align: left;
+    border: 2px solid #cbd5e1;
+    border-radius: 11px;
+    background: white;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+  }
+
+  .quiz-opt-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    background: #eff6ff;
+  }
+
+  .quiz-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  /* TRUE/FALSE TABLE FOR MINI TEST */
+  .tf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 15px;
+  }
+
+  .tf-table th, .tf-table td {
+    border: 1px solid #cbd5e1;
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  .tf-table th {
+    background: #eff6ff;
+    color: #1e3a8a;
+    font-weight: 800;
+  }
+
+  .tf-choice-btn {
+    padding: 5px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #cbd5e1;
+    background: white;
+    font-weight: 700;
+    cursor: pointer;
+    margin-right: 6px;
+  }
+
+  .tf-choice-btn.picked-true {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #065f46;
+  }
+
+  .tf-choice-btn.picked-false {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #991b1b;
+  }
+
+  /* TIMER BOX FOR MINI TEST */
+  .timer-bar {
+    background: linear-gradient(135deg, #1e293b, #334155);
+    color: white;
+    border-radius: 16px;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .clock-digits {
+    font-size: 28px;
+    font-weight: 900;
+    font-family: monospace;
+    color: #fde047;
+    letter-spacing: 2px;
+  }
+
+  /* SMART WHITEBOARD */
+  .smart-wb-wrapper {
+    border: 2px solid #94a3b8;
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 12px;
+    margin: 18px 0;
+  }
+
+  .smart-wb-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #cbd5e1;
+  }
+
+  .wb-tool-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wb-title-tag {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-right: 6px;
+  }
+
+  .wb-btn {
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .wb-btn:hover {
+    border-color: #64748b;
+    background: #f1f5f9;
+  }
+
+  .wb-btn.active {
+    background: #eff6ff;
+    border-color: #2563eb;
+    color: #1d4ed8;
+  }
+
+  .wb-btn.snip-btn {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: white;
+    border-color: #6d28d9;
+  }
+
+  .color-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1.5px #94a3b8;
+    cursor: pointer;
+  }
+
+  .color-dot.active {
+    transform: scale(1.22);
+    box-shadow: 0 0 0 2.5px #1e293b;
+  }
+
+  .wb-stage {
+    position: relative;
+    width: 100%;
+    height: 460px;
+    background-color: #ffffff;
+    background-image:
+      linear-gradient(to right, rgba(203, 213, 225, 0.35) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(203, 213, 225, 0.35) 1px, transparent 1px);
+    background-size: 28px 28px;
+    border-radius: 12px;
+    border: 1.5px solid #cbd5e1;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .wb-stage.plain-bg { background-image: none; }
+
+  .wb-stage canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .wb-bg-canvas { z-index: 1; }
+  .wb-ink-canvas { z-index: 2; cursor: crosshair; }
+
+  /* SCREEN SNIPPING OVERLAY */
+  #snip-floating-bar {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9998;
+    background: #0f172a;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 999px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    border: 2px solid #8b5cf6;
+  }
+
+  #snip-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.25);
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  #snip-rect {
+    display: none;
+    position: fixed;
+    border: 2.5px dashed #2563eb;
+    background: rgba(59, 130, 246, 0.14);
+    box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.38);
+    pointer-events: none;
+    z-index: 10000;
+  }
+
+  .btn-submit {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 13px 22px;
+    border-radius: 13px;
+    font-size: 15.5px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.28);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SCREEN SNIPPING FLOATING BAR & OVERLAY -->
+<div id="snip-floating-bar">
+  <span>✂️ Cuộn đến phần đề/hình cần cắt, rồi bấm:</span>
+  <button onclick="beginSnipDragMode()" style="background:#8b5cf6; color:white; border:none; padding:6px 14px; border-radius:999px; font-weight:800; cursor:pointer;">🎯 Kéo chọn vùng cắt</button>
+  <button onclick="cancelSnipMode()" style="background:#334155; color:white; border:none; padding:6px 12px; border-radius:999px; font-weight:700; cursor:pointer;">✖ Hủy</button>
+</div>
+<div id="snip-overlay"></div>
+<div id="snip-rect"></div>
+
+<!-- STICKY HEADER & NAVIGATION TABS -->
+<div class="sticky-top-shell">
+  <header>
+    <div class="logo-title">
+      <h1><span>📚</span> LUYỆN TẬP TỔNG HỢP: KHỐI LƯỢNG RIÊNG & THỰC HÀNH ĐO</h1>
+      <p>Khoa học tự nhiên 8 &mdash; Hệ thống hóa các dạng toán trọng tâm Bài 13 & Bài 14</p>
+    </div>
+    <button class="quick-ref-btn" onclick="toggleDensityDrawer()">📋 Bảng tra cứu KLR nhanh</button>
+  </header>
+
+  <!-- COLLAPSIBLE QUICK DENSITY LOOKUP BAR -->
+  <div id="density-drawer">
+    <strong style="color:#92400e;">Bảng khối lượng riêng thường dùng (1 g/cm&sup3; = 1 g/mL = 1 000 kg/m&sup3;):</strong>
+    <div class="drawer-chips">
+      <span class="d-chip">Vàng: 19 300 kg/m&sup3; (19,3 g/cm&sup3;)</span>
+      <span class="d-chip">Thủy ngân: 13 600 kg/m&sup3; (13,6 g/cm&sup3;)</span>
+      <span class="d-chip">Chì: 11 300 kg/m&sup3; (11,3 g/cm&sup3;)</span>
+      <span class="d-chip">Bạc: 10 500 kg/m&sup3; (10,5 g/cm&sup3;)</span>
+      <span class="d-chip">Đồng: 8 900 kg/m&sup3; (8,9 g/cm&sup3;)</span>
+      <span class="d-chip">Sắt / Thép: 7 800 kg/m&sup3; (7,8 g/cm&sup3;)</span>
+      <span class="d-chip">Nhôm: 2 700 kg/m&sup3; (2,7 g/cm&sup3;)</span>
+      <span class="d-chip">Đá / Gạch đặc: ~2 600 kg/m&sup3;</span>
+      <span class="d-chip">Nước: 1 000 kg/m&sup3; (1,0 g/cm&sup3;)</span>
+      <span class="d-chip">Nước đá: 900 kg/m&sup3; (0,9 g/cm&sup3;)</span>
+      <span class="d-chip">Dầu ăn / Dầu hỏa: 800 kg/m&sup3; (0,8 g/cm&sup3;)</span>
+      <span class="d-chip">Cồn: 790 kg/m&sup3; (0,79 g/cm&sup3;)</span>
+    </div>
+  </div>
+
+  <nav class="tab-bar">
+    <button class="nav-tab active" onclick="switchTab('tab-warmup', this)">1. Phản xạ tổng hợp (15 câu)</button>
+    <button class="nav-tab" onclick="switchTab('tab-solid', this)">2. Vật rắn, Rỗng/Đặc & Tỉ lệ (6 bài)</button>
+    <button class="nav-tab" onclick="switchTab('tab-liquid', this)">3. Chất lỏng, Lọ đong & Nước đá (5 bài)</button>
+    <button class="nav-tab" onclick="switchTab('tab-exp', this)">4. Bình chia độ & Bình tràn (5 bài)</button>
+    <button class="nav-tab" onclick="switchTab('tab-test', this)">5. Đề kiểm tra thử 25 phút</button>
+    <button class="nav-tab" onclick="switchTab('tab-hw', this)" style="color:#b45309;">6. Bài tập về nhà Buổi 2 📤</button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: KHỞI ĐỘNG & PHẢN XẠ NHANH 15 CÂU TRẮC NGHIỆM TỔNG HỢP              -->
+  <!-- ========================================================================= -->
+  <section id="tab-warmup" class="section-view active">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>⚡</span> 1. KHỞI ĐỘNG TỔNG HỢP: 15 CÂU TRẮC NGHIỆM THÔNG HIỂU & VẬN DỤNG</h2>
+          <p>Kết quả hiện tại: <strong id="warmup-score" style="color:#059669;">0 / 15</strong> câu đúng</p>
+        </div>
+        <button class="btn-reset" onclick="resetWarmupQuiz()">🔄 Làm lại 15 câu này</button>
+      </div>
+
+      <div class="method-box">
+        <strong>Tóm tắt cốt lõi cần nhớ:</strong>
+        &bull; Công thức: <strong>D = m / V</strong> &rArr; <strong>m = D &middot; V</strong> và <strong>V = m / D</strong>.<br>
+        &bull; Khi <strong>cùng thể tích V</strong>: vật nào có <strong>D lớn hơn</strong> thì có khối lượng <strong>m lớn hơn</strong>.<br>
+        &bull; Khi <strong>cùng khối lượng m</strong>: vật nào có <strong>D lớn hơn</strong> thì có thể tích <strong>V nhỏ hơn</strong> (gọn hơn).
+      </div>
+
+      <div id="warmup-quiz-container"></div>
+
+      <!-- BẢNG VIẾT BÚT CẢM ỨNG TAB 1 -->
+      <div id="wb-b2-tab1"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: DẠNG VẬT RẮN HÌNH HỌC, KIỂM TRA ĐẶC/RỖNG & TỈ LỆ (6 BÀI)           -->
+  <!-- ========================================================================= -->
+  <section id="tab-solid" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🧱</span> 2. BÀI TOÁN VẬT RẮN HÌNH HỌC, KIỂM TRA ĐẶC/RỖNG & SO SÁNH TỈ LỆ</h2>
+          <p>6 bài toán vận dụng thường gặp trong sách bài tập và đề kiểm tra định kì</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-action-soft" onclick="hideSolutionsInRange(1, 6)">🙈 Ẩn lời giải phần 2</button>
+          <button class="btn-reset" onclick="resetCardsInRange(1, 6, 'wb-b2-tab2')">🔄 Đặt lại Phần 2</button>
+        </div>
+      </div>
+
+      <div class="method-box">
+        <strong>Phương pháp giải nhanh:</strong><br>
+        1) <strong>Đồng nhất đơn vị</strong> của các cạnh về cùng <code>cm</code> (để tính V ra <code>cm&sup3;</code>) hoặc cùng <code>m</code> (để tính V ra <code>m&sup3;</code>) trước khi nhân.<br>
+        2) <strong>Kiểm tra vật đặc hay rỗng:</strong> Tính thể tích phần chất đặc thực sự <code>V<sub>đặc</sub> = m / D<sub>chất</sub></code> rồi so sánh với thể tích toàn bộ bên ngoài <code>V<sub>ngoài</sub></code>. Nếu <code>V<sub>ngoài</sub> &gt; V<sub>đặc</sub></code> thì vật bị rỗng và <code>V<sub>rỗng</sub> = V<sub>ngoài</sub> &minus; V<sub>đặc</sub></code>.
+      </div>
+
+      <!-- BÀI 1 -->
+      <div class="ex-card" id="b2-card-1">
+        <span class="ex-badge">Bài 1 &bull; Đổi đồng nhất đơn vị kích thước & nhận biết kim loại</span>
+        <div class="ex-title">
+          Một thỏi kim loại đặc hình hộp chữ nhật có chiều dài a = 2 dm, chiều rộng b = 10 cm, chiều cao c = 50 mm. Đặt thỏi kim loại lên cân thì chỉ khối lượng m = 2,7 kg.<br>
+          a) Tính thể tích của thỏi kim loại ra đơn vị cm&sup3;.<br>
+          b) Tính khối lượng riêng của thỏi kim loại và đối chiếu bảng để xác định đó là kim loại gì.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p1-wrap', 'wb-p1')">✍️ Bảng viết giải bài 1</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p1', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p1-wrap" style="display:none;"><div id="wb-p1"></div></div>
+        <div id="sol-p1" class="solution-box">
+          <div class="step-line"><strong>Đổi đồng nhất đơn vị về cm và g:</strong></div>
+          <div class="step-line">&bull; a = 2 dm = <strong>20 cm</strong>; &nbsp; b = <strong>10 cm</strong>; &nbsp; c = 50 mm = <strong>5 cm</strong>; &nbsp; m = 2,7 kg = <strong>2 700 g</strong>.</div>
+          <div class="step-line"><strong>a) Thể tích của thỏi kim loại là:</strong></div>
+          <div class="step-line" style="padding-left:16px;">V = a &middot; b &middot; c = 20 &times; 10 &times; 5 = <strong>1 000 cm&sup3;</strong>.</div>
+          <div class="step-line"><strong>b) Khối lượng riêng của thỏi kim loại là:</strong></div>
+          <div class="step-line" style="padding-left:16px;">D = m / V = 2 700 / 1 000 = <strong>2,7 g/cm&sup3;</strong> = <strong>2 700 kg/m&sup3;</strong>.</div>
+          <div class="step-line">&bull; Đối chiếu bảng khối lượng riêng &rArr; Thỏi kim loại làm bằng <strong>Nhôm (Al)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 2 -->
+      <div class="ex-card" id="b2-card-2">
+        <span class="ex-badge">Bài 2 &bull; Bài toán viên gạch xây có lỗ rỗng (SBT KHTN 8)</span>
+        <div class="ex-title">
+          Một viên gạch xây nhà dạng hình hộp chữ nhật có kích thước ngoài là dài 22 cm, rộng 10 cm, dày 5 cm. Dọc theo viên gạch có khoét 2 lỗ rỗng hình trụ xuyên suốt, thể tích mỗi lỗ là 150 cm&sup3;. Cân một viên gạch khô được khối lượng m = 1,28 kg. Tính khối lượng riêng của phần đất nung làm gạch theo g/cm&sup3; và kg/m&sup3;.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p2-wrap', 'wb-p2')">✍️ Bảng viết giải bài 2</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p2', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p2-wrap" style="display:none;"><div id="wb-p2"></div></div>
+        <div id="sol-p2" class="solution-box">
+          <div class="step-line">&bull; Thể tích toàn phần (kể cả lỗ) của viên gạch là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>ngoài</sub> = 22 &times; 10 &times; 5 = <strong>1 100 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Tổng thể tích của 2 lỗ rỗng là: V<sub>lỗ</sub> = 2 &times; 150 = <strong>300 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Thể tích phần đất nung đặc thực tế của viên gạch là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>gạch</sub> = V<sub>ngoài</sub> &minus; V<sub>lỗ</sub> = 1 100 &minus; 300 = <strong>800 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Đổi m = 1,28 kg = <strong>1 280 g</strong>. Khối lượng riêng của chất làm gạch là:</div>
+          <div class="step-line" style="padding-left:16px;">D = m / V<sub>gạch</sub> = 1 280 / 800 = <strong>1,6 g/cm&sup3;</strong> = <strong>1 600 kg/m&sup3;</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 3 -->
+      <div class="ex-card" id="b2-card-3">
+        <span class="ex-badge">Bài 3 &bull; Kiểm tra vật đặc hay rỗng & tìm thể tích phần rỗng</span>
+        <div class="ex-title">
+          Một khối sắt hình lập phương có độ dài cạnh bên ngoài là a = 10 cm. Đem cân khối sắt này được khối lượng m = 6,24 kg. Biết khối lượng riêng của sắt nguyên chất là D = 7,8 g/cm&sup3;.<br>
+          a) Hỏi khối sắt này đặc hoàn toàn hay bị rỗng bên trong?<br>
+          b) Nếu bị rỗng thì thể tích phần rỗng bên trong là bao nhiêu cm&sup3;?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p3-wrap', 'wb-p3')">✍️ Bảng viết giải bài 3</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p3', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p3-wrap" style="display:none;"><div id="wb-p3"></div></div>
+        <div id="sol-p3" class="solution-box">
+          <div class="step-line"><strong>a) Kiểm tra khối sắt đặc hay rỗng:</strong></div>
+          <div class="step-line">&bull; Thể tích toàn bộ bên ngoài của khối lập phương là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>ngoài</sub> = a&sup3; = 10 &times; 10 &times; 10 = <strong>1 000 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Đổi m = 6,24 kg = <strong>6 240 g</strong>. Thể tích phần sắt đặc thực sự tạo nên khối này là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>sắt đặc</sub> = m / D = 6 240 / 7,8 = <strong>800 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Vì V<sub>sắt đặc</sub> (800 cm&sup3;) &lt; V<sub>ngoài</sub> (1 000 cm&sup3;) nên <strong>khối sắt này bị rỗng bên trong</strong>!</div>
+          <div class="step-line"><strong>b) Thể tích phần rỗng bên trong là:</strong></div>
+          <div class="step-line" style="padding-left:16px;">V<sub>rỗng</sub> = V<sub>ngoài</sub> &minus; V<sub>sắt đặc</sub> = 1 000 &minus; 800 = <strong>200 cm&sup3;</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 4 -->
+      <div class="ex-card" id="b2-card-4">
+        <span class="ex-badge">Bài 4 &bull; Bài toán tải trọng xe trong thực tế xây dựng</span>
+        <div class="ex-title">
+          Một xưởng đá cần vận chuyển 40 tấm đá hoa cương hình hộp chữ nhật giống nhau, mỗi tấm có chiều dài 80 cm, chiều rộng 50 cm và độ dày 3 cm. Biết khối lượng riêng của đá hoa cương là D = 2 600 kg/m&sup3;. Hỏi một chiếc xe tải nhỏ có tải trọng tối đa 1,5 tấn có thể chở hết 40 tấm đá này trong một chuyến được không? Vì sao?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p4-wrap', 'wb-p4')">✍️ Bảng viết giải bài 4</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p4', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p4-wrap" style="display:none;"><div id="wb-p4"></div></div>
+        <div id="sol-p4" class="solution-box">
+          <div class="step-line">&bull; Thể tích của 1 tấm đá hoa cương là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>1</sub> = 80 &times; 50 &times; 3 = 12 000 cm&sup3; = <strong>0,012 m&sup3;</strong>.</div>
+          <div class="step-line">&bull; Tổng thể tích của 40 tấm đá là:</div>
+          <div class="step-line" style="padding-left:16px;">V = 40 &times; 0,012 = <strong>0,48 m&sup3;</strong>.</div>
+          <div class="step-line">&bull; Tổng khối lượng của 40 tấm đá là:</div>
+          <div class="step-line" style="padding-left:16px;">m = D &middot; V = 2 600 &times; 0,48 = <strong>1 248 kg</strong> = <strong>1,248 tấn</strong>.</div>
+          <div class="step-line">&bull; Kết luận: Vì 1,248 tấn &lt; 1,5 tấn nên xe tải <strong>chở hết được trong một chuyến</strong> mà không bị quá tải.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 5 -->
+      <div class="ex-card" id="b2-card-5">
+        <span class="ex-badge" style="background:#fef3c7; color:#b45309;">Bài 5 &bull; Hai vật có CÙNG THỂ TÍCH</span>
+        <div class="ex-title">
+          Hai khối kim loại đặc (một khối bằng nhôm, một khối bằng đồng) có cùng thể tích như nhau. Biết khối lượng riêng của nhôm là D<sub>1</sub> = 2,7 g/cm&sup3;, của đồng là D<sub>2</sub> = 8,9 g/cm&sup3; và cân khối nhôm được m<sub>1</sub> = 540 g. Hãy tính khối lượng m<sub>2</sub> của khối đồng.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p5-wrap', 'wb-p5')">✍️ Bảng viết giải bài 5</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p5', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p5-wrap" style="display:none;"><div id="wb-p5"></div></div>
+        <div id="sol-p5" class="solution-box">
+          <div class="step-line">&bull; Thể tích của khối nhôm là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>1</sub> = m<sub>1</sub> / D<sub>1</sub> = 540 / 2,7 = <strong>200 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Vì hai khối có cùng thể tích nên thể tích khối đồng cũng là: V<sub>2</sub> = V<sub>1</sub> = <strong>200 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Khối lượng của khối đồng là:</div>
+          <div class="step-line" style="padding-left:16px;">m<sub>2</sub> = D<sub>2</sub> &middot; V<sub>2</sub> = 8,9 &times; 200 = <strong>1 780 g</strong> (= 1,78 kg).</div>
+        </div>
+      </div>
+
+      <!-- BÀI 6 -->
+      <div class="ex-card" id="b2-card-6">
+        <span class="ex-badge" style="background:#fef3c7; color:#b45309;">Bài 6 &bull; Hai vật có CÙNG KHỐI LƯỢNG</span>
+        <div class="ex-title">
+          Một quả cân bằng sắt và một quả cân bằng chì đều có khối lượng bằng nhau là m = 1 kg. Biết khối lượng riêng của sắt là 7 800 kg/m&sup3; và của chì là 11 300 kg/m&sup3;. Không cần tính ra số thập phân dài, hãy lập luận cho biết quả cân nào có kích thước (thể tích) lớn hơn và lớn hơn bao nhiêu lần?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p6-wrap', 'wb-p6')">✍️ Bảng viết giải bài 6</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p6', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p6-wrap" style="display:none;"><div id="wb-p6"></div></div>
+        <div id="sol-p6" class="solution-box">
+          <div class="step-line">&bull; Ta có công thức tính thể tích: <code>V = m / D</code>.</div>
+          <div class="step-line">&bull; Khi hai vật có <strong>cùng khối lượng m</strong>, vật nào làm bằng chất có khối lượng riêng D nhỏ hơn thì sẽ có thể tích V lớn hơn.</div>
+          <div class="step-line">&bull; Vì D<sub>sắt</sub> (7 800 kg/m&sup3;) &lt; D<sub>chì</sub> (11 300 kg/m&sup3;) nên <strong>quả cân bằng sắt có thể tích lớn hơn quả cân bằng chì</strong>.</div>
+          <div class="step-line">&bull; Tỉ số thể tích: V<sub>sắt</sub> / V<sub>chì</sub> = D<sub>chì</sub> / D<sub>sắt</sub> = 11 300 / 7 800 &approx; <strong>1,45 lần</strong>.</div>
+        </div>
+      </div>
+
+      <div id="wb-b2-tab2"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: DẠNG CHẤT LỎNG, LỌ ĐONG DUNG TÍCH & NƯỚC ĐÁ ĐÔNG ĐẶC (5 BÀI)       -->
+  <!-- ========================================================================= -->
+  <section id="tab-liquid" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🧪</span> 3. BÀI TOÁN CHẤT LỎNG, BÌNH ĐONG & SỰ ĐÔNG ĐẶC CỦA NƯỚC</h2>
+          <p>5 dạng bài thực tế tiêu biểu về chất lỏng trong chương trình KHTN 8</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-action-soft" onclick="hideSolutionsInRange(7, 11)">🙈 Ẩn lời giải phần 3</button>
+          <button class="btn-reset" onclick="resetCardsInRange(7, 11, 'wb-b2-tab3')">🔄 Đặt lại Phần 3</button>
+        </div>
+      </div>
+
+      <!-- BÀI 7 -->
+      <div class="ex-card" id="b2-card-7">
+        <span class="ex-badge">Bài 7 &bull; Đong mật ong bằng vỏ chai nước suối (Thực tế đời sống)</span>
+        <div class="ex-title">
+          Người bán mật ong thường dùng vỏ chai nhựa loại 1,5 Lít để đong đầy mật ong bán cho khách. Biết khối lượng riêng của mật ong nguyên chất là D = 1,36 g/mL.<br>
+          a) Hỏi 1,5 Lít mật ong có nặng bằng 1,5 kg như nước lọc không?<br>
+          b) Tính khối lượng thật sự của 1,5 Lít mật ong đó ra đơn vị kilôgam.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p7-wrap', 'wb-p7')">✍️ Bảng viết giải bài 7</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p7', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p7-wrap" style="display:none;"><div id="wb-p7"></div></div>
+        <div id="sol-p7" class="solution-box">
+          <div class="step-line"><strong>a) So sánh với nước:</strong> Vì khối lượng riêng của mật ong (1,36 g/mL) lớn hơn của nước (1,0 g/mL) nên cùng thể tích 1,5 Lít thì <strong>mật ong nặng hơn 1,5 kg</strong>!</div>
+          <div class="step-line"><strong>b) Tính khối lượng mật ong:</strong></div>
+          <div class="step-line">&bull; Đổi V = 1,5 L = <strong>1 500 mL</strong>.</div>
+          <div class="step-line">&bull; Khối lượng của 1,5 Lít mật ong là:</div>
+          <div class="step-line" style="padding-left:16px;">m = D &middot; V = 1,36 &times; 1 500 = <strong>2 040 g</strong> = <strong>2,04 kg</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 8 -->
+      <div class="ex-card" id="b2-card-8">
+        <span class="ex-badge">Bài 8 &bull; Cân trừ bì xác định KLR dung dịch nước muối</span>
+        <div class="ex-title">
+          Trong giờ thực hành, một nhóm đặt chiếc cốc thủy tinh chia độ rỗng lên cân điện tử thì cân chỉ m<sub>1</sub> = 115 g. Rót thêm vào cốc đúng V = 200 mL dung dịch nước muối rồi đặt lại lên cân thì cân chỉ m<sub>2</sub> = 335 g. Tính khối lượng riêng của dung dịch nước muối theo g/mL và kg/m&sup3;.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p8-wrap', 'wb-p8')">✍️ Bảng viết giải bài 8</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p8', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p8-wrap" style="display:none;"><div id="wb-p8"></div></div>
+        <div id="sol-p8" class="solution-box">
+          <div class="step-line">&bull; Khối lượng của riêng phần dung dịch nước muối trong cốc là:</div>
+          <div class="step-line" style="padding-left:16px;">m = m<sub>2</sub> &minus; m<sub>1</sub> = 335 &minus; 115 = <strong>220 g</strong>.</div>
+          <div class="step-line">&bull; Khối lượng riêng của dung dịch nước muối là:</div>
+          <div class="step-line" style="padding-left:16px;">D = m / V = 220 / 200 = <strong>1,1 g/mL</strong> = <strong>1 100 kg/m&sup3;</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 9 -->
+      <div class="ex-card" id="b2-card-9">
+        <span class="ex-badge" style="background:#ede9fe; color:#6d28d9;">Bài 9 &bull; Dùng lọ chứa nước để tìm KLR chất lỏng chưa biết (Bài hay SBT)</span>
+        <div class="ex-title">
+          Một chiếc lọ thủy tinh rỗng khi khô ráo cân nặng m<sub>0</sub> = 120 g.<br>
+          &bull; Lần 1: Đổ đầy nước tinh khiết (D<sub>nước</sub> = 1 g/cm&sup3;) tới miệng lọ rồi đem cân thì tổng khối lượng là m<sub>1</sub> = 370 g.<br>
+          &bull; Lần 2: Đổ hết nước đi, tráng khô lọ rồi đổ đầy một loại dầu thực vật tới miệng lọ, đem cân được tổng khối lượng m<sub>2</sub> = 325 g.<br>
+          Hãy xác định dung tích V của chiếc lọ và khối lượng riêng của loại dầu thực vật trên!
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p9-wrap', 'wb-p9')">✍️ Bảng viết giải bài 9</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p9', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p9-wrap" style="display:none;"><div id="wb-p9"></div></div>
+        <div id="sol-p9" class="solution-box">
+          <div class="step-line"><strong>Bước 1 &mdash; Tìm dung tích V của lọ dựa vào lần đổ đầy nước:</strong></div>
+          <div class="step-line">&bull; Khối lượng nước chứa đầy lọ là: m<sub>nước</sub> = m<sub>1</sub> &minus; m<sub>0</sub> = 370 &minus; 120 = <strong>250 g</strong>.</div>
+          <div class="step-line">&bull; Dung tích của chiếc lọ bằng thể tích nước chứa đầy lọ:</div>
+          <div class="step-line" style="padding-left:16px;">V = m<sub>nước</sub> / D<sub>nước</sub> = 250 / 1 = <strong>250 cm&sup3;</strong> (250 mL).</div>
+          <div class="step-line"><strong>Bước 2 &mdash; Tìm khối lượng riêng của dầu thực vật:</strong></div>
+          <div class="step-line">&bull; Khối lượng dầu chứa đầy lọ là: m<sub>dầu</sub> = m<sub>2</sub> &minus; m<sub>0</sub> = 325 &minus; 120 = <strong>205 g</strong>.</div>
+          <div class="step-line">&bull; Vì dầu cũng đổ đầy lọ nên V<sub>dầu</sub> = V = 250 cm&sup3;. Khối lượng riêng của dầu là:</div>
+          <div class="step-line" style="padding-left:16px;">D<sub>dầu</sub> = m<sub>dầu</sub> / V = 205 / 250 = <strong>0,82 g/cm&sup3;</strong> (= 820 kg/m&sup3;).</div>
+        </div>
+      </div>
+
+      <!-- BÀI 10 -->
+      <div class="ex-card" id="b2-card-10">
+        <span class="ex-badge">Bài 10 &bull; Tính số can nhựa cần dùng để rót hết chất lỏng</span>
+        <div class="ex-title">
+          Cần rót hết m = 34 kg dầu hỏa (có khối lượng riêng D = 800 kg/m&sup3;) sang các can nhựa nhỏ, mỗi can có dung tích chứa tối đa 5 Lít. Hỏi cần chuẩn bị ít nhất bao nhiêu chiếc can loại 5 Lít để chứa hết lượng dầu hỏa trên?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p10-wrap', 'wb-p10')">✍️ Bảng viết giải bài 10</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p10', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p10-wrap" style="display:none;"><div id="wb-p10"></div></div>
+        <div id="sol-p10" class="solution-box">
+          <div class="step-line">&bull; Tổng thể tích của 34 kg dầu hỏa là:</div>
+          <div class="step-line" style="padding-left:16px;">V = m / D = 34 / 800 = 0,0425 m&sup3; = <strong>42,5 Lít</strong>.</div>
+          <div class="step-line">&bull; Ta chia cho dung tích mỗi can (5 Lít): 42,5 : 5 = <strong>8,5 (can)</strong>.</div>
+          <div class="step-line">&bull; Vì 8 can chỉ chứa được 40 Lít (còn dư 2,5 Lít dầu cần thêm 1 can nữa) nên cần chuẩn bị ít nhất <strong>9 chiếc can</strong>!</div>
+        </div>
+      </div>
+
+      <!-- BÀI 11 -->
+      <div class="ex-card" id="b2-card-11">
+        <span class="ex-badge" style="background:#dbeafe; color:#1e40af;">Bài 11 &bull; Nước đông đặc thành nước đá & giải thích hiện tượng thực tế</span>
+        <div class="ex-title">
+          Đổ V<sub>1</sub> = 450 cm&sup3; nước nguyên chất (D<sub>1</sub> = 1,0 g/cm&sup3;) vào khay làm đá. Sau khi đông đặc hoàn toàn thành nước đá (biết KLR của nước đá là D<sub>2</sub> = 0,9 g/cm&sup3;) và giả sử nước không bị bay hơi:<br>
+          a) Khối lượng và thể tích của lượng nước đá tạo thành là bao nhiêu?<br>
+          b) Từ kết quả trên, hãy giải thích vì sao không nên đổ nước đầy tận miệng chai thủy tinh đậy nắp chặt rồi bỏ vào ngăn đá tủ lạnh?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p11-wrap', 'wb-p11')">✍️ Bảng viết giải bài 11</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p11', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p11-wrap" style="display:none;"><div id="wb-p11"></div></div>
+        <div id="sol-p11" class="solution-box">
+          <div class="step-line"><strong>a) Tính khối lượng và thể tích nước đá:</strong></div>
+          <div class="step-line">&bull; Khối lượng nước ban đầu là: m<sub>1</sub> = D<sub>1</sub> &middot; V<sub>1</sub> = 1,0 &times; 450 = <strong>450 g</strong>.</div>
+          <div class="step-line">&bull; Khi đông đặc thành đá, khối lượng không đổi nên: m<sub>2</sub> = m<sub>1</sub> = <strong>450 g</strong>.</div>
+          <div class="step-line">&bull; Thể tích nước đá tạo thành là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>2</sub> = m<sub>2</sub> / D<sub>2</sub> = 450 / 0,9 = <strong>500 cm&sup3;</strong> (tăng thêm 50 cm&sup3;!).</div>
+          <div class="step-line"><strong>b) Giải thích thực tế:</strong> Khi nước đông thành đá, khối lượng riêng giảm (từ 1,0 xuống 0,9 g/cm&sup3;) nên <strong>thể tích tăng lên</strong>. Nếu đổ đầy kín chai thủy tinh, đá nở to ra sẽ ép vỡ nứt chai thủy tinh rất nguy hiểm!</div>
+        </div>
+      </div>
+
+      <div id="wb-b2-tab3"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 4: DẠNG THỰC HÀNH BÌNH CHIA ĐỘ & BÌNH TRÀN (BÀI 14 - 5 BÀI)           -->
+  <!-- ========================================================================= -->
+  <section id="tab-exp" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🔬</span> 4. BÀI TOÁN THÍ NGHIỆM BÌNH CHIA ĐỘ, BÌNH TRÀN & XỬ LÍ THỰC HÀNH</h2>
+          <p>5 bài toán gắn liền với thao tác thực hành Bài 14 KHTN 8</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn-action-soft" onclick="hideSolutionsInRange(12, 16)">🙈 Ẩn lời giải phần 4</button>
+          <button class="btn-reset" onclick="resetCardsInRange(12, 16, 'wb-b2-tab4')">🔄 Đặt lại Phần 4</button>
+        </div>
+      </div>
+
+      <!-- BÀI 12 (CÓ HÌNH VẼ BÌNH CHIA ĐỘ TRỰC QUAN) -->
+      <div class="ex-card" id="b2-card-12">
+        <span class="ex-badge">Bài 12 &bull; Đọc số chỉ trực tiếp từ hình vẽ thí nghiệm</span>
+        <div class="ex-title">
+          Quan sát hình mô tả kết quả thí nghiệm đo khối lượng riêng của một chiếc chìa khóa kim loại đặc dưới đây. Hãy ghi lại các giá trị m, V<sub>1</sub>, V<sub>2</sub>, tính khối lượng riêng D của chìa khóa và đối chiếu bảng cho biết chìa khóa đúc bằng kim loại gì?
+        </div>
+
+        <!-- HÌNH MINH HỌA SVG RÕ NÉT -->
+        <div style="background:#f8fafc; border:1.5px solid #cbd5e1; border-radius:14px; padding:14px; margin-bottom:14px; text-align:center;">
+          <svg viewBox="0 0 600 185" style="max-width:580px; width:100%; height:auto;">
+            <!-- Cân điện tử -->
+            <rect x="30" y="125" width="140" height="40" rx="7" fill="#1e293b"/>
+            <rect x="45" y="116" width="110" height="9" fill="#64748b"/>
+            <rect x="55" y="134" width="90" height="22" fill="#020617"/>
+            <text x="100" y="150" fill="#22c55e" font-family="monospace" font-weight="bold" font-size="14" text-anchor="middle">178.0 g</text>
+            <!-- Chìa khóa trên cân -->
+            <circle cx="82" cy="105" r="9" fill="none" stroke="#b45309" stroke-width="5"/>
+            <rect x="90" y="102" width="32" height="6" fill="#b45309"/>
+            <rect x="112" y="108" width="5" height="6" fill="#b45309"/>
+            <text x="100" y="180" fill="#334155" font-size="12" font-weight="bold" text-anchor="middle">1. Cân chìa khóa khô</text>
+
+            <!-- Bình V1 -->
+            <rect x="255" y="75" width="64" height="82" fill="rgba(56,189,248,0.45)"/>
+            <polyline points="255,25 255,157 319,157 319,25" fill="none" stroke="#334155" stroke-width="2.5"/>
+            <line x1="255" y1="75" x2="330" y2="75" stroke="#0284c7" stroke-dasharray="4,3" stroke-width="1.8"/>
+            <text x="334" y="79" fill="#0369a1" font-size="12.5" font-weight="bold">V₁ = 60 mL</text>
+            <text x="287" y="180" fill="#334155" font-size="12" font-weight="bold" text-anchor="middle">2. Trước khi thả</text>
+
+            <!-- Bình V2 -->
+            <rect x="445" y="50" width="64" height="107" fill="rgba(56,189,248,0.45)"/>
+            <circle cx="468" cy="144" r="7" fill="none" stroke="#b45309" stroke-width="4"/>
+            <rect x="474" y="141" width="22" height="5" fill="#b45309"/>
+            <polyline points="445,25 445,157 509,157 509,25" fill="none" stroke="#334155" stroke-width="2.5"/>
+            <line x1="445" y1="50" x2="520" y2="50" stroke="#dc2626" stroke-dasharray="4,3" stroke-width="1.8"/>
+            <text x="524" y="54" fill="#dc2626" font-size="12.5" font-weight="bold">V₂ = 80 mL</text>
+            <text x="477" y="180" fill="#334155" font-size="12" font-weight="bold" text-anchor="middle">3. Sau khi thả chìm</text>
+          </svg>
+        </div>
+
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p12-wrap', 'wb-p12')">✍️ Bảng viết giải bài 12</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p12', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p12-wrap" style="display:none;"><div id="wb-p12"></div></div>
+        <div id="sol-p12" class="solution-box">
+          <div class="step-line">&bull; Đọc số liệu từ thí nghiệm: m = <strong>178 g</strong>; &nbsp; V<sub>1</sub> = 60 mL = 60 cm&sup3;; &nbsp; V<sub>2</sub> = 80 mL = 80 cm&sup3;.</div>
+          <div class="step-line">&bull; Thể tích của chiếc chìa khóa là: V = V<sub>2</sub> &minus; V<sub>1</sub> = 80 &minus; 60 = <strong>20 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Khối lượng riêng của chìa khóa là:</div>
+          <div class="step-line" style="padding-left:16px;">D = m / V = 178 / 20 = <strong>8,9 g/cm&sup3;</strong> (= 8 900 kg/m&sup3;).</div>
+          <div class="step-line">&bull; Đối chiếu bảng KLR &rArr; Chiếc chìa khóa được đúc bằng <strong>Đồng</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 13 -->
+      <div class="ex-card" id="b2-card-13">
+        <span class="ex-badge">Bài 13 &bull; Đo gián tiếp nhiều vật nhỏ giống nhau để giảm sai số (SBT KHTN 8)</span>
+        <div class="ex-title">
+          Muốn đo khối lượng riêng của các viên bi sắt nhỏ giống hệt nhau, nếu chỉ thả 1 viên vào bình chia độ thì mực nước dâng lên rất ít, khó đọc chính xác. Do đó, người ta đem cân cùng lúc <strong>20 viên bi khô</strong> thì được tổng khối lượng 124,8 g; sau đó thả chìm cả 20 viên bi vào bình chia độ đang chứa 50 cm&sup3; nước thì mực nước dâng lên tới vạch 66 cm&sup3;.<br>
+          a) Tính thể tích của 1 viên bi sắt.<br>
+          b) Tính khối lượng riêng của chất làm viên bi theo g/cm&sup3; và kg/m&sup3;.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p13-wrap', 'wb-p13')">✍️ Bảng viết giải bài 13</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p13', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p13-wrap" style="display:none;"><div id="wb-p13"></div></div>
+        <div id="sol-p13" class="solution-box">
+          <div class="step-line"><strong>a) Tính thể tích của 1 viên bi:</strong></div>
+          <div class="step-line">&bull; Tổng thể tích của 20 viên bi bằng phần nước dâng lên:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>20 viên</sub> = 66 &minus; 50 = <strong>16 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Thể tích của 1 viên bi là: V<sub>1 viên</sub> = 16 : 20 = <strong>0,8 cm&sup3;</strong>.</div>
+          <div class="step-line"><strong>b) Khối lượng riêng của chất làm viên bi:</strong></div>
+          <div class="step-line" style="padding-left:16px;">D = m<sub>20 viên</sub> / V<sub>20 viên</sub> = 124,8 / 16 = <strong>7,8 g/cm&sup3;</strong> = <strong>7 800 kg/m&sup3;</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 14 -->
+      <div class="ex-card" id="b2-card-14">
+        <span class="ex-badge">Bài 14 &bull; Phương pháp Bình tràn cho vật kích thước lớn</span>
+        <div class="ex-title">
+          Một hòn đá cảnh có kích thước khá lớn không bỏ lọt bình chia độ. Đầu tiên đem cân hòn đá khô được khối lượng m = 650 g. Tiếp theo, đổ nước vào bình tràn cho tới khi nước vừa chạm miệng vòi tràn, đặt ống đong hứng dưới vòi rồi thả chìm hoàn toàn hòn đá vào bình tràn. Lượng nước tràn sang ống đong đọc được là 250 mL. Hãy xác định khối lượng riêng của hòn đá ra kg/m&sup3;.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p14-wrap', 'wb-p14')">✍️ Bảng viết giải bài 14</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p14', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p14-wrap" style="display:none;"><div id="wb-p14"></div></div>
+        <div id="sol-p14" class="solution-box">
+          <div class="step-line">&bull; Vì ban đầu nước đã ngang miệng vòi bình tràn nên thể tích hòn đá đúng bằng thể tích nước tràn sang ống đong:</div>
+          <div class="step-line" style="padding-left:16px;">V = 250 mL = <strong>250 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Khối lượng riêng của hòn đá là:</div>
+          <div class="step-line" style="padding-left:16px;">D = m / V = 650 / 250 = 2,6 g/cm&sup3; = <strong>2 600 kg/m&sup3;</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 15 -->
+      <div class="ex-card" id="b2-card-15">
+        <span class="ex-badge" style="background:#ede9fe; color:#6d28d9;">Bài 15 &bull; Bài toán kiểm tra nước có tràn khỏi bình hay không</span>
+        <div class="ex-title">
+          Một chiếc cốc đong hình trụ có dung tích chứa tối đa tới sát miệng cốc là 300 cm&sup3;, hiện đang chứa sẵn V<sub>1</sub> = 240 cm&sup3; nước. Người ta thả chìm hoàn toàn một quả nặng bằng nhôm đặc có khối lượng m = 216 g (biết D<sub>nhôm</sub> = 2,7 g/cm&sup3;) vào cốc.<br>
+          a) Hỏi nước trong cốc có bị tràn ra ngoài không?<br>
+          b) Nếu có tràn thì thể tích nước tràn ra ngoài là bao nhiêu cm&sup3;?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p15-wrap', 'wb-p15')">✍️ Bảng viết giải bài 15</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p15', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p15-wrap" style="display:none;"><div id="wb-p15"></div></div>
+        <div id="sol-p15" class="solution-box">
+          <div class="step-line">&bull; Thể tích của quả nặng bằng nhôm là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>nhôm</sub> = m / D<sub>nhôm</sub> = 216 / 2,7 = <strong>80 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; Tổng thể tích của nước và quả nặng nhôm là:</div>
+          <div class="step-line" style="padding-left:16px;">V<sub>tổng</sub> = V<sub>1</sub> + V<sub>nhôm</sub> = 240 + 80 = <strong>320 cm&sup3;</strong>.</div>
+          <div class="step-line"><strong>a)</strong> Vì V<sub>tổng</sub> (320 cm&sup3;) &gt; dung tích tối đa của cốc (300 cm&sup3;) nên <strong>nước sẽ bị tràn ra ngoài</strong>!</div>
+          <div class="step-line"><strong>b) Thể tích nước tràn ra ngoài là:</strong> V<sub>tràn</sub> = 320 &minus; 300 = <strong>20 cm&sup3;</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 16 -->
+      <div class="ex-card" id="b2-card-16">
+        <span class="ex-badge" style="background:#fef3c7; color:#b45309;">Bài 16 &bull; Câu hỏi tư duy thực hành: Đo thể tích vật nổi trên mặt nước</span>
+        <div class="ex-title">
+          Cần xác định khối lượng riêng của một nút bấc (hoặc miếng gỗ nhỏ không thấm nước) bỏ lọt bình chia độ. Khi thả vào bình chia độ thì nút bấc lại <strong>nổi một phần trên mặt nước</strong> chứ không tự chìm xuống. Hãy nêu cách dùng thêm một cây kim dài thật mảnh (hoặc một hòn sỏi làm vật nặng kéo chìm) để xác định đúng thể tích V của nút bấc!
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-p16-wrap', 'wb-p16')">✍️ Bảng viết giải bài 16</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-p16', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-p16-wrap" style="display:none;"><div id="wb-p16"></div></div>
+        <div id="sol-p16" class="solution-box">
+          <div class="step-line"><strong>Cách 1 (Dùng que kim mảnh ấn chìm):</strong></div>
+          <div class="step-line">&bull; Đọc mực nước ban đầu V<sub>1</sub> trong bình chia độ.</div>
+          <div class="step-line">&bull; Thả nút bấc vào rồi dùng đầu mũi kim thật mảnh ấn nhẹ cho nút bấc vừa ngập hoàn toàn dưới mặt nước (thể tích đầu kim ngập nước không đáng kể), đọc mực nước V<sub>2</sub> &rArr; <code>V<sub>nút bấc</sub> = V<sub>2</sub> &minus; V<sub>1</sub></code>.</div>
+          <div class="step-line"><strong>Cách 2 (Buộc kèm hòn sỏi kéo chìm):</strong></div>
+          <div class="step-line">&bull; Bước A: Thả chìm riêng hòn sỏi vào bình chia độ, đọc thể tích nước + sỏi là <strong>V<sub>1</sub></strong>.</div>
+          <div class="step-line">&bull; Bước B: Buộc nút bấc vào hòn sỏi rồi thả để sỏi kéo cả nút bấc chìm hoàn toàn dưới nước, đọc mực nước mới <strong>V<sub>2</sub></strong> &rArr; Thể tích riêng nút bấc là: <code>V<sub>nút bấc</sub> = V<sub>2</sub> &minus; V<sub>1</sub></code>!</div>
+        </div>
+      </div>
+
+      <div id="wb-b2-tab4"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 5: ĐỀ KIỂM TRA THỬ 25 PHÚT CUỐI BUỔI                                  -->
+  <!-- ========================================================================= -->
+  <section id="tab-test" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>⏱️</span> 5. ĐỀ KIỂM TRA TỔNG KẾT CHUYÊN ĐỀ KHỐI LƯỢNG RIÊNG (25 PHÚT)</h2>
+          <p>Đánh giá mức độ nắm vững kiến thức Bài 13 & Bài 14 trước khi chuyển sang phần Áp suất</p>
+        </div>
+        <button class="btn-reset" onclick="resetMiniTest()">🔄 Đặt lại toàn bộ Đề kiểm tra</button>
+      </div>
+
+      <!-- ĐỒNG HỒ ĐẾM NGƯỢC -->
+      <div class="timer-bar">
+        <div>
+          <div style="font-size:12.5px; opacity:0.85; font-weight:700;">ĐỒNG HỒ LÀM BÀI TRÊN LỚP</div>
+          <div class="clock-digits" id="test-clock">25:00</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button onclick="startTestClock()" style="background:#10b981; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">▶️ Bắt đầu tính giờ</button>
+          <button onclick="pauseTestClock()" style="background:#f59e0b; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">⏸️ Tạm dừng</button>
+          <button onclick="resetTestClock()" style="background:#475569; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">🔄 Đặt lại 25:00</button>
+        </div>
+      </div>
+
+      <!-- PHẦN I: TRẮC NGHIỆM 6 CÂU (3 ĐIỂM) -->
+      <h3 style="color:#1e3a8a; font-size:18px; margin-bottom:12px;">Phần I. Trắc nghiệm nhiều lựa chọn (3,0 điểm &mdash; mỗi câu 0,5 điểm)</h3>
+      <div id="minitest-mc-container"></div>
+
+      <hr style="margin: 24px 0; border: none; border-top: 2px dashed #cbd5e1;">
+
+      <!-- PHẦN II: TRẮC NGHIỆM ĐÚNG / SAI (2 ĐIỂM) -->
+      <h3 style="color:#1e3a8a; font-size:18px; margin-bottom:12px;">Phần II. Câu trắc nghiệm Đúng / Sai (2,0 điểm)</h3>
+      <div class="ex-card" style="background:#f8fafc;">
+        <div class="ex-title" style="font-size:16.5px;">
+          Một nhóm thực hiện đo khối lượng riêng của một viên đá cuội không thấm nước bằng cân điện tử và bình chia độ. Xét tính Đúng / Sai của các nhận định sau:
+        </div>
+        <table class="tf-table">
+          <tr>
+            <th style="width:65%;">Phát biểu</th>
+            <th style="width:35%; text-align:center;">Lựa chọn & Đáp án</th>
+          </tr>
+          <tr>
+            <td>a) Nên thả viên đá vào bình nước đo thể tích trước, rồi vớt viên đá ướt đặt ngay lên cân đo khối lượng.</td>
+            <td style="text-align:center;" id="tf-cell-0">
+              <button class="tf-choice-btn" onclick="pickTF(0, true, false)">Đúng</button>
+              <button class="tf-choice-btn" onclick="pickTF(0, false, false)">Sai</button>
+            </td>
+          </tr>
+          <tr>
+            <td>b) Nếu mực nước ban đầu là 70 mL, sau khi thả chìm viên đá là 110 mL thì thể tích viên đá là 40 cm&sup3;.</td>
+            <td style="text-align:center;" id="tf-cell-1">
+              <button class="tf-choice-btn" onclick="pickTF(1, true, true)">Đúng</button>
+              <button class="tf-choice-btn" onclick="pickTF(1, false, true)">Sai</button>
+            </td>
+          </tr>
+          <tr>
+            <td>c) Biết khối lượng viên đá khô là 100 g và thể tích là 40 cm&sup3; thì khối lượng riêng của đá là 2,5 g/cm&sup3;.</td>
+            <td style="text-align:center;" id="tf-cell-2">
+              <button class="tf-choice-btn" onclick="pickTF(2, true, true)">Đúng</button>
+              <button class="tf-choice-btn" onclick="pickTF(2, false, true)">Sai</button>
+            </td>
+          </tr>
+          <tr>
+            <td>d) Đổi giá trị 2,5 g/cm&sup3; sang đơn vị kg/m&sup3; ta được 250 kg/m&sup3;.</td>
+            <td style="text-align:center;" id="tf-cell-3">
+              <button class="tf-choice-btn" onclick="pickTF(3, true, false)">Đúng</button>
+              <button class="tf-choice-btn" onclick="pickTF(3, false, false)">Sai</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <hr style="margin: 24px 0; border: none; border-top: 2px dashed #cbd5e1;">
+
+      <!-- PHẦN III: TỰ LUẬN NGẮN (5 ĐIỂM) -->
+      <h3 style="color:#1e3a8a; font-size:18px; margin-bottom:12px;">Phần III. Tự luận tính toán (5,0 điểm)</h3>
+
+      <div class="ex-card" id="b2-card-17">
+        <span class="ex-badge">Câu tự luận 1 (2,0 điểm)</span>
+        <div class="ex-title">
+          Một thanh kim loại hình hộp chữ nhật có các kích thước: dài 15 cm, rộng 4 cm, cao 2 cm và có khối lượng m = 1,068 kg. Tính khối lượng riêng của thanh kim loại theo g/cm&sup3; và kg/m&sup3;, từ đó cho biết thanh làm bằng kim loại gì (biết D<sub>nhôm</sub> = 2 700 kg/m&sup3;; D<sub>sắt</sub> = 7 800 kg/m&sup3;; D<sub>đồng</sub> = 8 900 kg/m&sup3;).
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-t1-wrap', 'wb-t1')">✍️ Bảng viết chấm / chữa Câu 1</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-t1', this)">👁️ Xem đáp án & thang điểm</button>
+        </div>
+        <div id="wb-t1-wrap" style="display:none;"><div id="wb-t1"></div></div>
+        <div id="sol-t1" class="solution-box">
+          <div class="step-line">&bull; <em>(0,5 đ)</em> Thể tích thanh kim loại: V = 15 &times; 4 &times; 2 = <strong>120 cm&sup3;</strong>; đổi m = 1,068 kg = <strong>1 068 g</strong>.</div>
+          <div class="step-line">&bull; <em>(1,0 đ)</em> Khối lượng riêng: D = m / V = 1 068 / 120 = <strong>8,9 g/cm&sup3;</strong> = <strong>8 900 kg/m&sup3;</strong>.</div>
+          <div class="step-line">&bull; <em>(0,5 đ)</em> Đối chiếu số liệu &rArr; Thanh kim loại làm bằng <strong>Đồng</strong>.</div>
+        </div>
+      </div>
+
+      <div class="ex-card" id="b2-card-18">
+        <span class="ex-badge">Câu tự luận 2 (1,5 điểm)</span>
+        <div class="ex-title">
+          Một bình xăng xe máy chứa được tối đa 4 Lít xăng. Biết khối lượng riêng của xăng là D = 700 kg/m&sup3;. Khi đổ đầy bình thì khối lượng riêng phần xăng trong bình nặng bao nhiêu kilôgam?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-t2-wrap', 'wb-t2')">✍️ Bảng viết chấm / chữa Câu 2</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-t2', this)">👁️ Xem đáp án & thang điểm</button>
+        </div>
+        <div id="wb-t2-wrap" style="display:none;"><div id="wb-t2"></div></div>
+        <div id="sol-t2" class="solution-box">
+          <div class="step-line">&bull; <em>(0,5 đ)</em> Đổi thể tích: V = 4 L = 4 dm&sup3; = <strong>0,004 m&sup3;</strong>.</div>
+          <div class="step-line">&bull; <em>(1,0 đ)</em> Khối lượng xăng khi đổ đầy bình: m = D &middot; V = 700 &times; 0,004 = <strong>2,8 kg</strong>.</div>
+        </div>
+      </div>
+
+      <div class="ex-card" id="b2-card-19">
+        <span class="ex-badge">Câu tự luận 3 (1,5 điểm)</span>
+        <div class="ex-title">
+          Một bức tượng bằng nhôm có khối lượng m = 810 g. Khi thả chìm hoàn toàn bức tượng vào bình tràn chứa đầy nước thì thu được 350 cm&sup3; nước tràn ra ngoài. Biết khối lượng riêng của nhôm đặc là 2,7 g/cm&sup3;. Hỏi bức tượng nhôm này đặc hay rỗng? Nếu rỗng thì thể tích phần rỗng là bao nhiêu?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-t3-wrap', 'wb-t3')">✍️ Bảng viết chấm / chữa Câu 3</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-t3', this)">👁️ Xem đáp án & thang điểm</button>
+        </div>
+        <div id="wb-t3-wrap" style="display:none;"><div id="wb-t3"></div></div>
+        <div id="sol-t3" class="solution-box">
+          <div class="step-line">&bull; <em>(0,5 đ)</em> Thể tích phần nhôm đặc tạo nên bức tượng là: V<sub>nhôm</sub> = m / D = 810 / 2,7 = <strong>300 cm&sup3;</strong>.</div>
+          <div class="step-line">&bull; <em>(0,5 đ)</em> Thể tích toàn bộ bức tượng bằng lượng nước tràn ra: V<sub>ngoài</sub> = <strong>350 cm&sup3;</strong> &gt; 300 cm&sup3; &rArr; <strong>Bức tượng bị rỗng bên trong</strong>.</div>
+          <div class="step-line">&bull; <em>(0,5 đ)</em> Thể tích phần rỗng là: V<sub>rỗng</sub> = 350 &minus; 300 = <strong>50 cm&sup3;</strong>.</div>
+        </div>
+      </div>
+
+      <div id="wb-b2-tab5"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 6: BÀI TẬP VỀ NHÀ BUỔI 2                                              -->
+  <!-- ========================================================================= -->
+  <section id="tab-hw" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📤</span> 6. BÀI TẬP VỀ NHÀ TRỰC TUYẾN BUỔI 2 (TỔNG HỢP KHỐI LƯỢNG RIÊNG)</h2>
+          <p>Bộ câu hỏi tổng hợp mới hoàn toàn cho Buổi 2 &mdash; Tự động gửi kết quả về <strong>thaomy1005@gmail.com</strong></p>
+        </div>
+      </div>
+
+      <div style="background:#fdf4ff; border:2px solid #c084fc; border-radius:16px; padding:18px 22px; display:flex; flex-wrap:wrap; gap:20px; align-items:center; justify-content:space-between;">
+        <div style="flex:1; min-width:280px;">
+          <h4 style="color:#6b21a8; font-size:16px; margin-bottom:8px;">🎯 ĐƯỜNG LINK BÀI TẬP TỔNG HỢP BUỔI 2</h4>
+          <p style="font-size:15px; color:#581c87; margin-bottom:14px; line-height:1.55;">
+            Ngân hàng câu hỏi vận dụng tổng hợp Bài 13 & Bài 14 (bài toán rỗng/đặc, tỉ lệ cùng m / cùng V, bình chia độ, cân trừ bì, nước đá đông đặc...) tự động đảo đề mỗi lượt làm.
+          </p>
+          <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="https://manduong1502.github.io/khtn8-game/klr-buoi2.html" target="_blank" class="btn-submit" style="background:linear-gradient(135deg,#2563eb,#4f46e5);">🔗 Mở Bài tập về nhà Buổi 2</a>
+            <button class="btn-submit" onclick="copyZaloBuoi2()">📋 Sao chép tin nhắn gửi nhóm Zalo</button>
+          </div>
+        </div>
+        <div style="background:white; padding:10px; border-radius:14px; border:2px solid #e9d5ff; text-align:center;"><svg style="width:136px; height:136px; display:block;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 37 37" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h37v37H0z"/><path stroke="#000000" d="M2 2.5h7m1 0h1m2 0h1m2 0h5m4 0h1m2 0h7M2 3.5h1m5 0h1m2 0h2m1 0h1m3 0h1m1 0h4m4 0h1m5 0h1M2 4.5h1m1 0h3m1 0h1m3 0h2m1 0h1m1 0h3m1 0h6m1 0h1m1 0h3m1 0h1M2 5.5h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h1m3 0h2m2 0h3m1 0h1m1 0h3m1 0h1M2 6.5h1m1 0h3m1 0h1m1 0h2m1 0h1m2 0h1m6 0h1m1 0h1m2 0h1m1 0h3m1 0h1M2 7.5h1m5 0h1m1 0h1m1 0h2m4 0h2m1 0h4m1 0h1m1 0h1m5 0h1M2 8.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M10 9.5h1m3 0h1m1 0h8m1 0h2M2 10.5h1m3 0h1m1 0h7m1 0h1m2 0h1m2 0h4m1 0h5m2 0h1M2 11.5h3m1 0h2m2 0h2m3 0h4m1 0h1m1 0h2m1 0h1m1 0h1m3 0h2M2 12.5h4m1 0h2m1 0h1m2 0h1m3 0h4m2 0h1m1 0h1m5 0h1m1 0h1M2 13.5h1m2 0h1m3 0h1m6 0h1m2 0h1m1 0h1m1 0h1m1 0h3M3 14.5h1m4 0h1m1 0h8m1 0h1m1 0h4m1 0h1m1 0h1m1 0h2m1 0h1M2 15.5h1m1 0h3m6 0h3m2 0h3m1 0h2m1 0h1m1 0h1m1 0h1m1 0h2M2 16.5h2m1 0h1m2 0h3m1 0h5m1 0h2m5 0h4m2 0h1m1 0h1M2 17.5h2m1 0h1m5 0h2m1 0h1m1 0h1m2 0h3m1 0h2m2 0h2m1 0h1M2 18.5h1m3 0h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h4m1 0h1m1 0h1m2 0h1M3 19.5h2m4 0h5m3 0h1m1 0h1m2 0h1m2 0h1m1 0h1m3 0h3M3 20.5h2m1 0h1m1 0h1m3 0h1m1 0h1m1 0h5m3 0h2m1 0h3m1 0h1m1 0h1M6 21.5h1m2 0h1m1 0h6m1 0h3m2 0h2m1 0h2m1 0h1m3 0h2M2 22.5h1m1 0h6m5 0h2m1 0h2m1 0h1m1 0h4m1 0h1m1 0h2m1 0h1M2 23.5h1m1 0h2m1 0h1m2 0h6m4 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h1M4 24.5h1m2 0h2m2 0h2m1 0h1m1 0h2m1 0h2m1 0h1m2 0h4m1 0h4M4 25.5h1m1 0h2m1 0h3m1 0h1m1 0h1m1 0h3m3 0h1m2 0h2m3 0h1M2 26.5h4m2 0h1m1 0h2m2 0h1m4 0h1m3 0h1m1 0h7m1 0h1M10 27.5h1m3 0h1m1 0h5m1 0h1m1 0h1m1 0h1m3 0h1m1 0h2M2 28.5h7m1 0h2m2 0h1m2 0h1m1 0h2m1 0h2m2 0h1m1 0h1m1 0h2m1 0h1M2 29.5h1m5 0h1m8 0h1m1 0h1m2 0h2m2 0h1m3 0h1m2 0h2M2 30.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m4 0h5m1 0h6M2 31.5h1m1 0h3m1 0h1m3 0h1m2 0h2m1 0h3m4 0h2m1 0h3M2 32.5h1m1 0h3m1 0h1m5 0h1m1 0h1m1 0h2m2 0h4m2 0h4M2 33.5h1m5 0h1m6 0h2m2 0h1m1 0h3m1 0h3m3 0h1M2 34.5h7m1 0h2m1 0h1m2 0h4m3 0h1m2 0h1m1 0h1m5 0h1"/></svg><span style="font-size:11.5px; font-weight:700; color:#6b21a8; margin-top:4px; display:block;">Quét làm BTVN Buổi 2</span></div>
+      </div>
+
+      <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:14px; padding:20px; margin-top:20px;">
+        <h3 style="font-size:16.5px; color:#1e3a8a; margin-bottom:10px;">Mẫu tin nhắn gửi Zalo cuối Buổi 2:</h3>
+        <textarea id="zalo-b2-box" style="width:100%; height:180px; padding:14px; border:2px solid #cbd5e1; border-radius:10px; font-size:14.5px; line-height:1.55; outline:none;">Cô gửi các bạn bài tập luyện tập tổng hợp Buổi 2 chuyên đề Khối lượng riêng (Bài 13 & 14 KHTN 8):
+🔗 Link làm bài: https://manduong1502.github.io/khtn8-game/klr-buoi2.html
+
+Yêu cầu về nhà:
+1. Nhập họ tên đầy đủ và hoàn thành 12 câu hỏi tổng hợp vận dụng (đổi đơn vị hỗn hợp, kiểm tra vật đặc/rỗng, bài toán chất lỏng và bình chia độ).
+2. Chuẩn bị nháp và máy tính cầm tay trước khi bấm bắt đầu.
+3. Điểm số và các câu cần lưu ý sẽ tự động gửi về email thaomy1005@gmail.com để cô theo dõi kết quả trước khi sang bài Áp suất vào buổi tới. Chúc các bạn làm bài thật tốt!</textarea>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// =============================================================================
+// 1. ĐIỀU HƯỚNG TAB & BẢNG TRA CỨU NHANH
+// =============================================================================
+function toggleDensityDrawer() {
+  const dr = document.getElementById('density-drawer');
+  dr.style.display = (dr.style.display === 'block') ? 'none' : 'block';
+}
+
+function switchTab(tabId, btnEl) {
+  document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  setTimeout(() => {
+    Object.keys(WB_REGISTRY).forEach(id => resizeWB(id));
+  }, 40);
+}
+
+function toggleAns(solId, btnEl) {
+  const box = document.getElementById(solId);
+  if (!box) return;
+  const hasScale = btnEl && btnEl.innerText.includes('thang điểm');
+  if (box.style.display === 'block') {
+    box.style.display = 'none';
+    if (btnEl) btnEl.innerHTML = hasScale ? '👁️ Xem đáp án & thang điểm' : '👁️ Hiển thị lời giải chi tiết';
+  } else {
+    box.style.display = 'block';
+    if (btnEl) btnEl.innerHTML = hasScale ? '🙈 Ẩn đáp án & thang điểm' : '🙈 Ẩn lời giải chi tiết';
+  }
+}
+
+function hideSolutionsInRange(fromIdx, toIdx) {
+  for (let i = fromIdx; i <= toIdx; i++) {
+    const sol = document.getElementById(`sol-p${i}`);
+    if (sol) sol.style.display = 'none';
+    const card = document.getElementById(`b2-card-${i}`);
+    if (card) {
+      const btn = card.querySelector('.ans-toggle-btn');
+      if (btn) btn.innerHTML = '👁️ Hiển thị lời giải chi tiết';
+    }
+  }
+}
+
+function resetCardsInRange(fromIdx, toIdx, mainWBId) {
+  hideSolutionsInRange(fromIdx, toIdx);
+  for (let i = fromIdx; i <= toIdx; i++) {
+    const wrap = document.getElementById(`wb-p${i}-wrap`);
+    if (wrap) wrap.style.display = 'none';
+    if (WB_REGISTRY[`wb-p${i}`]) clearWBAll(`wb-p${i}`);
+  }
+  if (mainWBId && WB_REGISTRY[mainWBId]) clearWBAll(mainWBId);
+}
+
+// =============================================================================
+// 2. HỆ THỐNG BẢNG VIẾT BÚT CẢM ỨNG ĐA LỚP + CẮT ẢNH MÀN HÌNH
+// =============================================================================
+const WB_REGISTRY = {};
+let activeSnipTargetWB = null;
+
+function createSmartWhiteboard(mountId, titleText = "Bảng viết & Ghi chú", initialHeight = 460) {
+  const mount = document.getElementById(mountId);
+  if (!mount || WB_REGISTRY[mountId]) return;
+
+  mount.innerHTML = `
+    <div class="smart-wb-wrapper">
+      <div class="smart-wb-toolbar">
+        <div class="wb-tool-group">
+          <span class="wb-title-tag">✍️ ${titleText}</span>
+          <button type="button" class="wb-btn active" id="${mountId}-tool-pen" onclick="setWBTool('${mountId}', 'pen')">🖊️ Bút viết</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-hl" onclick="setWBTool('${mountId}', 'hl')">🖍️ Dạ quang</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-eraser" onclick="setWBTool('${mountId}', 'eraser')">🧽 Tẩy nét</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-move" onclick="setWBTool('${mountId}', 'move')">✋ Chỉnh ảnh cắt</button>
+        </div>
+
+        <div class="wb-tool-group">
+          <div class="color-dot active" style="background:#dc2626;" onclick="setWBColor('${mountId}', '#dc2626', this)"></div>
+          <div class="color-dot" style="background:#2563eb;" onclick="setWBColor('${mountId}', '#2563eb', this)"></div>
+          <div class="color-dot" style="background:#059669;" onclick="setWBColor('${mountId}', '#059669', this)"></div>
+          <div class="color-dot" style="background:#0f172a;" onclick="setWBColor('${mountId}', '#0f172a', this)"></div>
+          <select onchange="setWBSize('${mountId}', this.value)" style="padding:5px 8px; border-radius:8px; border:1.5px solid #cbd5e1; font-size:12.5px; font-weight:700;">
+            <option value="2.5">Nét mảnh</option>
+            <option value="4" selected>Nét vừa</option>
+            <option value="7">Nét đậm</option>
+          </select>
+        </div>
+
+        <div class="wb-tool-group">
+          <button type="button" class="wb-btn snip-btn" onclick="startSnipForWB('${mountId}')">✂️ Cắt ảnh màn hình đưa xuống đây</button>
+          <label class="wb-btn" style="margin:0;">
+            🖼️ Chèn ảnh
+            <input type="file" accept="image/*" style="display:none;" onchange="uploadImgToWB('${mountId}', this)">
+          </label>
+          <button type="button" class="wb-btn" onclick="undoWB('${mountId}')">↩️ Hoàn tác</button>
+          <button type="button" class="wb-btn" onclick="changeWBHeight('${mountId}', 200)">➕ Mở rộng bảng</button>
+          <button type="button" class="wb-btn" onclick="toggleWBGrid('${mountId}')">📄 Nền ô</button>
+          <button type="button" class="wb-btn" onclick="clearWBInk('${mountId}')">🧹 Xóa nét</button>
+          <button type="button" class="wb-btn" style="color:#be123c;" onclick="clearWBAll('${mountId}')">🗑️ Xóa hết</button>
+        </div>
+      </div>
+
+      <div class="wb-stage" id="${mountId}-stage" style="height:${initialHeight}px;">
+        <canvas class="wb-bg-canvas" id="${mountId}-bg"></canvas>
+        <canvas class="wb-ink-canvas" id="${mountId}-ink"></canvas>
+      </div>
+    </div>
+  `;
+
+  const stage = document.getElementById(`${mountId}-stage`);
+  const bgCanvas = document.getElementById(`${mountId}-bg`);
+  const inkCanvas = document.getElementById(`${mountId}-ink`);
+
+  const state = {
+    id: mountId,
+    stage,
+    bgCanvas,
+    inkCanvas,
+    bgCtx: bgCanvas.getContext('2d'),
+    inkCtx: inkCanvas.getContext('2d'),
+    tool: 'pen',
+    color: '#dc2626',
+    size: 4,
+    drawing: false,
+    lastPt: null,
+    history: [],
+    images: [],
+    dragImg: null,
+    resizingImg: null,
+    dragOffset: { x: 0, y: 0 }
+  };
+
+  WB_REGISTRY[mountId] = state;
+  resizeWB(mountId);
+  bindWBEvents(state);
+}
+
+function resizeWB(id) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  const rect = st.stage.getBoundingClientRect();
+  if (rect.width < 10 || rect.height < 10) return;
+
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const targetW = Math.round(rect.width * dpr);
+  const targetH = Math.round(rect.height * dpr);
+  if (st.inkCanvas.width === targetW && st.inkCanvas.height === targetH) return;
+
+  const tempInk = document.createElement('canvas');
+  tempInk.width = st.inkCanvas.width;
+  tempInk.height = st.inkCanvas.height;
+  if (tempInk.width > 0 && tempInk.height > 0) tempInk.getContext('2d').drawImage(st.inkCanvas, 0, 0);
+
+  st.bgCanvas.width = targetW;
+  st.bgCanvas.height = targetH;
+  st.inkCanvas.width = targetW;
+  st.inkCanvas.height = targetH;
+
+  st.bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  st.inkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  if (tempInk.width > 0 && tempInk.height > 0) {
+    st.inkCtx.save();
+    st.inkCtx.setTransform(1, 0, 0, 1, 0, 0);
+    st.inkCtx.drawImage(tempInk, 0, 0);
+    st.inkCtx.restore();
+  }
+  redrawWBImages(st);
+}
+
+function redrawWBImages(st) {
+  const rect = st.stage.getBoundingClientRect();
+  st.bgCtx.clearRect(0, 0, rect.width || 2000, rect.height || 2000);
+  st.images.forEach(item => {
+    st.bgCtx.drawImage(item.img, item.x, item.y, item.w, item.h);
+    if (st.tool === 'move') {
+      st.bgCtx.save();
+      st.bgCtx.strokeStyle = '#2563eb';
+      st.bgCtx.lineWidth = 2;
+      st.bgCtx.setLineDash([6, 4]);
+      st.bgCtx.strokeRect(item.x, item.y, item.w, item.h);
+      st.bgCtx.setLineDash([]);
+      st.bgCtx.fillStyle = '#2563eb';
+      st.bgCtx.fillRect(item.x + item.w - 14, item.y + item.h - 14, 14, 14);
+      st.bgCtx.restore();
+    }
+  });
+}
+
+function saveWBHistory(st) {
+  if (st.inkCanvas.width === 0) return;
+  if (st.history.length >= 15) st.history.shift();
+  const snap = document.createElement('canvas');
+  snap.width = st.inkCanvas.width;
+  snap.height = st.inkCanvas.height;
+  snap.getContext('2d').drawImage(st.inkCanvas, 0, 0);
+  st.history.push(snap);
+}
+
+function bindWBEvents(st) {
+  const cv = st.inkCanvas;
+
+  function getLocalPos(e) {
+    const r = cv.getBoundingClientRect();
+    const pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    return { x: pt.clientX - r.left, y: pt.clientY - r.top };
+  }
+
+  cv.addEventListener('pointerdown', e => {
+    if (e.button !== undefined && e.button !== 0) return;
+    e.preventDefault();
+    const pos = getLocalPos(e);
+
+    if (st.tool === 'move') {
+      for (let i = st.images.length - 1; i >= 0; i--) {
+        const it = st.images[i];
+        if (pos.x >= it.x + it.w - 22 && pos.x <= it.x + it.w + 8 &&
+            pos.y >= it.y + it.h - 22 && pos.y <= it.y + it.h + 8) {
+          st.resizingImg = it;
+          return;
+        }
+        if (pos.x >= it.x && pos.x <= it.x + it.w && pos.y >= it.y && pos.y <= it.y + it.h) {
+          st.dragImg = it;
+          st.dragOffset = { x: pos.x - it.x, y: pos.y - it.y };
+          return;
+        }
+      }
+      return;
+    }
+
+    saveWBHistory(st);
+    st.drawing = true;
+    st.lastPt = pos;
+    const ctx = st.inkCtx;
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    if (st.tool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = 26;
+      ctx.strokeStyle = 'rgba(0,0,0,1)';
+    } else if (st.tool === 'hl') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = 20;
+      ctx.strokeStyle = 'rgba(250, 204, 21, 0.35)';
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = st.size;
+      ctx.strokeStyle = st.color;
+    }
+    ctx.lineTo(pos.x + 0.1, pos.y + 0.1);
+    ctx.stroke();
+  });
+
+  cv.addEventListener('pointermove', e => {
+    if (st.tool === 'move') {
+      if (!st.dragImg && !st.resizingImg) return;
+      e.preventDefault();
+      const pos = getLocalPos(e);
+      if (st.resizingImg) {
+        const ratio = st.resizingImg.aspect || (st.resizingImg.w / st.resizingImg.h);
+        const newW = Math.max(80, pos.x - st.resizingImg.x);
+        st.resizingImg.w = newW;
+        st.resizingImg.h = newW / ratio;
+      } else if (st.dragImg) {
+        st.dragImg.x = pos.x - st.dragOffset.x;
+        st.dragImg.y = pos.y - st.dragOffset.y;
+      }
+      redrawWBImages(st);
+      return;
+    }
+    if (!st.drawing) return;
+    e.preventDefault();
+    const pos = getLocalPos(e);
+    const midX = (st.lastPt.x + pos.x) / 2;
+    const midY = (st.lastPt.y + pos.y) / 2;
+    st.inkCtx.quadraticCurveTo(st.lastPt.x, st.lastPt.y, midX, midY);
+    st.inkCtx.stroke();
+    st.lastPt = pos;
+  });
+
+  window.addEventListener('pointerup', () => {
+    st.drawing = false;
+    st.dragImg = null;
+    st.resizingImg = null;
+    st.inkCtx.globalCompositeOperation = 'source-over';
+  });
+}
+
+function setWBTool(id, tool) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  st.tool = tool;
+  ['pen', 'hl', 'eraser', 'move'].forEach(t => {
+    const b = document.getElementById(`${id}-tool-${t}`);
+    if (b) b.classList.toggle('active', t === tool);
+  });
+  st.inkCanvas.style.cursor = tool === 'move' ? 'move' : (tool === 'eraser' ? 'cell' : 'crosshair');
+  redrawWBImages(st);
+}
+
+function setWBColor(id, color, dotEl) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  st.color = color;
+  if (st.tool === 'eraser' || st.tool === 'move') setWBTool(id, 'pen');
+  dotEl.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+  dotEl.classList.add('active');
+}
+
+function setWBSize(id, val) {
+  if (WB_REGISTRY[id]) WB_REGISTRY[id].size = parseFloat(val);
+}
+
+function undoWB(id) {
+  const st = WB_REGISTRY[id];
+  if (!st || st.history.length === 0) return;
+  const prev = st.history.pop();
+  st.inkCtx.save();
+  st.inkCtx.setTransform(1, 0, 0, 1, 0, 0);
+  st.inkCtx.clearRect(0, 0, st.inkCanvas.width, st.inkCanvas.height);
+  st.inkCtx.drawImage(prev, 0, 0);
+  st.inkCtx.restore();
+}
+
+function clearWBInk(id) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  saveWBHistory(st);
+  st.inkCtx.save();
+  st.inkCtx.setTransform(1, 0, 0, 1, 0, 0);
+  st.inkCtx.clearRect(0, 0, st.inkCanvas.width, st.inkCanvas.height);
+  st.inkCtx.restore();
+}
+
+function clearWBAll(id) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  clearWBInk(id);
+  st.images = [];
+  redrawWBImages(st);
+}
+
+function changeWBHeight(id, delta) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  st.stage.style.height = `${Math.max(300, st.stage.offsetHeight + delta)}px`;
+  resizeWB(id);
+}
+
+function toggleWBGrid(id) {
+  if (WB_REGISTRY[id]) WB_REGISTRY[id].stage.classList.toggle('plain-bg');
+}
+
+function toggleInlineWB(wrapId, wbId) {
+  const wrap = document.getElementById(wrapId);
+  if (!wrap) return;
+  if (wrap.style.display === 'none' || !wrap.style.display) {
+    wrap.style.display = 'block';
+    createSmartWhiteboard(wbId, "Bảng viết giải chi tiết", 420);
+    setTimeout(() => resizeWB(wbId), 30);
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+function addImageElementToWB(id, imgObj) {
+  const st = WB_REGISTRY[id];
+  if (!st) return;
+  resizeWB(id);
+  const stageRect = st.stage.getBoundingClientRect();
+  const maxW = Math.max(260, stageRect.width - 40);
+  const drawW = Math.min(imgObj.width, maxW);
+  const ratio = imgObj.width / imgObj.height;
+  const drawH = drawW / ratio;
+
+  if (drawH > stageRect.height * 0.68) {
+    const neededH = Math.round(drawH + 220);
+    if (neededH > stageRect.height) {
+      st.stage.style.height = `${neededH}px`;
+      resizeWB(id);
+    }
+  }
+  const posX = Math.max(16, (st.stage.getBoundingClientRect().width - drawW) / 2);
+  st.images.push({ img: imgObj, x: posX, y: 16, w: drawW, h: drawH, aspect: ratio });
+  setWBTool(id, 'pen');
+  redrawWBImages(st);
+}
+
+function uploadImgToWB(id, inputEl) {
+  const file = inputEl.files && inputEl.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => addImageElementToWB(id, img);
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+  inputEl.value = '';
+}
+
+function startSnipForWB(wbId) {
+  activeSnipTargetWB = wbId;
+  document.getElementById('snip-floating-bar').style.display = 'flex';
+}
+
+function cancelSnipMode() {
+  activeSnipTargetWB = null;
+  document.getElementById('snip-floating-bar').style.display = 'none';
+  document.getElementById('snip-overlay').style.display = 'none';
+  document.getElementById('snip-rect').style.display = 'none';
+}
+
+function beginSnipDragMode() {
+  document.getElementById('snip-floating-bar').style.display = 'none';
+  const overlay = document.getElementById('snip-overlay');
+  const rectEl = document.getElementById('snip-rect');
+  overlay.style.display = 'block';
+  rectEl.style.display = 'none';
+
+  let startX = 0, startY = 0, dragging = false;
+
+  function onDown(e) {
+    e.preventDefault();
+    const pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    startX = pt.clientX;
+    startY = pt.clientY;
+    dragging = true;
+    rectEl.style.left = `${startX}px`;
+    rectEl.style.top = `${startY}px`;
+    rectEl.style.width = '0px';
+    rectEl.style.height = '0px';
+    rectEl.style.display = 'block';
+  }
+
+  function onMove(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    const pt = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    rectEl.style.left = `${Math.min(startX, pt.clientX)}px`;
+    rectEl.style.top = `${Math.min(startY, pt.clientY)}px`;
+    rectEl.style.width = `${Math.abs(pt.clientX - startX)}px`;
+    rectEl.style.height = `${Math.abs(pt.clientY - startY)}px`;
+  }
+
+  async function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    overlay.removeEventListener('pointerdown', onDown);
+    overlay.removeEventListener('pointermove', onMove);
+    window.removeEventListener('pointerup', onUp);
+
+    const cropBox = rectEl.getBoundingClientRect();
+    overlay.style.display = 'none';
+    rectEl.style.display = 'none';
+
+    if (cropBox.width < 20 || cropBox.height < 20 || !activeSnipTargetWB) {
+      cancelSnipMode();
+      return;
+    }
+
+    const targetWB = activeSnipTargetWB;
+    activeSnipTargetWB = null;
+
+    if (window.html2canvas) {
+      try {
+        const snap = await window.html2canvas(document.body, {
+          x: cropBox.left + window.scrollX,
+          y: cropBox.top + window.scrollY,
+          width: cropBox.width,
+          height: cropBox.height,
+          scale: Math.min(window.devicePixelRatio || 2, 2),
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false
+        });
+        const img = new Image();
+        img.onload = () => {
+          addImageElementToWB(targetWB, img);
+          document.getElementById(targetWB).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+        img.src = snap.toDataURL('image/png');
+      } catch (err) {
+        alert("Không thể chụp vùng này. Có thể dùng nút Chèn ảnh hoặc dán ảnh chụp màn hình.");
+      }
+    }
+  }
+
+  overlay.addEventListener('pointerdown', onDown);
+  overlay.addEventListener('pointermove', onMove);
+  window.addEventListener('pointerup', onUp);
+}
+
+// =============================================================================
+// 3. TAB 1: 15 CÂU TRẮC NGHIỆM PHẢN XẠ TỔNG HỢP
+// =============================================================================
+const WARMUP_DATA = [
+  {
+    q: "Câu 1. Đổi hỗn hợp đơn vị: Một bể cá chứa 0,045 m³ nước, tức là chứa bao nhiêu Lít nước?",
+    opts: ["4,5 L", "45 L", "450 L", "0,45 L"],
+    ans: 1,
+    exp: "1 m³ = 1 000 L ⇒ 0,045 × 1 000 = 45 L."
+  },
+  {
+    q: "Câu 2. Giá trị khối lượng riêng 1,36 g/mL (mật ong) đổi sang đơn vị kg/m³ là:",
+    opts: ["136 kg/m³", "1 360 kg/m³", "13 600 kg/m³", "0,00136 kg/m³"],
+    ans: 1,
+    exp: "1 g/mL = 1 g/cm³ = 1 000 kg/m³ ⇒ 1,36 × 1 000 = 1 360 kg/m³."
+  },
+  {
+    q: "Câu 3. So sánh 1 kg sắt và 1 kg bông gòn đặt trên bàn cân, kết luận nào sau đây ĐÚNG?",
+    opts: [
+      "1 kg sắt có khối lượng lớn hơn 1 kg bông",
+      "Hai vật có cùng khối lượng (1 kg), nhưng 1 kg bông có thể tích lớn hơn rất nhiều vì KLR bông nhỏ hơn sắt",
+      "Hai vật có cùng thể tích",
+      "1 kg sắt có thể tích lớn hơn 1 kg bông"
+    ],
+    ans: 1,
+    exp: "Cùng khối lượng m = 1 kg, nhưng vì D_bông << D_sắt nên V_bông = m/D rất lớn so với V_sắt!"
+  },
+  {
+    q: "Câu 4. Hai thỏi đặc có kích thước giống hệt nhau: một thỏi bằng đồng (D = 8,9 g/cm³) và một thỏi bằng nhôm (D = 2,7 g/cm³). So sánh khối lượng của chúng:",
+    opts: [
+      "Thỏi nhôm nặng hơn thỏi đồng",
+      "Hai thỏi nặng bằng nhau vì cùng thể tích",
+      "Thỏi đồng có khối lượng lớn hơn thỏi nhôm (vì cùng V mà D_đồng > D_nhôm)",
+      "Không đủ dữ kiện để so sánh"
+    ],
+    ans: 2,
+    exp: "Vì m = D · V, khi V bằng nhau thì vật có D lớn hơn sẽ có khối lượng m lớn hơn."
+  },
+  {
+    q: "Câu 5. Ba chất lỏng không hòa tan vào nhau: Thủy ngân (13,6 g/cm³), Nước (1,0 g/cm³) và Dầu ăn (0,8 g/cm³) cùng đổ vào một ống nghiệm thẳng đứng. Thứ tự phân lớp từ ĐÁY ống lên TRÊN CÙNG là:",
+    opts: [
+      "Dầu ăn → Nước → Thủy ngân",
+      "Thủy ngân (dưới đáy) → Nước (ở giữa) → Dầu ăn (trên cùng)",
+      "Nước → Thủy ngân → Dầu ăn",
+      "Thủy ngân → Dầu ăn → Nước"
+    ],
+    ans: 1,
+    exp: "Chất có khối lượng riêng lớn nhất (Thủy ngân) nằm dưới đáy, tiếp theo là Nước, nhẹ nhất (Dầu ăn) nổi trên cùng."
+  },
+  {
+    q: "Câu 6. Một viên bi sắt đặc nguyên chất đang ở nhiệt độ phòng. Nếu nung nóng viên bi sắt đó nở to ra thì khối lượng riêng của nó thay đổi thế nào?",
+    opts: [
+      "Tăng lên vì nhiệt độ tăng",
+      "Giảm đi vì khối lượng m không đổi nhưng thể tích V tăng lên",
+      "Không thay đổi",
+      "Tăng gấp đôi"
+    ],
+    ans: 1,
+    exp: "Khi nung nóng, m không đổi còn V tăng lên ⇒ D = m / V giảm đi!"
+  },
+  {
+    q: "Câu 7. Ngược lại với sắt, khi một lượng nước đông đặc thành nước đá thì thể tích tăng lên khoảng 10%. Khi đó khối lượng riêng của nước đá so với nước lỏng sẽ:",
+    opts: [
+      "Nhỏ hơn khối lượng riêng của nước lỏng (nên cục nước đá nổi trong ly nước!)",
+      "Lớn hơn khối lượng riêng của nước lỏng",
+      "Bằng đúng 1 000 kg/m³",
+      "Tăng lên 10%"
+    ],
+    ans: 0,
+    exp: "m không đổi, V tăng ⇒ D_đá < D_nước (khoảng 900 kg/m³ < 1 000 kg/m³), nhờ vậy viên đá luôn nổi trong cốc nước giải khát!"
+  },
+  {
+    q: "Câu 8. Hai chai nhựa giống hệt nhau có cùng dung tích 1 Lít: Chai A đựng đầy nước tinh khiết (D = 1 000 kg/m³), Chai B đựng đầy dầu ăn (D = 800 kg/m³). Khối lượng chất lỏng trong hai chai lần lượt là:",
+    opts: [
+      "Chai A: 1 kg; Chai B: 1 kg",
+      "Chai A: 1 kg; Chai B: 0,8 kg",
+      "Chai A: 0,8 kg; Chai B: 1 kg",
+      "Chai A: 10 kg; Chai B: 8 kg"
+    ],
+    ans: 1,
+    exp: "1 L = 0,001 m³. Nước: 1000 × 0,001 = 1 kg; Dầu ăn: 800 × 0,001 = 0,8 kg."
+  },
+  {
+    q: "Câu 9. Một khối lập phương có cạnh a = 3 cm thì có thể tích V bằng bao nhiêu?",
+    opts: ["9 cm³", "18 cm³", "27 cm³", "6 cm³"],
+    ans: 2,
+    exp: "Thể tích hình lập phương V = a³ = 3 × 3 × 3 = 27 cm³ (tránh nhầm thành 3 × 3 = 9!)."
+  },
+  {
+    q: "Câu 10. Để kiểm tra một quả cầu đồng có bị rỗng bên trong hay không, ta đo khối lượng m và thể tích bên ngoài V của quả cầu. Quả cầu chắc chắn BỊ RỖNG nếu:",
+    opts: [
+      "Thương số m / V nhỏ hơn khối lượng riêng của đồng đặc (8,9 g/cm³)",
+      "Thương số m / V bằng đúng 8,9 g/cm³",
+      "Thương số m / V lớn hơn 8,9 g/cm³",
+      "Khối lượng m nhỏ hơn 1 kg"
+    ],
+    ans: 0,
+    exp: "Nếu vật rỗng thì V_ngoài lớn hơn thể tích đồng thực tế nên tỉ số m / V_ngoài < 8,9 g/cm³."
+  },
+  {
+    q: "Câu 11. Trong thí nghiệm đo KLR hòn sỏi bằng bình chia độ, nếu có nhiều bọt khí to bám quanh hòn sỏi dưới nước mà không gõ nhẹ cho thoát hết ra thì kết quả đo sẽ bị ảnh hưởng thế nào?",
+    opts: [
+      "Thể tích V đo được lớn hơn thực tế, làm D tính ra bị nhỏ hơn thực tế",
+      "Thể tích V đo được nhỏ hơn thực tế",
+      "Khối lượng m tăng lên",
+      "Không ảnh hưởng gì đến kết quả"
+    ],
+    ans: 0,
+    exp: "Bọt khí chiếm thêm chỗ làm mực nước V₂ dâng cao hơn thực tế ⇒ V tăng giả tạo ⇒ D = m/V bị nhỏ hơn giá trị thật!"
+  },
+  {
+    q: "Câu 12. Khi đọc mực nước trong bình chia độ, nếu đặt mắt nhìn từ trên cao chéo xuống đáy mặt khum thì giá trị thể tích đọc được thường:",
+    opts: [
+      "Lớn hơn thể tích thực tế",
+      "Chính xác tuyệt đối",
+      "Bằng 0",
+      "Không phụ thuộc góc nhìn"
+    ],
+    ans: 0,
+    exp: "Nhìn chéo từ trên cao xuống sẽ gióng trúng vạch cao hơn đáy mặt khum nên kết quả đọc bị lớn hơn thực tế."
+  },
+  {
+    q: "Câu 13. Một chiếc can rỗng nặng 200 g. Đổ vào can 2 Lít rượu (D = 0,8 g/mL) thì tổng khối lượng cả can và rượu là:",
+    opts: ["1 600 g", "1 800 g (1,8 kg)", "2 200 g", "1 400 g"],
+    ans: 1,
+    exp: "Khối lượng rượu: m_rượu = 0,8 × 2 000 mL = 1 600 g. Tổng khối lượng cả can: 1 600 + 200 = 1 800 g = 1,8 kg."
+  },
+  {
+    q: "Câu 14. Một vật bằng chì nặng 226 g (biết D_chì = 11,3 g/cm³). Khi thả chìm hoàn toàn vào bình chia độ đang có 100 mL nước thì mực nước dâng lên tới vạch:",
+    opts: ["111,3 mL", "120 mL", "122,6 mL", "80 mL"],
+    ans: 1,
+    exp: "Thể tích vật chì: V = m / D = 226 / 11,3 = 20 cm³ = 20 mL. Mực nước mới V₂ = 100 + 20 = 120 mL!"
+  },
+  {
+    q: "Câu 15. Trường hợp nào dưới đây KHÔNG dùng phương pháp thả trực tiếp vào bình chia độ chứa nước để đo thể tích vật rắn được?",
+    opts: [
+      "Viên bi sắt",
+      "Viên đường phèn hoặc cục muối ăn (vì bị hòa tan trong nước!)",
+      "Chìa khóa đồng",
+      "Viên sỏi cuội"
+    ],
+    ans: 1,
+    exp: "Phương pháp bình chia độ chứa nước chỉ áp dụng cho vật rắn KHÔNG THẤM NƯỚC và KHÔNG TAN trong nước."
+  }
+];
+
+let warmupScore = 0;
+
+function renderWarmupQuiz() {
+  warmupScore = 0;
+  document.getElementById('warmup-score').innerText = '0 / 15';
+  const box = document.getElementById('warmup-quiz-container');
+  box.innerHTML = '';
+
+  WARMUP_DATA.forEach((item, qIdx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.style.background = '#f8fafc';
+    let html = `<div class="ex-title" style="font-size:16.5px;">${item.q}</div><div style="display:flex; flex-direction:column; gap:8px;">`;
+    item.opts.forEach((opt, oIdx) => {
+      html += `
+        <button class="quiz-opt-btn" id="wq-${qIdx}-${oIdx}" onclick="answerWarmup(${qIdx}, ${oIdx})">
+          <span class="quiz-letter">${['A','B','C','D'][oIdx]}</span>
+          <span>${opt}</span>
+        </button>
+      `;
+    });
+    html += `</div><div id="wq-exp-${qIdx}" style="display:none; margin-top:10px; padding:10px 14px; border-radius:8px; font-size:14px;"></div>`;
+    card.innerHTML = html;
+    box.appendChild(card);
+  });
+}
+
+function answerWarmup(qIdx, chosen) {
+  const item = WARMUP_DATA[qIdx];
+  for (let i = 0; i < 4; i++) {
+    const b = document.getElementById(`wq-${qIdx}-${i}`);
+    b.disabled = true;
+    if (i === item.ans) {
+      b.style.borderColor = '#10b981';
+      b.style.background = '#ecfdf5';
+      b.style.color = '#065f46';
+    } else if (i === chosen) {
+      b.style.borderColor = '#ef4444';
+      b.style.background = '#fef2f2';
+      b.style.color = '#991b1b';
+    }
+  }
+  const exp = document.getElementById(`wq-exp-${qIdx}`);
+  exp.style.display = 'block';
+  if (chosen === item.ans) {
+    warmupScore++;
+    document.getElementById('warmup-score').innerText = `${warmupScore} / 15`;
+    exp.style.background = '#ecfdf5';
+    exp.style.borderLeft = '4px solid #10b981';
+    exp.style.color = '#065f46';
+    exp.innerHTML = `✅ <strong>Chính xác!</strong> ${item.exp}`;
+  } else {
+    exp.style.background = '#fef2f2';
+    exp.style.borderLeft = '4px solid #ef4444';
+    exp.style.color = '#991b1b';
+    exp.innerHTML = `❌ <strong>Chưa đúng.</strong> ${item.exp}`;
+  }
+}
+
+function resetWarmupQuiz() {
+  renderWarmupQuiz();
+  clearWBAll('wb-b2-tab1');
+}
+
+// =============================================================================
+// 4. TAB 5: ĐỀ KIỂM TRA THỬ 25 PHÚT & ĐỒNG HỒ
+// =============================================================================
+const MINITEST_MC = [
+  { q: "Câu 1. Đổi đơn vị: 0,85 g/cm³ bằng bao nhiêu kg/m³?", opts: ["85 kg/m³", "850 kg/m³", "8 500 kg/m³", "0,00085 kg/m³"], ans: 1, exp: "0,85 × 1 000 = 850 kg/m³." },
+  { q: "Câu 2. Một vật có khối lượng m = 540 g và thể tích V = 200 cm³. Khối lượng riêng của vật là:", opts: ["2,7 g/cm³", "0,37 g/cm³", "27 g/cm³", "108 000 g/cm³"], ans: 0, exp: "D = 540 / 200 = 2,7 g/cm³." },
+  { q: "Câu 3. Biết KLR của sắt là 7 800 kg/m³. Thể tích của một dầm sắt đặc nặng 390 kg là:", opts: ["0,5 m³", "0,05 m³", "20 m³", "5 L"], ans: 1, exp: "V = m / D = 390 / 7 800 = 0,05 m³ (= 50 L)." },
+  { q: "Câu 4. Khi rót 500 mL nước tinh khiết (D = 1 g/mL) vào một cốc rỗng nặng 90 g thì cân chỉ giá trị là:", opts: ["500 g", "410 g", "590 g", "509 g"], ans: 2, exp: "m_nước = 500 g ⇒ m_tổng = 500 + 90 = 590 g." },
+  { q: "Câu 5. Hai quả cầu đặc bằng bạc (10,5 g/cm³) và chì (11,3 g/cm³) có cùng thể tích 10 cm³. Quả cầu chì nặng hơn quả cầu bạc bao nhiêu gam?", opts: ["0,8 g", "8 g", "80 g", "218 g"], ans: 1, exp: "m_chì = 113 g; m_bạc = 105 g ⇒ Chênh lệch: 113 - 105 = 8 g." },
+  { q: "Câu 6. Dụng cụ cần thiết để đo KLR của một khối gỗ hình hộp chữ nhật là:", opts: ["Lực kế và bình tràn", "Cân điện tử và thước thẳng có vạch chia", "Nhiệt kế và bình chia độ", "Chỉ cần một chiếc cân"], ans: 1, exp: "Cân đo m, thước thẳng đo 3 kích thước a, b, c để tính V = a·b·c." }
+];
+
+function renderMiniTestMC() {
+  const box = document.getElementById('minitest-mc-container');
+  box.innerHTML = '';
+  MINITEST_MC.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.style.background = '#f8fafc';
+    let html = `<div class="ex-title" style="font-size:16px;">${item.q}</div><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:8px;">`;
+    item.opts.forEach((opt, oIdx) => {
+      html += `
+        <button class="quiz-opt-btn" id="mt-${idx}-${oIdx}" onclick="checkMiniTestMC(${idx}, ${oIdx})">
+          <span class="quiz-letter">${['A','B','C','D'][oIdx]}</span>
+          <span>${opt}</span>
+        </button>
+      `;
+    });
+    html += `</div><div id="mt-exp-${idx}" style="display:none; margin-top:8px; padding:8px 12px; border-radius:8px; font-size:13.5px;"></div>`;
+    card.innerHTML = html;
+    box.appendChild(card);
+  });
+}
+
+function checkMiniTestMC(idx, chosen) {
+  const item = MINITEST_MC[idx];
+  for (let i = 0; i < 4; i++) {
+    const b = document.getElementById(`mt-${idx}-${i}`);
+    b.disabled = true;
+    if (i === item.ans) {
+      b.style.borderColor = '#10b981';
+      b.style.background = '#ecfdf5';
+    } else if (i === chosen) {
+      b.style.borderColor = '#ef4444';
+      b.style.background = '#fef2f2';
+    }
+  }
+  const exp = document.getElementById(`mt-exp-${idx}`);
+  exp.style.display = 'block';
+  exp.style.background = chosen === item.ans ? '#ecfdf5' : '#fef2f2';
+  exp.innerHTML = `${chosen === item.ans ? '✅ <strong>Đúng (0,5 đ):</strong>' : '❌ <strong>Sai:</strong>'} ${item.exp}`;
+}
+
+function pickTF(rowIdx, pickedVal, actualVal) {
+  const cell = document.getElementById(`tf-cell-${rowIdx}`);
+  const isRight = pickedVal === actualVal;
+  cell.innerHTML = isRight
+    ? `<span style="color:#059669; font-weight:800;">✅ Chọn ${pickedVal ? 'Đúng' : 'Sai'} (Chính xác!)</span>`
+    : `<span style="color:#dc2626; font-weight:800;">❌ Chọn ${pickedVal ? 'Đúng' : 'Sai'} (Đáp án là: ${actualVal ? 'Đúng' : 'Sai'})</span>`;
+}
+
+function resetTFTable() {
+  const answers = [false, true, true, false];
+  answers.forEach((ans, idx) => {
+    const cell = document.getElementById(`tf-cell-${idx}`);
+    if (cell) {
+      cell.innerHTML = `
+        <button class="tf-choice-btn" onclick="pickTF(${idx}, true, ${ans})">Đúng</button>
+        <button class="tf-choice-btn" onclick="pickTF(${idx}, false, ${ans})">Sai</button>
+      `;
+    }
+  });
+}
+
+let testSecs = 25 * 60;
+let testTimerId = null;
+
+function updateClockUI() {
+  const m = String(Math.floor(testSecs / 60)).padStart(2, '0');
+  const s = String(testSecs % 60).padStart(2, '0');
+  document.getElementById('test-clock').innerText = `${m}:${s}`;
+}
+
+function startTestClock() {
+  if (testTimerId) return;
+  testTimerId = setInterval(() => {
+    if (testSecs > 0) {
+      testSecs--;
+      updateClockUI();
+    } else {
+      clearInterval(testTimerId);
+      testTimerId = null;
+      alert("⏰ Đã hết 25 phút làm bài!");
+    }
+  }, 1000);
+}
+
+function pauseTestClock() {
+  clearInterval(testTimerId);
+  testTimerId = null;
+}
+
+function resetTestClock() {
+  pauseTestClock();
+  testSecs = 25 * 60;
+  updateClockUI();
+}
+
+function resetMiniTest() {
+  resetTestClock();
+  renderMiniTestMC();
+  resetTFTable();
+  ['t1', 't2', 't3'].forEach(k => {
+    const sol = document.getElementById(`sol-${k}`);
+    if (sol) sol.style.display = 'none';
+    const wrap = document.getElementById(`wb-${k}-wrap`);
+    if (wrap) wrap.style.display = 'none';
+    if (WB_REGISTRY[`wb-${k}`]) clearWBAll(`wb-${k}`);
+  });
+  for (let i = 17; i <= 19; i++) {
+    const card = document.getElementById(`b2-card-${i}`);
+    if (card) {
+      const btn = card.querySelector('.ans-toggle-btn');
+      if (btn) btn.innerHTML = '👁️ Xem đáp án & thang điểm';
+    }
+  }
+  clearWBAll('wb-b2-tab5');
+}
+
+function copyZaloBuoi2() {
+  const txt = document.getElementById('zalo-b2-box').value;
+  navigator.clipboard.writeText(txt).then(() => {
+    alert("✅ Đã sao chép tin nhắn bài tập về nhà Buổi 2!");
+  });
+}
+
+window.addEventListener('resize', () => {
+  Object.keys(WB_REGISTRY).forEach(id => resizeWB(id));
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  createSmartWhiteboard('wb-b2-tab1', 'Bảng viết nháp Phần 1', 450);
+  createSmartWhiteboard('wb-b2-tab2', 'Bảng viết nháp chung Phần 2', 450);
+  createSmartWhiteboard('wb-b2-tab3', 'Bảng viết nháp chung Phần 3', 450);
+  createSmartWhiteboard('wb-b2-tab4', 'Bảng viết nháp chung Phần 4', 450);
+  createSmartWhiteboard('wb-b2-tab5', 'Bảng viết chữa đề kiểm tra', 450);
+
+  renderWarmupQuiz();
+  renderMiniTestMC();
+});
+</script>
+
+</body>
+</html>
