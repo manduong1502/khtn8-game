@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KHTN 7 - Buổi 2: Bài 9 Đo Tốc Độ & Bài 11 An Toàn Giao Thông</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+  :root {
+    --primary: #0f766e;
+    --primary-light: #0d9488;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+
+  body {
+    background-color: #f0fdfa;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sticky-top-shell {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.1);
+  }
+
+  header {
+    background: linear-gradient(135deg, #134e4a 0%, #0f766e 55%, #0284c7 100%);
+    color: white;
+    padding: 10px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .logo-title h1 {
+    font-size: 20px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-title p {
+    font-size: 12.5px;
+    opacity: 0.94;
+    margin-top: 2px;
+  }
+
+  nav.tab-bar {
+    background: #ffffff;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    padding: 0 14px;
+  }
+
+  .nav-tab {
+    padding: 12px 16px;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--muted);
+    border: none;
+    background: transparent;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .nav-tab:hover { color: var(--primary); background: #f8fafc; }
+  .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #ccfbf1; }
+
+  main {
+    flex: 1;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 22px 18px 80px;
+  }
+
+  .section-view { display: none; animation: fadeIn 0.25s ease; }
+  .section-view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 26px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .section-header {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .section-header h2 { font-size: 22.5px; font-weight: 800; color: #134e4a; display: flex; align-items: center; gap: 10px; }
+  .section-header p { font-size: 15px; color: var(--muted); margin-top: 4px; }
+
+  .btn-reset {
+    background: #fff1f2; color: #be123c; border: 1.5px solid #fda4af;
+    padding: 8px 15px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer;
+  }
+
+  .sim-panel {
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 22px;
+  }
+
+  .sim-btn {
+    background: white;
+    border: 1.5px solid #cbd5e1;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .sim-btn.play {
+    background: linear-gradient(135deg, #0f766e, #0284c7);
+    color: white;
+    border: none;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 15.5px;
+  }
+
+  .compare-table th, .compare-table td {
+    border: 1px solid #cbd5e1;
+    padding: 11px 14px;
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  .compare-table th {
+    background: #0f766e;
+    color: white;
+    font-weight: 800;
+    text-align: center;
+  }
+
+  .compare-table tr:nth-child(even) { background: #f8fafc; }
+
+  /* TRAFFIC SIGNS GRID */
+  .signs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .sign-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .ex-card {
+    background: #ffffff;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 18px;
+  }
+
+  .ex-badge {
+    display: inline-block;
+    background: #ccfbf1;
+    color: #0f766e;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+  }
+
+  .ex-title { font-size: 17.5px; font-weight: 700; color: #0f172a; line-height: 1.55; margin-bottom: 12px; }
+  .hint-strip { display: none; background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 15px; color: #92400e; margin-bottom: 12px; }
+  .ex-btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .hint-btn { background: #fef3c7; color: #b45309; border: 2px solid #fcd34d; border-radius: 10px; padding: 9px 15px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .ans-toggle-btn { background: #f1f5f9; color: #334155; border: 2px solid #cbd5e1; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .wb-toggle-btn { background: #f5f3ff; color: #6d28d9; border: 2px solid #ddd6fe; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .solution-box { display: none; background: #f0fdf4; border-left: 5px solid #10b981; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 14px; font-size: 16px; line-height: 1.65; }
+
+  .quiz-opt-btn {
+    padding: 12px 15px; text-align: left; border: 2px solid #cbd5e1; border-radius: 12px;
+    background: white; font-size: 15.5px; font-weight: 600; color: #1e293b; cursor: pointer;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .quiz-letter { width: 30px; height: 30px; border-radius: 8px; background: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+
+  /* SMART WHITEBOARD */
+  .smart-wb-wrapper { border: 2px solid #94a3b8; background: #f8fafc; border-radius: 16px; padding: 12px; margin: 18px 0; }
+  .smart-wb-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; }
+  .wb-tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .wb-title-tag { font-size: 13.5px; font-weight: 800; color: #134e4a; margin-right: 6px; }
+  .wb-btn { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-size: 12.5px; font-weight: 700; color: #334155; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+  .wb-btn.active { background: #ccfbf1; border-color: #0f766e; color: #134e4a; }
+  .wb-btn.snip-btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #6d28d9; }
+  .color-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1.5px #94a3b8; cursor: pointer; }
+  .color-dot.active { transform: scale(1.22); box-shadow: 0 0 0 2.5px #1e293b; }
+  .wb-stage { position: relative; width: 100%; height: 460px; background-color: #ffffff; background-image: linear-gradient(to right, rgba(203,213,225,0.35) 1px, transparent 1px), linear-gradient(to bottom, rgba(203,213,225,0.35) 1px, transparent 1px); background-size: 28px 28px; border-radius: 12px; border: 1.5px solid #cbd5e1; overflow: hidden; touch-action: none; }
+  .wb-stage.plain-bg { background-image: none; }
+  .wb-stage canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; }
+  .wb-bg-canvas { z-index: 1; }
+  .wb-ink-canvas { z-index: 2; cursor: crosshair; }
+
+  #snip-floating-bar { display: none; position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 9998; background: #0f172a; color: white; padding: 10px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); align-items: center; gap: 12px; font-size: 14px; font-weight: 700; border: 2px solid #8b5cf6; }
+  #snip-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(15,23,42,0.25); cursor: crosshair; touch-action: none; }
+  #snip-rect { display: none; position: fixed; border: 2.5px dashed #0f766e; background: rgba(20,184,166,0.14); box-shadow: 0 0 0 9999px rgba(15,23,42,0.38); pointer-events: none; z-index: 10000; }
+
+  .btn-submit { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 13px 22px; border-radius: 13px; font-size: 15.5px; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div id="snip-floating-bar">
+  <span>✂️ Cuộn đến phần nội dung cần cắt, rồi bấm:</span>
+  <button onclick="beginSnipDragMode()" style="background:#8b5cf6; color:white; border:none; padding:6px 14px; border-radius:999px; font-weight:800; cursor:pointer;">🎯 Kéo chọn vùng cắt</button>
+  <button onclick="cancelSnipMode()" style="background:#334155; color:white; border:none; padding:6px 12px; border-radius:999px; font-weight:700; cursor:pointer;">✖ Hủy</button>
+</div>
+<div id="snip-overlay"></div>
+<div id="snip-rect"></div>
+
+<div class="sticky-top-shell">
+  <header>
+    <div class="logo-title">
+      <h1><span>⏱️</span> KHTN 7 &mdash; CHƯƠNG III: TỐC ĐỘ (BUỔI 2)</h1>
+      <p>Bài 9: Đo tốc độ & Bài 11: Thảo luận về ảnh hưởng của tốc độ trong an toàn giao thông</p>
+    </div>
+  </header>
+
+  <nav class="tab-bar">
+    <button class="nav-tab active" onclick="switchTab('tab-stopwatch', this)">1. Bài 9: Đo bằng Đồng hồ bấm giây</button>
+    <button class="nav-tab" onclick="switchTab('tab-photogate', this)">2. Bài 9: Cổng quang điện & Bắn tốc độ</button>
+    <button class="nav-tab" onclick="switchTab('tab-safety', this)">3. Bài 11: Tốc độ & An toàn giao thông</button>
+    <button class="nav-tab" onclick="switchTab('tab-exercises', this)">4. Bài tập củng cố Bài 9 & 11</button>
+    <button class="nav-tab" onclick="switchTab('tab-hw', this)" style="color:#b45309;">5. Bài tập về nhà Buổi 2 📤</button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: BÀI 9 - CÁCH 1: ĐỒNG HỒ BẤM GIÂY                                   -->
+  <!-- ========================================================================= -->
+  <section id="tab-stopwatch" class="section-view active">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>⏱️</span> 1. BÀI 9: ĐO TỐC ĐỘ BẰNG THƯỚC VÀ ĐỒNG HỒ BẤM GIÂY</h2>
+          <p>Nguyên tắc chung: Muốn đo tốc độ của vật, ta cần đo <strong>quãng đường s</strong> và <strong>thời gian t</strong> rồi chia <strong>v = s / t</strong></p>
+        </div>
+      </div>
+
+      <!-- MÔ PHỎNG HOẠT HÌNH ĐỒNG HỒ BẤM GIÂY -->
+      <div class="sim-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <strong style="font-size:17px; color:#134e4a;">🚗 Mô phỏng thí nghiệm 1: Đo tốc độ xe đồ chơi bằng đồng hồ bấm giây</strong>
+          <div style="display:flex; gap:8px;">
+            <button class="sim-btn play" onclick="runStopwatchSim()">▶️ Bấm chạy xe & Bấm giờ</button>
+            <button class="sim-btn" onclick="resetStopwatchSim()">🔄 Đặt lại</button>
+          </div>
+        </div>
+        <canvas id="swCanvas" width="800" height="220" style="width:100%; height:auto; background:white; border-radius:14px; border:1.5px solid #cbd5e1;"></canvas>
+        <div id="sw-readout" style="margin-top:10px; padding:12px 16px; background:#ccfbf1; border-radius:10px; font-size:15.5px; font-weight:700; color:#134e4a;">
+          Đã dùng thước đo sẵn khoảng cách từ Vạch xuất phát A đến Vạch đích B là <strong>s = 1,2 m</strong>. Bấm chạy để đo thời gian t!
+        </div>
+      </div>
+
+      <!-- 4 BƯỚC TIẾN HÀNH DỄ NHỚ CHO HS YẾU -->
+      <div style="background:#f0fdf4; border-left:5px solid #10b981; padding:16px 20px; border-radius:0 14px 14px 0; font-size:16px; line-height:1.7;">
+        <strong>📋 Thứ tự các bước đo bằng đồng hồ bấm giây:</strong><br>
+        &bull; <strong>Bước 1:</strong> Dùng thước đo độ dài quãng đường <strong>s</strong> từ vạch xuất phát A đến vạch đích B.<br>
+        &bull; <strong>Bước 2:</strong> Giữ xe tại vạch xuất phát A; thả xe chạy đồng thời bấm <strong>START</strong> trên đồng hồ bấm giây.<br>
+        &bull; <strong>Bước 3:</strong> Đúng lúc đầu xe vừa chạm vạch đích B thì bấm <strong>STOP</strong> dừng đồng hồ để đọc thời gian <strong>t</strong>.<br>
+        &bull; <strong>Bước 4:</strong> Thực hiện đo 3 lần để lấy thời gian trung bình <code>t = (t<sub>1</sub> + t<sub>2</sub> + t<sub>3</sub>) : 3</code> (giúp giảm sai số do tay người bấm hơi sớm hoặc hơi trễ!), sau đó tính <code>v = s / t</code>.
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: BÀI 9 - CÁCH 2: CỔNG QUANG ĐIỆN & SÚNG BẮN TỐC ĐỘ                   -->
+  <!-- ========================================================================= -->
+  <section id="tab-photogate" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🔦</span> 2. ĐO TỐC ĐỘ BẰNG CỔNG QUANG ĐIỆN & THIẾT BỊ BẮN TỐC ĐỘ</h2>
+          <p>Tự động bật/tắt đồng hồ bằng tia sáng giúp đo chính xác những chuyển động rất nhanh</p>
+        </div>
+      </div>
+
+      <!-- MÔ PHỎNG HOẠT HÌNH 2 CỔNG QUANG ĐIỆN -->
+      <div class="sim-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <strong style="font-size:17px; color:#134e4a;">🔬 Mô phỏng thí nghiệm 2: Hai cổng quang điện nối đồng hồ đo thời gian hiện số</strong>
+          <div style="display:flex; gap:8px;">
+            <button class="sim-btn play" onclick="runPhotogateSim()">▶️ Thả xe qua 2 Cổng quang điện</button>
+            <button class="sim-btn" onclick="resetPhotogateSim()">🔄 Đặt lại</button>
+          </div>
+        </div>
+        <canvas id="pgCanvas" width="800" height="245" style="width:100%; height:auto; background:white; border-radius:14px; border:1.5px solid #cbd5e1;"></canvas>
+        <div id="pg-readout" style="margin-top:10px; padding:12px 16px; background:#e0f2fe; border-radius:10px; font-size:15.5px; font-weight:700; color:#0c4a6e;">
+          Hai cổng quang điện Cổng 1 và Cổng 2 đặt cách nhau <strong>s = 0,80 m</strong>. Nhấn nút thả xe để xem tia hồng ngoại tự bật/tắt đồng hồ!
+        </div>
+      </div>
+
+      <!-- SO SÁNH 2 DỤNG CỤ + SÚNG BẮN TỐC ĐỘ -->
+      <table class="compare-table">
+        <tr>
+          <th style="width:24%;">Đặc điểm</th>
+          <th style="width:38%;">Đồng hồ bấm giây (Bấm bằng tay)</th>
+          <th style="width:38%;">Cổng quang điện + Đồng hồ hiện số</th>
+        </tr>
+        <tr>
+          <td><strong>Cách bật / tắt giờ</strong></td>
+          <td>Người đo nhìn bằng mắt và bấm nút bằng ngón tay.</td>
+          <td>Vật chắn tia sáng ở <strong>Cổng 1 tự bật</strong>, chắn tia sáng ở <strong>Cổng 2 tự dừng</strong>.</td>
+        </tr>
+        <tr>
+          <td><strong>Độ chính xác</strong></td>
+          <td>Dễ lệch vài phần mười giây do phản xạ tay bấm chậm hoặc sớm.</td>
+          <td><strong>Rất chính xác</strong> (tới phần nghìn giây), đo được cả vật lăn rất nhanh.</td>
+        </tr>
+      </table>
+
+      <div style="background:#fef3c7; border:2px solid #f59e0b; border-radius:16px; padding:16px 20px; margin-top:16px; font-size:15.5px; line-height:1.6; color:#78350f;">
+        <strong>🚓 Thiết bị &ldquo;bắn tốc độ&rdquo; trong giao thông hoạt động thế nào?</strong><br>
+        Thiết bị bắn tốc độ gồm <strong>camera chụp biển số xe</strong> kết hợp bộ phận phát tia sóng tới ô tô đang chạy để đo thời gian <code>t</code> xe đi hết một quãng đường ngắn <code>s</code>, từ đó máy tự tính ra ngay tốc độ <code>v = s / t</code> của xe để phát hiện xe chạy quá tốc độ quy định!
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: BÀI 11 - TỐC ĐỘ VÀ AN TOÀN GIAO THÔNG                              -->
+  <!-- ========================================================================= -->
+  <section id="tab-safety" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🚦</span> 3. BÀI 11: ẢNH HƯỞNG CỦA TỐC ĐỘ TRONG AN TOÀN GIAO THÔNG</h2>
+          <p>Đọc biển báo tốc độ, tra bảng khoảng cách an toàn và áp dụng Quy tắc &ldquo;3 giây&rdquo;</p>
+        </div>
+      </div>
+
+      <!-- 3.1 PHÂN BIỆT BIỂN BÁO GIAO THÔNG TRỰC QUAN -->
+      <h3 style="font-size:18px; color:#134e4a; margin-bottom:10px;">3.1. Phân biệt nhanh các biển báo về tốc độ & khoảng cách trên đường</h3>
+      <div class="signs-grid">
+        <div class="sign-card">
+          <svg viewBox="0 0 110 110" style="width:92px; height:92px;">
+            <circle cx="55" cy="55" r="46" fill="#ffffff" stroke="#dc2626" stroke-width="11"/>
+            <text x="55" y="69" font-size="40" font-weight="900" fill="#0f172a" text-anchor="middle">50</text>
+          </svg>
+          <div style="font-weight:800; color:#b91c1c; margin-top:6px;">Tốc độ TỐI ĐA cho phép</div>
+          <div style="font-size:13.5px; color:#475569; margin-top:4px;">Viền ĐỎ nền TRẮNG: Xe chỉ được đi từ <strong>50 km/h trở xuống</strong> (cấm vượt quá 50 km/h).</div>
+        </div>
+
+        <div class="sign-card">
+          <svg viewBox="0 0 110 110" style="width:92px; height:92px;">
+            <circle cx="55" cy="55" r="48" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+            <text x="55" y="69" font-size="40" font-weight="900" fill="#ffffff" text-anchor="middle">60</text>
+          </svg>
+          <div style="font-weight:800; color:#1d4ed8; margin-top:6px;">Tốc độ TỐI THIỂU cho phép</div>
+          <div style="font-size:13.5px; color:#475569; margin-top:4px;">Nền XANH chữ TRẮNG: Xe phải đi từ <strong>60 km/h trở lên</strong> (không được đi chậm cản đường).</div>
+        </div>
+
+        <div class="sign-card">
+          <svg viewBox="0 0 110 110" style="width:92px; height:92px;">
+            <circle cx="55" cy="55" r="46" fill="#ffffff" stroke="#dc2626" stroke-width="11"/>
+            <rect x="23" y="45" width="18" height="12" rx="3" fill="#0f172a"/>
+            <rect x="69" y="45" width="18" height="12" rx="3" fill="#0f172a"/>
+            <text x="55" y="76" font-size="20" font-weight="900" fill="#0f172a" text-anchor="middle">70m</text>
+          </svg>
+          <div style="font-weight:800; color:#0f766e; margin-top:6px;">Khoảng cách tối thiểu 2 xe</div>
+          <div style="font-size:13.5px; color:#475569; margin-top:4px;">Các xe đi nối đuôi nhau phải cách nhau <strong>ít nhất 70 m</strong> trở lên để kịp phanh.</div>
+        </div>
+      </div>
+
+      <!-- 3.2 BẢNG KHOẢNG CÁCH AN TOÀN TỐI THIỂU SGK -->
+      <h3 style="font-size:18px; color:#134e4a; margin:20px 0 8px;">3.2. Bảng khoảng cách an toàn tối thiểu giữa hai xe (Khi đường khô ráo - SGK KHTN 7)</h3>
+      <table class="compare-table">
+        <tr>
+          <th>Tốc độ lưu hành v (km/h)</th>
+          <th style="text-align:center;">v = 60</th>
+          <th style="text-align:center;">60 &lt; v &le; 80</th>
+          <th style="text-align:center;">80 &lt; v &le; 100</th>
+          <th style="text-align:center;">100 &lt; v &le; 120</th>
+        </tr>
+        <tr>
+          <td><strong>Khoảng cách an toàn tối thiểu (m)</strong></td>
+          <td style="text-align:center; font-weight:800; color:#0f766e;">35 m</td>
+          <td style="text-align:center; font-weight:800; color:#0f766e;">55 m</td>
+          <td style="text-align:center; font-weight:800; color:#0f766e;">70 m</td>
+          <td style="text-align:center; font-weight:800; color:#0f766e;">100 m</td>
+        </tr>
+      </table>
+      <p style="font-size:14.5px; color:#b45309; font-weight:600; margin-bottom:18px;">
+        ⚠️ Lưu ý: Khi <strong>trời mưa, đường trơn trượt, sương mù</strong> hoặc tầm nhìn hạn chế, khoảng cách an toàn phải <strong>lớn hơn</strong> trị số ghi trong bảng trên!
+      </p>
+
+      <!-- 3.3 MÔ PHỎNG QUY TẮC 3 GIÂY -->
+      <div class="sim-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+          <div>
+            <strong style="font-size:17px; color:#134e4a;">🚘 3.3. Quy tắc &ldquo;3 giây&rdquo; trên đường cao tốc: <code>Khoảng cách an toàn (m) = v (m/s) &times; 3 (s)</code></strong>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="sim-btn play" onclick="runBrakeSim('safe')">✅ Giữ đúng 3 giây (60 m)</button>
+            <button class="sim-btn" style="background:#fee2e2; border-color:#f87171; color:#991b1b;" onclick="runBrakeSim('tooClose')">⚠️ Bám quá sát (20 m)</button>
+          </div>
+        </div>
+        <canvas id="brakeCanvas" width="800" height="185" style="width:100%; height:auto; background:white; border-radius:14px; border:1.5px solid #cbd5e1;"></canvas>
+        <div id="brake-caption" style="margin-top:10px; padding:12px 16px; background:#fef3c7; border-radius:10px; font-size:15px; font-weight:700; color:#92400e;">
+          Ví dụ xe đang chạy <strong>72 km/h (= 20 m/s)</strong> &rArr; Khoảng cách an toàn theo quy tắc 3 giây là: <strong>20 m/s &times; 3 s = 60 m</strong>. Hãy bấm thử 2 nút để xem chuyện gì xảy ra khi xe trước phanh gấp!
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 4: BÀI TẬP CỦNG CỐ BÀI 9 & BÀI 11                                     -->
+  <!-- ========================================================================= -->
+  <section id="tab-exercises" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📝</span> 4. BÀI TẬP THỰC HÀNH CỦNG CỐ BÀI 9 & BÀI 11</h2>
+          <p>8 câu trắc nghiệm nhận biết + 5 bài tập tính toán dễ hiểu có gợi ý từng bước</p>
+        </div>
+        <button class="btn-reset" onclick="resetB2Exercises()">🔄 Đặt lại toàn bộ Phần 4</button>
+      </div>
+
+      <h3 style="font-size:18px; color:#134e4a; margin-bottom:12px;">4.1. Trắc nghiệm nhanh (Điểm: <span id="b2-q-score" style="color:#059669;">0/8</span>)</h3>
+      <div id="b2-quiz-container"></div>
+
+      <hr style="margin:26px 0; border:none; border-top:2px dashed #cbd5e1;">
+
+      <h3 style="font-size:18px; color:#134e4a; margin-bottom:12px;">4.2. Bài tập tự luận thực tế (5 bài có gợi ý từng bước)</h3>
+
+      <!-- BÀI 1 -->
+      <div class="ex-card" id="b2ex-card-1">
+        <span class="ex-badge">Bài 1 &bull; Tính tốc độ từ bảng bấm giây 3 lần (Bài 9)</span>
+        <div class="ex-title">
+          Một bạn dùng thước đo quãng đường s = 15 m rồi dùng đồng hồ bấm giây đo thời gian bạn mình chạy qua quãng đường đó 3 lần, thu được kết quả: t<sub>1</sub> = 3,1 s; &nbsp; t<sub>2</sub> = 2,9 s; &nbsp; t<sub>3</sub> = 3,0 s.<br>
+          a) Tính thời gian chạy trung bình của 3 lần đo.<br>
+          b) Tính tốc độ chạy trung bình ra đơn vị m/s.
+        </div>
+        <div id="b2h-1" class="hint-strip">💡 <strong>Gợi ý:</strong> a) Cộng 3 số thời gian lại rồi chia cho 3: t = (3,1 + 2,9 + 3,0) : 3. &nbsp; b) Lấy quãng đường s = 15 m chia cho thời gian trung bình vừa tính!</div>
+        <div class="ex-btn-row">
+          <button class="hint-btn" onclick="toggleHint('b2h-1')">💡 Gợi ý bước làm</button>
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-b2e1-wrap', 'wb-b2e1')">✍️ Bảng viết bài 1</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-b2e1', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-b2e1-wrap" style="display:none;"><div id="wb-b2e1"></div></div>
+        <div id="sol-b2e1" class="solution-box">
+          <div>&bull; <strong>a) Thời gian chạy trung bình là:</strong> t = (3,1 + 2,9 + 3,0) : 3 = 9,0 : 3 = <strong>3,0 (s)</strong>.</div>
+          <div>&bull; <strong>b) Tốc độ chạy trung bình là:</strong> v = s / t = 15 / 3,0 = <strong>5 (m/s)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 2 -->
+      <div class="ex-card" id="b2ex-card-2">
+        <span class="ex-badge">Bài 2 &bull; Bài toán 2 cổng quang điện (Bài 9)</span>
+        <div class="ex-title">
+          Trong phòng thí nghiệm, hai cổng quang điện đặt cách nhau quãng đường s = 60 cm. Khi cho viên bi lăn qua cổng thứ nhất đến cổng thứ hai, đồng hồ đo thời gian hiện số chỉ 0,5 giây. Tính tốc độ của viên bi ra đơn vị m/s.
+        </div>
+        <div id="b2h-2" class="hint-strip">💡 <strong>Gợi ý:</strong> Chú ý quãng đường đang là 60 cm! Hãy đổi s = 60 cm = 60 : 100 = 0,6 m trước, rồi lấy 0,6 chia cho 0,5 s.</div>
+        <div class="ex-btn-row">
+          <button class="hint-btn" onclick="toggleHint('b2h-2')">💡 Gợi ý bước làm</button>
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-b2e2-wrap', 'wb-b2e2')">✍️ Bảng viết bài 2</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-b2e2', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-b2e2-wrap" style="display:none;"><div id="wb-b2e2"></div></div>
+        <div id="sol-b2e2" class="solution-box">
+          <div>&bull; Đổi đơn vị quãng đường: s = 60 cm = <strong>0,6 m</strong>.</div>
+          <div>&bull; Tốc độ của viên bi là: v = s / t = 0,6 / 0,5 = <strong>1,2 (m/s)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 3 -->
+      <div class="ex-card" id="b2ex-card-3">
+        <span class="ex-badge">Bài 3 &bull; Kiểm tra xe có chạy quá tốc độ giới hạn không (Bài 11)</span>
+        <div class="ex-title">
+          Trên một đoạn đường có cắm biển báo tròn viền đỏ ghi số <strong>&ldquo;50&rdquo;</strong> (tốc độ tối đa 50 km/h). Thiết bị bắn tốc độ đo được một chiếc ô tô đi qua quãng đường s = 30 m trong thời gian t = 2 giây. Hỏi ô tô này có vi phạm vượt quá tốc độ cho phép không? Vì sao?
+        </div>
+        <div id="b2h-3" class="hint-strip">💡 <strong>Gợi ý:</strong> Bước 1: Tính tốc độ ô tô ra m/s (v = 30 : 2 = 15 m/s). Bước 2: Đổi sang km/h bằng cách nhân với 3,6 rồi so sánh với số 50 km/h trên biển báo!</div>
+        <div class="ex-btn-row">
+          <button class="hint-btn" onclick="toggleHint('b2h-3')">💡 Gợi ý bước làm</button>
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-b2e3-wrap', 'wb-b2e3')">✍️ Bảng viết bài 3</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-b2e3', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-b2e3-wrap" style="display:none;"><div id="wb-b2e3"></div></div>
+        <div id="sol-b2e3" class="solution-box">
+          <div>&bull; Tốc độ của ô tô theo m/s là: v = s / t = 30 / 2 = <strong>15 (m/s)</strong>.</div>
+          <div>&bull; Đổi sang km/h: v = 15 &times; 3,6 = <strong>54 (km/h)</strong>.</div>
+          <div>&bull; Vì 54 km/h &gt; 50 km/h nên <strong>ô tô này ĐÃ VI PHẠM chạy quá tốc độ tối đa cho phép</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 4 -->
+      <div class="ex-card" id="b2ex-card-4">
+        <span class="ex-badge" style="background:#fef3c7; color:#b45309;">Bài 4 &bull; Tính khoảng cách an toàn theo Quy tắc &ldquo;3 giây&rdquo; (Bài 11)</span>
+        <div class="ex-title">
+          Một ô tô đang chạy trên đường cao tốc với tốc độ 90 km/h. Áp dụng quy tắc &ldquo;3 giây&rdquo;, hãy tính khoảng cách an toàn tối thiểu mà người lái xe cần giữ với xe chạy ngay phía trước.
+        </div>
+        <div id="b2h-4" class="hint-strip">💡 <strong>Gợi ý:</strong> Bước 1: Đổi tốc độ v = 90 km/h sang đơn vị m/s (lấy 90 chia 3,6). Bước 2: Nhân tốc độ (m/s) với thời gian t = 3 giây!</div>
+        <div class="ex-btn-row">
+          <button class="hint-btn" onclick="toggleHint('b2h-4')">💡 Gợi ý bước làm</button>
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-b2e4-wrap', 'wb-b2e4')">✍️ Bảng viết bài 4</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-b2e4', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-b2e4-wrap" style="display:none;"><div id="wb-b2e4"></div></div>
+        <div id="sol-b2e4" class="solution-box">
+          <div>&bull; Đổi tốc độ của ô tô sang m/s: v = 90 : 3,6 = <strong>25 (m/s)</strong>.</div>
+          <div>&bull; Khoảng cách an toàn tối thiểu theo quy tắc &ldquo;3 giây&rdquo; là:</div>
+          <div style="padding-left:20px; font-weight:800; color:#065f46;">s = v &middot; t = 25 &times; 3 = 75 (m).</div>
+        </div>
+      </div>
+
+      <!-- BÀI 5 -->
+      <div class="ex-card" id="b2ex-card-5">
+        <span class="ex-badge">Bài 5 &bull; Giải thích tình huống trời mưa đường trơn (Bài 11)</span>
+        <div class="ex-title">
+          Vì sao vào những ngày trời mưa to trên đường cao tốc, bảng điện tử thường thông báo yêu cầu các xe phải <strong>giảm tốc độ tối đa xuống</strong> (ví dụ từ 100 km/h giảm xuống còn 80 km/h) và <strong>tăng khoảng cách giữa các xe</strong>?
+        </div>
+        <div id="b2h-5" class="hint-strip">💡 <strong>Gợi ý:</strong> Nghĩ tới 2 yếu tố: mặt đường ướt làm bánh xe dễ bị trượt dài hơn khi phanh, và mưa lớn làm mắt người lái xe khó nhìn xa!</div>
+        <div class="ex-btn-row">
+          <button class="hint-btn" onclick="toggleHint('b2h-5')">💡 Gợi ý bước làm</button>
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-b2e5-wrap', 'wb-b2e5')">✍️ Bảng viết bài 5</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-b2e5', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-b2e5-wrap" style="display:none;"><div id="wb-b2e5"></div></div>
+        <div id="sol-b2e5" class="solution-box">
+          <div>&bull; Khi trời mưa to, <strong>tầm nhìn của người lái xe bị giảm</strong> (khó phát hiện sớm chướng ngại vật phía trước).</div>
+          <div>&bull; Đồng thời mặt đường ướt làm <strong>bánh xe dễ trơn trượt</strong>, quãng đường xe trượt thêm từ lúc đạp phanh đến lúc dừng hẳn dài hơn nhiều so với đường khô.</div>
+          <div>&rArr; Do đó phải giảm tốc độ và giữ khoảng cách xa hơn để kịp phanh dừng an toàn, tránh đâm liên hoàn.</div>
+        </div>
+      </div>
+
+      <div id="wb-g7b2-tab4"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 5: BÀI TẬP VỀ NHÀ BUỔI 2                                              -->
+  <!-- ========================================================================= -->
+  <section id="tab-hw" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📤</span> 5. BÀI TẬP VỀ NHÀ TRỰC TUYẾN BUỔI 2 (BÀI 9 & BÀI 11)</h2>
+          <p>Chọn <strong>Chặng 2 - Buổi 2</strong> trên cổng trò chơi Tốc độ Lớp 7 &mdash; Gửi kết quả về <strong>thaomy1005@gmail.com</strong></p>
+        </div>
+      </div>
+
+      <div style="background:#f0fdfa; border:2px solid #5eead4; border-radius:16px; padding:20px; margin-bottom:18px;">
+        <h4 style="color:#0f766e; font-size:16.5px; margin-bottom:8px;">🎯 ĐƯỜNG LINK BÀI TẬP VỀ NHÀ BUỔI 2</h4>
+        <p style="font-size:15px; color:#134e4a; margin-bottom:14px;">
+          Ôn tập cách đo tốc độ (đồng hồ bấm giây, cổng quang điện), nhận biết biển báo giao thông, tra bảng khoảng cách an toàn và quy tắc 3 giây.
+        </p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a href="https://manduong1502.github.io/khtn8-game/khtn7-tocdo-game.html?buoi=2" target="_blank" class="btn-submit" style="background:linear-gradient(135deg,#0f766e,#0284c7);">🔗 Mở Bài tập về nhà Buổi 2</a>
+          <button class="btn-submit" onclick="copyZaloB2()">📋 Sao chép tin nhắn gửi nhóm Zalo</button>
+        </div>
+      </div>
+
+      <textarea id="zalo-g7b2" style="width:100%; height:170px; padding:14px; border:2px solid #cbd5e1; border-radius:12px; font-size:14.5px; line-height:1.55; outline:none;">Cô gửi các em bài tập trò chơi ôn luyện Buổi 2 môn KHTN 7 (Bài 9: Đo tốc độ & Bài 11: An toàn giao thông):
+🔗 Link làm bài: https://manduong1502.github.io/khtn8-game/khtn7-tocdo-game.html?buoi=2
+
+Hướng dẫn làm bài:
+1. Nhập họ và tên của em rồi bấm vào "Chặng 2 - Buổi 2: Đo tốc độ & An toàn giao thông".
+2. Đọc kỹ biển báo tốc độ tối đa/tối thiểu và nhớ công thức Quy tắc 3 giây (s = v × 3, với v tính bằng m/s).
+3. Kết quả bài làm sẽ tự động gửi về email của cô. Chúc các em làm bài thật tốt!</textarea>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function switchTab(tabId, btnEl) {
+  document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => {
+    Object.keys(WB_REGISTRY).forEach(id => resizeWB(id));
+    if (tabId === 'tab-stopwatch') drawStopwatchSim();
+    if (tabId === 'tab-photogate') drawPhotogateSim();
+    if (tabId === 'tab-safety') drawBrakeSim();
+  }, 40);
+}
+
+function toggleHint(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+}
+
+function toggleAns(solId, btnEl) {
+  const box = document.getElementById(solId);
+  if (!box) return;
+  if (box.style.display === 'block') {
+    box.style.display = 'none';
+    if (btnEl) btnEl.innerHTML = '👁️ Hiển thị lời giải chi tiết';
+  } else {
+    box.style.display = 'block';
+    if (btnEl) btnEl.innerHTML = '🙈 Ẩn lời giải chi tiết';
+  }
+}
+
+// =============================================================================
+// MÔ PHỎNG 1: ĐỒNG HỒ BẤM GIÂY
+// =============================================================================
+let swState = { pos: 0, time: 0, animId: null };
+
+function resetStopwatchSim() {
+  cancelAnimationFrame(swState.animId);
+  swState = { pos: 0, time: 0, animId: null };
+  document.getElementById('sw-readout').innerHTML = 'Đã dùng thước đo sẵn khoảng cách từ Vạch xuất phát A đến Vạch đích B là <strong>s = 1,2 m</strong>. Bấm chạy để đo thời gian t!';
+  drawStopwatchSim();
+}
+
+function runStopwatchSim() {
+  cancelAnimationFrame(swState.animId);
+  const start = performance.now();
+  const totalT = 2.4; // 2.4 giây đi hết 1,2 m => v = 0,5 m/s
+  function frame(now) {
+    const t = Math.min(totalT, (now - start) / 1000);
+    swState.time = t;
+    swState.pos = t / totalT;
+    drawStopwatchSim();
+    if (t < totalT) swState.animId = requestAnimationFrame(frame);
+    else {
+      document.getElementById('sw-readout').innerHTML =
+        `✅ Xe chạm vạch B &rarr; Bấm STOP! Thời gian đo được: <strong>t = 2,40 s</strong> &rArr; Tốc độ xe: <strong>v = s / t = 1,2 / 2,4 = 0,5 m/s</strong>.`;
+    }
+  }
+  swState.animId = requestAnimationFrame(frame);
+}
+
+function drawStopwatchSim() {
+  const cv = document.getElementById('swCanvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  // Mặt bàn & Thước mét
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(40, 155, 720, 45);
+  ctx.fillStyle = '#fde047';
+  ctx.strokeStyle = '#ca8a04';
+  ctx.fillRect(130, 165, 520, 22);
+  ctx.strokeRect(130, 165, 520, 22);
+  ctx.fillStyle = '#78350f';
+  ctx.font = 'bold 13px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Thước đo quãng đường: s = 1,2 m', 390, 181);
+
+  // Vạch A và Vạch B
+  const xA = 130, xB = 650;
+  ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(xA, 85); ctx.lineTo(xA, 165); ctx.stroke();
+  ctx.fillStyle = '#0284c7'; ctx.fillText('Vạch A (Xuất phát)', xA, 76);
+
+  ctx.strokeStyle = '#dc2626';
+  ctx.beginPath(); ctx.moveTo(xB, 85); ctx.lineTo(xB, 165); ctx.stroke();
+  ctx.fillStyle = '#dc2626'; ctx.fillText('Vạch B (Đích)', xB, 76);
+
+  // Đồng hồ bấm giây tròn
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath(); ctx.roundRect(320, 14, 160, 46, 12); ctx.fill();
+  ctx.fillStyle = '#22c55e';
+  ctx.font = 'bold 20px monospace';
+  ctx.fillText(`⏱️ ${swState.time.toFixed(2)} s`, 400, 44);
+
+  // Xe đồ chơi
+  const carX = xA + swState.pos * (xB - xA) - 46;
+  ctx.fillStyle = '#0ea5e9';
+  ctx.beginPath(); ctx.roundRect(carX, 118, 52, 24, 6); ctx.fill();
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath(); ctx.arc(carX + 12, 147, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(carX + 40, 147, 7, 0, Math.PI * 2); ctx.fill();
+}
+
+// =============================================================================
+// MÔ PHỎNG 2: CỔNG QUANG ĐIỆN + ĐỒNG HỒ ĐO THỜI GIAN HIỆN SỐ
+// =============================================================================
+let pgState = { x: 80, timer: 0, gate1Hit: false, gate2Hit: false, animId: null };
+
+function resetPhotogateSim() {
+  cancelAnimationFrame(pgState.animId);
+  pgState = { x: 80, timer: 0, gate1Hit: false, gate2Hit: false, animId: null };
+  document.getElementById('pg-readout').innerHTML = 'Hai cổng quang điện Cổng 1 và Cổng 2 đặt cách nhau <strong>s = 0,80 m</strong>. Nhấn nút thả xe để xem tia hồng ngoại tự bật/tắt đồng hồ!';
+  drawPhotogateSim();
+}
+
+function runPhotogateSim() {
+  cancelAnimationFrame(pgState.animId);
+  const g1X = 230, g2X = 590;
+  const start = performance.now();
+
+  function frame(now) {
+    const dt = (now - start) / 1000;
+    const curX = 80 + dt * 360; // px/s
+    pgState.x = Math.min(710, curX);
+
+    if (curX >= g1X && curX < g2X) {
+      pgState.gate1Hit = true;
+      pgState.timer = ((curX - g1X) / (g2X - g1X)) * 0.50;
+    } else if (curX >= g2X) {
+      pgState.gate1Hit = true;
+      pgState.gate2Hit = true;
+      pgState.timer = 0.50;
+    }
+    drawPhotogateSim();
+
+    if (curX < 710) pgState.animId = requestAnimationFrame(frame);
+    else {
+      document.getElementById('pg-readout').innerHTML =
+        `✅ Qua <strong>Cổng 1</strong> đồng hồ tự chạy, qua <strong>Cổng 2</strong> đồng hồ tự dừng đúng ở <strong>t = 0,500 s</strong>! &rArr; Tốc độ: <strong>v = 0,80 / 0,50 = 1,6 m/s</strong>.`;
+    }
+  }
+  pgState.animId = requestAnimationFrame(frame);
+}
+
+function drawPhotogateSim() {
+  const cv = document.getElementById('pgCanvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  const g1X = 230, g2X = 590, trackY = 185;
+
+  // Đồng hồ đo thời gian hiện số đặt ở giữa phía trên
+  ctx.fillStyle = '#1e293b';
+  ctx.beginPath(); ctx.roundRect(295, 14, 210, 56, 10); ctx.fill();
+  ctx.fillStyle = '#020617';
+  ctx.fillRect(320, 24, 160, 28);
+  ctx.fillStyle = '#ef4444';
+  ctx.font = 'bold 19px monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${pgState.timer.toFixed(3)} s`, 400, 44);
+  ctx.fillStyle = '#cbd5e1';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('Đồng hồ đo thời gian hiện số', 400, 64);
+
+  // Dây điện nối từ 2 cổng về đồng hồ
+  ctx.strokeStyle = '#64748b'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(g1X, 105); ctx.lineTo(g1X, 42); ctx.lineTo(295, 42); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(g2X, 105); ctx.lineTo(g2X, 42); ctx.lineTo(505, 42); ctx.stroke();
+
+  // Máng lăn nằm ngang
+  ctx.fillStyle = '#cbd5e1';
+  ctx.fillRect(50, trackY, 700, 16);
+
+  // Cổng quang điện 1 & 2
+  [[g1X, 'Cổng quang 1 (Bật)', pgState.gate1Hit], [g2X, 'Cổng quang 2 (Dừng)', pgState.gate2Hit]].forEach(([gx, lbl, hit]) => {
+    ctx.fillStyle = hit ? '#10b981' : '#334155';
+    ctx.fillRect(gx - 10, 105, 20, 80);
+    // Tia hồng ngoại
+    ctx.strokeStyle = '#ef4444'; ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(gx, 115); ctx.lineTo(gx, 185); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#0f172a'; ctx.font = 'bold 12.5px sans-serif';
+    ctx.fillText(lbl, gx, 98);
+  });
+
+  // Khoảng cách s = 0,80 m
+  ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(g1X, 216); ctx.lineTo(g2X, 216); ctx.stroke();
+  ctx.fillStyle = '#0369a1'; ctx.font = 'bold 13.5px sans-serif';
+  ctx.fillText('Khoảng cách giữa 2 cổng: s = 0,80 m', (g1X + g2X) / 2, 234);
+
+  // Xe lăn có tấm chắn sáng
+  ctx.fillStyle = '#f59e0b';
+  ctx.fillRect(pgState.x - 24, trackY - 26, 48, 20);
+  ctx.fillStyle = '#dc2626';
+  ctx.fillRect(pgState.x - 4, trackY - 44, 8, 18); // Tấm chắn tia sáng
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath(); ctx.arc(pgState.x - 14, trackY - 3, 5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(pgState.x + 14, trackY - 3, 5, 0, Math.PI * 2); ctx.fill();
+}
+
+// =============================================================================
+// MÔ PHỎNG 3: QUY TẮC 3 GIÂY & PHANH KHẨN CẤP (BÀI 11)
+// =============================================================================
+let brakeState = { xFront: 460, xBack: 220, braking: false, crashed: false, animId: null };
+
+function drawBrakeSim() {
+  const cv = document.getElementById('brakeCanvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  // Mặt đường nhựa
+  ctx.fillStyle = '#334155';
+  ctx.fillRect(20, 75, 760, 74);
+  ctx.strokeStyle = '#fde047'; ctx.lineWidth = 3; ctx.setLineDash([22, 16]);
+  ctx.beginPath(); ctx.moveTo(30, 112); ctx.lineTo(770, 112); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Xe phía trước (màu xanh)
+  ctx.fillStyle = '#38bdf8';
+  ctx.beginPath(); ctx.roundRect(brakeState.xFront, 92, 68, 34, 8); ctx.fill();
+  if (brakeState.braking) {
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(brakeState.xFront - 4, 95, 6, 28);
+    ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('🛑 PHANH GẤP!', brakeState.xFront + 34, 66);
+  }
+
+  // Xe phía sau (màu cam)
+  ctx.fillStyle = brakeState.crashed ? '#ef4444' : '#f59e0b';
+  ctx.beginPath(); ctx.roundRect(brakeState.xBack, 92, 68, 34, 8); ctx.fill();
+  ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('Xe sau', brakeState.xBack + 34, 113);
+  ctx.fillText('Xe trước', brakeState.xFront + 34, 113);
+
+  if (brakeState.crashed) {
+    ctx.fillStyle = '#dc2626';
+    ctx.font = 'bold 18px sans-serif';
+    ctx.fillText('💥 VA CHẠM DO BÁM QUÁ SÁT!', brakeState.xFront - 10, 42);
+  }
+}
+
+function runBrakeSim(mode) {
+  cancelAnimationFrame(brakeState.animId);
+  const gapPx = mode === 'safe' ? 230 : 85;
+  brakeState = { xFront: 360, xBack: 360 - gapPx, braking: false, crashed: false, animId: null };
+  const start = performance.now();
+
+  function frame(now) {
+    const t = (now - start) / 1000;
+    if (t < 0.7) {
+      brakeState.xFront = 360 + t * 160;
+      brakeState.xBack = brakeState.xFront - gapPx;
+    } else {
+      brakeState.braking = true;
+      const bt = t - 0.7;
+      // Xe trước dừng nhanh ở 530; xe sau phản ứng trễ 0.6s mới đạp phanh!
+      brakeState.xFront = Math.min(540, 472 + bt * 110 * Math.max(0, 1 - bt * 0.9));
+      const desiredBack = (360 - gapPx) + 0.7 * 160 + Math.min(185, bt * 155);
+      if (desiredBack + 68 >= brakeState.xFront) {
+        brakeState.xBack = brakeState.xFront - 66;
+        brakeState.crashed = true;
+        drawBrakeSim();
+        document.getElementById('brake-caption').innerHTML =
+          `❌ <strong>Bám sát 20 m:</strong> Khi xe trước phanh bất ngờ, người lái xe sau chưa kịp phản ứng và quãng đường trượt phanh không đủ &rArr; <strong>Xảy ra va chạm đuôi xe!</strong>`;
+        return;
+      } else {
+        brakeState.xBack = desiredBack;
+      }
+    }
+    drawBrakeSim();
+    if (t < 2.2) brakeState.animId = requestAnimationFrame(frame);
+    else {
+      document.getElementById('brake-caption').innerHTML =
+        `✅ <strong>Giữ đúng khoảng cách 3 giây (60 m):</strong> Nhờ khoảng cách đủ rộng, người lái xe sau kịp nhìn thấy đèn phanh và dừng lại cách xe trước an toàn!`;
+    }
+  }
+  brakeState.animId = requestAnimationFrame(frame);
+}
+
+// =============================================================================
+// TRẮC NGHIỆM BÀI 9 & BÀI 11 (TAB 4)
+// =============================================================================
+const B2_QUIZ = [
+  { q: "Câu 1. Để đo tốc độ chuyển động của một vật trong phòng thí nghiệm, ta cần đo hai đại lượng nào?", opts: ["Khối lượng và thời gian", "Quãng đường đi được và thời gian đi hết quãng đường đó", "Quãng đường và khối lượng", "Thể tích và thời gian"], ans: 1, exp: "Có quãng đường s và thời gian t ta tính được v = s / t." },
+  { q: "Câu 2. Ưu điểm nổi bật của cổng quang điện kết hợp đồng hồ đo thời gian hiện số so với đồng hồ bấm giây là:", opts: ["Giá rẻ hơn thước kẻ", "Tự động bật và dừng đồng hồ chính xác, không phụ thuộc phản xạ tay bấm của người đo", "Đo được cân nặng của xe", "Không cần dùng điện"], ans: 1, exp: "Tia sáng ở cổng quang tự đóng/ngắt đồng hồ nên loại bỏ lỗi bấm tay chậm." },
+  { q: "Câu 3. Khi dùng cổng quang điện đo tốc độ xe lăn từ Cổng A đến Cổng B: đồng hồ bắt đầu đếm khi nào?", opts: ["Khi xe bắt đầu chạm chắn tia sáng ở Cổng A", "Khi xe đi qua khỏi Cổng B", "Khi chưa thả xe", "Khi xe dừng hẳn"], ans: 0, exp: "Cổng A phát tín hiệu BẬT đồng hồ, Cổng B phát tín hiệu DỪNG đồng hồ." },
+  { q: "Câu 4. Thiết bị 'bắn tốc độ' trên đường giao thông được dùng để:", opts: ["Đo khối lượng hàng hóa trên ô tô", "Kiểm tra tốc độ của các phương tiện giao thông xem có vượt quá tốc độ quy định hay không", "Đếm số người ngồi trên xe", "Đo nhiệt độ mặt đường"], ans: 1, exp: "Thiết bị bắn tốc độ giúp cảnh sát giao thông phát hiện phương tiện vi phạm tốc độ." },
+  { q: "Câu 5. Biển báo hình tròn nền trắng, viền đỏ, ở giữa có số '60' màu đen mang ý nghĩa gì?", opts: ["Tốc độ tối thiểu phải đi là 60 km/h", "Tốc độ tối đa cho phép là 60 km/h (cấm đi vượt quá 60 km/h)", "Khoảng cách giữa hai xe là 60 m", "Đoạn đường dài 60 km"], ans: 1, exp: "Hình tròn viền đỏ nền trắng ghi số 60 là biển cấm vượt quá tốc độ tối đa 60 km/h." },
+  { q: "Câu 6. Theo bảng quy định khi mặt đường khô ráo, nếu ô tô chạy với tốc độ từ trên 60 km/h đến 80 km/h thì khoảng cách an toàn tối thiểu là:", opts: ["35 m", "55 m", "70 m", "100 m"], ans: 1, exp: "Theo bảng SGK KHTN 7: 60 km/h là 35 m; trên 60 đến 80 km/h là 55 m." },
+  { q: "Câu 7. Xe chạy tốc độ càng cao thì khi xảy ra va chạm tai nạn càng nghiêm trọng vì:", opts: ["Người lái khó dừng xe kịp thời và lực va chạm rất mạnh", "Xe tốn ít xăng hơn", "Đường rộng hơn", "Không ảnh hưởng gì"], ans: 0, exp: "Tốc độ quá cao khiến quãng đường phanh kéo dài, không kịp xử lí tình huống bất ngờ." },
+  { q: "Câu 8. Một ô tô chạy trên cao tốc với tốc độ 20 m/s (tức 72 km/h). Theo quy tắc '3 giây', khoảng cách an toàn tối thiểu tới xe trước là:", opts: ["23 m", "60 m", "216 m", "30 m"], ans: 1, exp: "Áp dụng s = v · t = 20 m/s × 3 s = 60 m." }
+];
+
+let b2Score = 0;
+function renderB2Quiz() {
+  b2Score = 0;
+  document.getElementById('b2-q-score').innerText = '0/8';
+  const box = document.getElementById('b2-quiz-container');
+  box.innerHTML = '';
+  B2_QUIZ.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.style.background = '#f8fafc';
+    let html = `<div class="ex-title" style="font-size:16.5px;">${item.q}</div><div style="display:flex; flex-direction:column; gap:8px;">`;
+    item.opts.forEach((opt, oIdx) => {
+      html += `<button class="quiz-opt-btn" id="b2q-${idx}-${oIdx}" onclick="checkB2Q(${idx}, ${oIdx})"><span class="quiz-letter">${['A','B','C','D'][oIdx]}</span><span>${opt}</span></button>`;
+    });
+    html += `</div><div id="b2q-exp-${idx}" style="display:none; margin-top:10px; padding:10px 14px; border-radius:8px; font-size:14.5px;"></div>`;
+    card.innerHTML = html;
+    box.appendChild(card);
+  });
+}
+
+function checkB2Q(idx, chosen) {
+  const item = B2_QUIZ[idx];
+  for (let i = 0; i < 4; i++) {
+    const b = document.getElementById(`b2q-${idx}-${i}`);
+    b.disabled = true;
+    if (i === item.ans) { b.style.borderColor = '#10b981'; b.style.background = '#ecfdf5'; }
+    else if (i === chosen) { b.style.borderColor = '#ef4444'; b.style.background = '#fef2f2'; }
+  }
+  const exp = document.getElementById(`b2q-exp-${idx}`);
+  exp.style.display = 'block';
+  if (chosen === item.ans) {
+    b2Score++;
+    document.getElementById('b2-q-score').innerText = `${b2Score}/8`;
+    exp.style.background = '#ecfdf5'; exp.style.color = '#065f46';
+    exp.innerHTML = `✅ <strong>Chính xác!</strong> ${item.exp}`;
+  } else {
+    exp.style.background = '#fef2f2'; exp.style.color = '#991b1b';
+    exp.innerHTML = `❌ <strong>Chưa đúng:</strong> ${item.exp}`;
+  }
+}
+
+function resetB2Exercises() {
+  renderB2Quiz();
+  for (let i = 1; i <= 5; i++) {
+    const h = document.getElementById(`b2h-${i}`); if (h) h.style.display = 'none';
+    const s = document.getElementById(`sol-b2e${i}`); if (s) s.style.display = 'none';
+    const c = document.getElementById(`b2ex-card-${i}`);
+    if (c) { const btn = c.querySelector('.ans-toggle-btn'); if (btn) btn.innerHTML = '👁️ Hiển thị lời giải chi tiết'; }
+    const w = document.getElementById(`wb-b2e${i}-wrap`); if (w) w.style.display = 'none';
+    if (WB_REGISTRY[`wb-b2e${i}`]) clearWBAll(`wb-b2e${i}`);
+  }
+  clearWBAll('wb-g7b2-tab4');
+}
+
+function copyZaloB2() {
+  navigator.clipboard.writeText(document.getElementById('zalo-g7b2').value).then(() => {
+    alert("✅ Đã sao chép tin nhắn gửi nhóm Zalo cho Buổi 2!");
+  });
+}
+
+// =============================================================================
+// SMART WHITEBOARD + SCREEN SNIPPING ENGINE
+// =============================================================================
+const WB_REGISTRY = {};
+let activeSnipTargetWB = null;
+
+function createSmartWhiteboard(mountId, titleText = "Bảng viết & Ghi chú", initialHeight = 450) {
+  const mount = document.getElementById(mountId);
+  if (!mount || WB_REGISTRY[mountId]) return;
+  mount.innerHTML = `
+    <div class="smart-wb-wrapper">
+      <div class="smart-wb-toolbar">
+        <div class="wb-tool-group">
+          <span class="wb-title-tag">✍️ ${titleText}</span>
+          <button type="button" class="wb-btn active" id="${mountId}-tool-pen" onclick="setWBTool('${mountId}', 'pen')">🖊️ Bút viết</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-hl" onclick="setWBTool('${mountId}', 'hl')">🖍️ Dạ quang</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-eraser" onclick="setWBTool('${mountId}', 'eraser')">🧽 Tẩy nét</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-move" onclick="setWBTool('${mountId}', 'move')">✋ Chỉnh ảnh cắt</button>
+        </div>
+        <div class="wb-tool-group">
+          <div class="color-dot active" style="background:#dc2626;" onclick="setWBColor('${mountId}', '#dc2626', this)"></div>
+          <div class="color-dot" style="background:#0284c7;" onclick="setWBColor('${mountId}', '#0284c7', this)"></div>
+          <div class="color-dot" style="background:#059669;" onclick="setWBColor('${mountId}', '#059669', this)"></div>
+          <div class="color-dot" style="background:#0f172a;" onclick="setWBColor('${mountId}', '#0f172a', this)"></div>
+          <select onchange="setWBSize('${mountId}', this.value)" style="padding:5px 8px; border-radius:8px; border:1.5px solid #cbd5e1; font-size:12.5px; font-weight:700;">
+            <option value="2.5">Nét mảnh</option><option value="4" selected>Nét vừa</option><option value="7">Nét đậm</option>
+          </select>
+        </div>
+        <div class="wb-tool-group">
+          <button type="button" class="wb-btn snip-btn" onclick="startSnipForWB('${mountId}')">✂️ Cắt ảnh màn hình đưa xuống đây</button>
+          <label class="wb-btn" style="margin:0;">🖼️ Chèn ảnh<input type="file" accept="image/*" style="display:none;" onchange="uploadImgToWB('${mountId}', this)"></label>
+          <button type="button" class="wb-btn" onclick="undoWB('${mountId}')">↩️ Hoàn tác</button>
+          <button type="button" class="wb-btn" onclick="changeWBHeight('${mountId}', 200)">➕ Mở rộng bảng</button>
+          <button type="button" class="wb-btn" onclick="clearWBInk('${mountId}')">🧹 Xóa nét</button>
+          <button type="button" class="wb-btn" style="color:#be123c;" onclick="clearWBAll('${mountId}')">🗑️ Xóa hết</button>
+        </div>
+      </div>
+      <div class="wb-stage" id="${mountId}-stage" style="height:${initialHeight}px;">
+        <canvas class="wb-bg-canvas" id="${mountId}-bg"></canvas>
+        <canvas class="wb-ink-canvas" id="${mountId}-ink"></canvas>
+      </div>
+    </div>
+  `;
+  const stage = document.getElementById(`${mountId}-stage`), bgCanvas = document.getElementById(`${mountId}-bg`), inkCanvas = document.getElementById(`${mountId}-ink`);
+  const state = { id: mountId, stage, bgCanvas, inkCanvas, bgCtx: bgCanvas.getContext('2d'), inkCtx: inkCanvas.getContext('2d'), tool: 'pen', color: '#dc2626', size: 4, drawing: false, lastPt: null, history: [], images: [], dragImg: null, resizingImg: null, dragOffset: { x: 0, y: 0 } };
+  WB_REGISTRY[mountId] = state; resizeWB(mountId); bindWBEvents(state);
+}
+function resizeWB(id) {
+  const st = WB_REGISTRY[id]; if (!st) return;
+  const rect = st.stage.getBoundingClientRect(); if (rect.width < 10 || rect.height < 10) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), tW = Math.round(rect.width * dpr), tH = Math.round(rect.height * dpr);
+  if (st.inkCanvas.width === tW && st.inkCanvas.height === tH) return;
+  const tmp = document.createElement('canvas'); tmp.width = st.inkCanvas.width; tmp.height = st.inkCanvas.height;
+  if (tmp.width > 0 && tmp.height > 0) tmp.getContext('2d').drawImage(st.inkCanvas, 0, 0);
+  st.bgCanvas.width = tW; st.bgCanvas.height = tH; st.inkCanvas.width = tW; st.inkCanvas.height = tH;
+  st.bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0); st.inkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (tmp.width > 0 && tmp.height > 0) { st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.drawImage(tmp,0,0); st.inkCtx.restore(); }
+  redrawWBImages(st);
+}
+function redrawWBImages(st) {
+  const rect = st.stage.getBoundingClientRect(); st.bgCtx.clearRect(0, 0, rect.width || 2000, rect.height || 2000);
+  st.images.forEach(it => {
+    st.bgCtx.drawImage(it.img, it.x, it.y, it.w, it.h);
+    if (st.tool === 'move') {
+      st.bgCtx.save(); st.bgCtx.strokeStyle = '#0f766e'; st.bgCtx.lineWidth = 2; st.bgCtx.setLineDash([6,4]); st.bgCtx.strokeRect(it.x, it.y, it.w, it.h); st.bgCtx.setLineDash([]); st.bgCtx.fillStyle = '#0f766e'; st.bgCtx.fillRect(it.x + it.w - 14, it.y + it.h - 14, 14, 14); st.bgCtx.restore();
+    }
+  });
+}
+function saveWBHistory(st) { if (!st.inkCanvas.width) return; if (st.history.length >= 15) st.history.shift(); const s = document.createElement('canvas'); s.width = st.inkCanvas.width; s.height = st.inkCanvas.height; s.getContext('2d').drawImage(st.inkCanvas, 0, 0); st.history.push(s); }
+function bindWBEvents(st) {
+  const cv = st.inkCanvas;
+  const getPos = e => { const r = cv.getBoundingClientRect(), p = (e.touches && e.touches[0]) ? e.touches[0] : e; return { x: p.clientX - r.left, y: p.clientY - r.top }; };
+  cv.addEventListener('pointerdown', e => {
+    if (e.button !== undefined && e.button !== 0) return; e.preventDefault(); const pos = getPos(e);
+    if (st.tool === 'move') {
+      for (let i = st.images.length - 1; i >= 0; i--) {
+        const it = st.images[i];
+        if (pos.x >= it.x + it.w - 22 && pos.x <= it.x + it.w + 8 && pos.y >= it.y + it.h - 22 && pos.y <= it.y + it.h + 8) { st.resizingImg = it; return; }
+        if (pos.x >= it.x && pos.x <= it.x + it.w && pos.y >= it.y && pos.y <= it.y + it.h) { st.dragImg = it; st.dragOffset = { x: pos.x - it.x, y: pos.y - it.y }; return; }
+      }
+      return;
+    }
+    saveWBHistory(st); st.drawing = true; st.lastPt = pos; const ctx = st.inkCtx;
+    ctx.beginPath(); ctx.moveTo(pos.x, pos.y); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    if (st.tool === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = 26; ctx.strokeStyle = 'rgba(0,0,0,1)'; }
+    else if (st.tool === 'hl') { ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = 20; ctx.strokeStyle = 'rgba(250,204,21,0.35)'; }
+    else { ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = st.size; ctx.strokeStyle = st.color; }
+    ctx.lineTo(pos.x + 0.1, pos.y + 0.1); ctx.stroke();
+  });
+  cv.addEventListener('pointermove', e => {
+    if (st.tool === 'move') {
+      if (!st.dragImg && !st.resizingImg) return; e.preventDefault(); const pos = getPos(e);
+      if (st.resizingImg) { const ratio = st.resizingImg.aspect || (st.resizingImg.w / st.resizingImg.h); st.resizingImg.w = Math.max(80, pos.x - st.resizingImg.x); st.resizingImg.h = st.resizingImg.w / ratio; }
+      else if (st.dragImg) { st.dragImg.x = pos.x - st.dragOffset.x; st.dragImg.y = pos.y - st.dragOffset.y; }
+      redrawWBImages(st); return;
+    }
+    if (!st.drawing) return; e.preventDefault(); const pos = getPos(e);
+    st.inkCtx.quadraticCurveTo(st.lastPt.x, st.lastPt.y, (st.lastPt.x + pos.x) / 2, (st.lastPt.y + pos.y) / 2); st.inkCtx.stroke(); st.lastPt = pos;
+  });
+  window.addEventListener('pointerup', () => { st.drawing = false; st.dragImg = null; st.resizingImg = null; st.inkCtx.globalCompositeOperation = 'source-over'; });
+}
+function setWBTool(id, tool) { const st = WB_REGISTRY[id]; if (!st) return; st.tool = tool; ['pen','hl','eraser','move'].forEach(t => { const b = document.getElementById(`${id}-tool-${t}`); if (b) b.classList.toggle('active', t === tool); }); redrawWBImages(st); }
+function setWBColor(id, c, el) { const st = WB_REGISTRY[id]; if (!st) return; st.color = c; if (st.tool === 'eraser' || st.tool === 'move') setWBTool(id, 'pen'); el.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active')); el.classList.add('active'); }
+function setWBSize(id, v) { if (WB_REGISTRY[id]) WB_REGISTRY[id].size = parseFloat(v); }
+function undoWB(id) { const st = WB_REGISTRY[id]; if (!st || !st.history.length) return; const p = st.history.pop(); st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.clearRect(0,0,st.inkCanvas.width,st.inkCanvas.height); st.inkCtx.drawImage(p,0,0); st.inkCtx.restore(); }
+function clearWBInk(id) { const st = WB_REGISTRY[id]; if (!st) return; saveWBHistory(st); st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.clearRect(0,0,st.inkCanvas.width,st.inkCanvas.height); st.inkCtx.restore(); }
+function clearWBAll(id) { const st = WB_REGISTRY[id]; if (!st) return; clearWBInk(id); st.images = []; redrawWBImages(st); }
+function changeWBHeight(id, d) { const st = WB_REGISTRY[id]; if (!st) return; st.stage.style.height = `${Math.max(300, st.stage.offsetHeight + d)}px`; resizeWB(id); }
+function toggleInlineWB(wrapId, wbId) { const w = document.getElementById(wrapId); if (!w) return; if (w.style.display === 'none' || !w.style.display) { w.style.display = 'block'; createSmartWhiteboard(wbId, 'Bảng viết giải bài', 420); setTimeout(() => resizeWB(wbId), 30); } else w.style.display = 'none'; }
+function addImageElementToWB(id, imgObj) {
+  const st = WB_REGISTRY[id]; if (!st) return; resizeWB(id);
+  const r = st.stage.getBoundingClientRect(), drawW = Math.min(imgObj.width, Math.max(260, r.width - 40)), ratio = imgObj.width / imgObj.height, drawH = drawW / ratio;
+  if (drawH > r.height * 0.68 && drawH + 220 > r.height) { st.stage.style.height = `${Math.round(drawH + 220)}px`; resizeWB(id); }
+  st.images.push({ img: imgObj, x: Math.max(16, (st.stage.getBoundingClientRect().width - drawW) / 2), y: 16, w: drawW, h: drawH, aspect: ratio });
+  setWBTool(id, 'pen'); redrawWBImages(st);
+}
+function uploadImgToWB(id, inp) { const f = inp.files && inp.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = ev => { const im = new Image(); im.onload = () => addImageElementToWB(id, im); im.src = ev.target.result; }; rd.readAsDataURL(f); inp.value = ''; }
+function startSnipForWB(id) { activeSnipTargetWB = id; document.getElementById('snip-floating-bar').style.display = 'flex'; }
+function cancelSnipMode() { activeSnipTargetWB = null; document.getElementById('snip-floating-bar').style.display = 'none'; document.getElementById('snip-overlay').style.display = 'none'; document.getElementById('snip-rect').style.display = 'none'; }
+function beginSnipDragMode() {
+  document.getElementById('snip-floating-bar').style.display = 'none';
+  const ov = document.getElementById('snip-overlay'), rc = document.getElementById('snip-rect'); ov.style.display = 'block'; rc.style.display = 'none';
+  let sx = 0, sy = 0, drag = false;
+  function down(e) { e.preventDefault(); const p = (e.touches && e.touches[0]) ? e.touches[0] : e; sx = p.clientX; sy = p.clientY; drag = true; rc.style.left = `${sx}px`; rc.style.top = `${sy}px`; rc.style.width = '0px'; rc.style.height = '0px'; rc.style.display = 'block'; }
+  function move(e) { if (!drag) return; e.preventDefault(); const p = (e.touches && e.touches[0]) ? e.touches[0] : e; rc.style.left = `${Math.min(sx, p.clientX)}px`; rc.style.top = `${Math.min(sy, p.clientY)}px`; rc.style.width = `${Math.abs(p.clientX - sx)}px`; rc.style.height = `${Math.abs(p.clientY - sy)}px`; }
+  async function up() {
+    if (!drag) return; drag = false; ov.removeEventListener('pointerdown', down); ov.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+    const box = rc.getBoundingClientRect(); ov.style.display = 'none'; rc.style.display = 'none';
+    if (box.width < 20 || box.height < 20 || !activeSnipTargetWB) { cancelSnipMode(); return; }
+    const target = activeSnipTargetWB; activeSnipTargetWB = null;
+    if (window.html2canvas) {
+      const snap = await window.html2canvas(document.body, { x: box.left + window.scrollX, y: box.top + window.scrollY, width: box.width, height: box.height, scale: Math.min(window.devicePixelRatio || 2, 2), backgroundColor: '#ffffff', useCORS: true, logging: false });
+      const im = new Image(); im.onload = () => { addImageElementToWB(target, im); document.getElementById(target).scrollIntoView({ behavior: 'smooth', block: 'center' }); }; im.src = snap.toDataURL('image/png');
+    }
+  }
+  ov.addEventListener('pointerdown', down); ov.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+}
+
+window.addEventListener('resize', () => Object.keys(WB_REGISTRY).forEach(id => resizeWB(id)));
+window.addEventListener('DOMContentLoaded', () => {
+  createSmartWhiteboard('wb-g7b2-tab4', 'Bảng viết nháp chung Phần 4', 450);
+  renderB2Quiz();
+  drawStopwatchSim();
+  drawPhotogateSim();
+  drawBrakeSim();
+});
+</script>
+</body>
+</html>
