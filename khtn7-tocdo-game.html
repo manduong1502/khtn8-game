@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trò Chơi KHTN 7: Chinh Phục Chương III - Tốc Độ (3 Buổi)</title>
+<style>
+  :root {
+    --primary: #0284c7;
+    --secondary: #4f46e5;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg-grad: linear-gradient(135deg, #0c4a6e 0%, #1e3a8a 50%, #312e81 100%);
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
+  body { background: var(--bg-grad); min-height: 100vh; color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 16px; }
+
+  .game-wrapper { width: 100%; max-width: 780px; margin: auto; }
+  .hud-bar { background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.25); border-radius: 18px; padding: 12px 18px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+  .hud-pill { background: rgba(15,23,42,0.45); padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; }
+
+  .screen { display: none; background: var(--card); border-radius: 24px; padding: 26px 22px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); animation: popIn 0.25s ease; }
+  .screen.active { display: block; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hero-badge { display: inline-block; background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 13px; padding: 6px 14px; border-radius: 999px; margin-bottom: 10px; }
+  h1.game-title { font-size: 25px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+  .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 18px; line-height: 1.5; }
+
+  .input-group { margin-bottom: 16px; }
+  .input-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #334155; }
+  .text-input { width: 100%; padding: 13px 16px; border: 2px solid #cbd5e1; border-radius: 14px; font-size: 16px; font-weight: 600; outline: none; }
+  .text-input:focus { border-color: var(--primary); }
+
+  .avatar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 20px; }
+  @media (max-width: 600px) { .avatar-grid { grid-template-columns: repeat(3, 1fr); } }
+  .avatar-card { border: 2px solid #e2e8f0; border-radius: 14px; padding: 10px 4px; font-size: 26px; text-align: center; cursor: pointer; background: #f8fafc; }
+  .avatar-card.selected { border-color: var(--primary); background: #e0f2fe; }
+
+  .stage-btn-list { display: flex; flex-direction: column; gap: 12px; }
+  .stage-btn {
+    border: none; border-radius: 16px; padding: 16px 18px; color: white; font-size: 16px; font-weight: 800;
+    cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15); transition: transform 0.15s;
+  }
+  .stage-btn:hover { transform: translateY(-2px); }
+  .stage-btn.s1 { background: linear-gradient(135deg, #0284c7, #2563eb); }
+  .stage-btn.s2 { background: linear-gradient(135deg, #0f766e, #0d9488); }
+  .stage-btn.s3 { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+
+  .progress-track { width: 100%; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 16px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #0ea5e9, #6366f1); width: 0%; transition: width 0.3s; }
+
+  .q-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 18px; padding: 18px; font-size: 18px; font-weight: 700; line-height: 1.5; color: #0f172a; margin-bottom: 12px; }
+  .hint-box { display: none; background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 14.5px; color: #92400e; margin-bottom: 12px; }
+
+  .opts-list { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn { background: white; border: 2px solid #cbd5e1; border-radius: 14px; padding: 13px 16px; font-size: 16px; font-weight: 600; color: #1e293b; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+  .opt-letter { width: 32px; height: 32px; border-radius: 9px; background: #e2e8f0; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .opt-btn.correct { border-color: #10b981; background: #ecfdf5; color: #065f46; }
+  .opt-btn.correct .opt-letter { background: #10b981; color: white; }
+  .opt-btn.wrong { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+  .opt-btn.wrong .opt-letter { background: #ef4444; color: white; }
+
+  .explain-panel { display: none; margin-top: 14px; padding: 13px 16px; border-radius: 14px; background: #eff6ff; border-left: 5px solid #0284c7; font-size: 15px; line-height: 1.5; color: #0c4a6e; }
+
+  .score-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px 0; }
+  .stat-card { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 14px 10px; text-align: center; }
+  .stat-card .num { font-size: 24px; font-weight: 900; color: var(--primary); }
+  .stat-card .txt { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .email-notice { background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; padding: 12px 16px; border-radius: 14px; font-size: 14.5px; margin-bottom: 16px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="game-wrapper">
+  <div class="hud-bar">
+    <div class="hud-pill" id="hud-player">🐰 Học sinh</div>
+    <div class="hud-pill" id="hud-score">⭐ Điểm: 0 XP</div>
+    <div class="hud-pill" id="hud-streak">🔥 Chuỗi đúng: 0</div>
+  </div>
+
+  <!-- MÀN HÌNH CHÍNH -->
+  <div id="screen-home" class="screen active">
+    <span class="hero-badge">🏃 KHTN 7 - CHƯƠNG III: TỐC ĐỘ (3 CHẶNG ÔN LUYỆN)</span>
+    <h1 class="game-title">Đường Đua Tốc Độ & An Toàn Giao Thông</h1>
+    <p class="subtitle">Câu hỏi ngắn gọn, dễ hiểu, mỗi câu đều có nút <strong>💡 Gợi ý cách tính</strong> hỗ trợ khi cần. Mỗi lần chơi hệ thống tự đảo câu và đáp án!</p>
+
+    <div class="input-group">
+      <label for="student-name">1. Nhập họ và tên của em để nộp bài cho cô:</label>
+      <input type="text" id="student-name" class="text-input" placeholder="Ví dụ: Lê Bảo Ngọc...">
+    </div>
+
+    <div class="input-group">
+      <label>2. Chọn nhân vật đồng hành:</label>
+      <div class="avatar-grid">
+        <div class="avatar-card selected" onclick="pickAvatar('🐰', this)">🐰</div>
+        <div class="avatar-card" onclick="pickAvatar('🐼', this)">🐼</div>
+        <div class="avatar-card" onclick="pickAvatar('🦊', this)">🦊</div>
+        <div class="avatar-card" onclick="pickAvatar('🐬', this)">🐬</div>
+        <div class="avatar-card" onclick="pickAvatar('🦁', this)">🦁</div>
+        <div class="avatar-card" onclick="pickAvatar('🚀', this)">🚀</div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>3. Chọn bài tập buổi học cô giao:</label>
+      <div class="stage-btn-list">
+        <button class="stage-btn s1" id="btn-buoi-1" onclick="startStage(1)">
+          <span>🏁 Chặng 1 - Buổi 1: Đổi đơn vị & Công thức Tốc độ (Bài 8)</span>
+          <span>10 câu &rarr;</span>
+        </button>
+        <button class="stage-btn s2" id="btn-buoi-2" onclick="startStage(2)">
+          <span>🚦 Chặng 2 - Buổi 2: Đo tốc độ & An toàn giao thông (Bài 9 & 11)</span>
+          <span>10 câu &rarr;</span>
+        </button>
+        <button class="stage-btn s3" id="btn-buoi-3" onclick="startStage(3)">
+          <span>📈 Chặng 3 - Buổi 3: Đồ thị s - t & Tổng hợp Chương III (Bài 10)</span>
+          <span>10 câu &rarr;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MÀN HÌNH LÀM BÀI -->
+  <div id="screen-quiz" class="screen">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <span id="q-counter" style="font-weight:800; color:#0369a1; font-size:15px;">Câu 1 / 10</span>
+      <button onclick="toggleCurrentHint()" style="background:#fef3c7; color:#b45309; border:1.5px solid #fcd34d; padding:6px 12px; border-radius:999px; font-weight:800; font-size:13px; cursor:pointer;">💡 Xem gợi ý cách làm</button>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="q-progress"></div></div>
+
+    <div class="q-box" id="q-text"></div>
+    <div class="hint-box" id="q-hint"></div>
+    <div class="opts-list" id="q-options"></div>
+    <div class="explain-panel" id="q-explain"></div>
+
+    <button class="stage-btn s1" id="btn-next-q" style="display:none; margin-top:16px; width:100%; justify-content:center;" onclick="nextQ()">Câu tiếp theo &rarr;</button>
+  </div>
+
+  <!-- MÀN HÌNH KẾT QUẢ -->
+  <div id="screen-result" class="screen" style="text-align:center;">
+    <div style="font-size:62px; margin-bottom:6px;" id="res-trophy">🏆</div>
+    <span class="hero-badge" id="res-badge">TAY ĐUA TỐC ĐỘ XUẤT SẮC</span>
+    <h2 id="res-title" style="font-size:22px; margin-bottom:6px;">Hoàn thành bài tập!</h2>
+    <div class="score-stats">
+      <div class="stat-card"><div class="num" id="res-xp">0</div><div class="txt">Điểm XP</div></div>
+      <div class="stat-card"><div class="num" id="res-correct">0/10</div><div class="txt">Số câu đúng</div></div>
+      <div class="stat-card"><div class="num" id="res-acc">0%</div><div class="txt">Độ chính xác</div></div>
+    </div>
+    <div class="email-notice" id="email-status">⏳ Đang gửi kết quả bài làm về email của cô...</div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="stage-btn s1" style="flex:1; justify-content:center;" onclick="startStage(currentStageNum)">🔄 Làm lại chặng này</button>
+      <button class="stage-btn s2" style="flex:1; justify-content:center;" onclick="showScreen('screen-home')">🏠 Chọn chặng khác</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TEACHER_EMAIL = "thaomy1005@gmail.com";
+
+const STAGE_BANKS = {
+  1: [
+    { q: "Đổi đơn vị quãng đường: 2 km bằng bao nhiêu mét (m)?", correct: "2 000 m", wrongs: ["200 m", "20 m", "0,2 m"], hint: "1 km = 1 000 m, em lấy 2 nhân với 1 000 nhé!", explain: "2 km = 2 × 1 000 = 2 000 m." },
+    { q: "Đổi thời gian: 30 phút bằng bao nhiêu giờ (h)?", correct: "0,5 giờ", wrongs: ["0,3 giờ", "3 giờ", "30 giờ"], hint: "Đổi phút sang giờ ta lấy số phút CHIA 60: lấy 30 : 60.", explain: "30 phút = 30 : 60 = 0,5 giờ." },
+    { q: "Đổi thời gian: 15 phút bằng bao nhiêu giờ (h)?", correct: "0,25 giờ", wrongs: ["0,15 giờ", "1,5 giờ", "0,5 giờ"], hint: "Em lấy 15 chia cho 60 nhé!", explain: "15 phút = 15 : 60 = 0,25 giờ." },
+    { q: "Công thức đúng để tính tốc độ chuyển động v là:", correct: "v = s / t", wrongs: ["v = s · t", "v = t / s", "v = s + t"], hint: "Trong Tam giác công thức, s nằm ở đỉnh trên, v và t nằm ở dưới.", explain: "Công thức chuẩn: v = s / t (quãng đường chia thời gian)." },
+    { q: "Muốn tính quãng đường s khi biết tốc độ v và thời gian t, ta dùng phép tính nào?", correct: "s = v · t (nhân nhau)", wrongs: ["s = v / t", "s = t / v", "s = v - t"], hint: "Che chữ s trên đỉnh Tam giác đi, còn v và t đứng cạnh nhau!", explain: "Quãng đường bằng tốc độ nhân thời gian: s = v · t." },
+    { q: "Đổi đơn vị tốc độ: 10 m/s bằng bao nhiêu km/h?", correct: "36 km/h", wrongs: ["3,6 km/h", "100 km/h", "13,6 km/h"], hint: "Từ m/s sang km/h ta NHÂN với 3,6!", explain: "10 m/s × 3,6 = 36 km/h." },
+    { q: "Đổi đơn vị tốc độ: 72 km/h bằng bao nhiêu m/s?", correct: "20 m/s", wrongs: ["7,2 m/s", "25 m/s", "259,2 m/s"], hint: "Từ km/h sang m/s ta CHIA cho 3,6!", explain: "72 : 3,6 = 20 m/s." },
+    { q: "Một bạn chạy bộ hết quãng đường 80 m trong 10 giây. Tốc độ chạy của bạn là:", correct: "8 m/s", wrongs: ["800 m/s", "70 m/s", "0,8 m/s"], hint: "Lấy quãng đường s = 80 chia thời gian t = 10.", explain: "v = s / t = 80 / 10 = 8 m/s." },
+    { q: "Một xe máy đi đều với tốc độ 40 km/h trong 2 giờ thì đi được quãng đường là:", correct: "80 km", wrongs: ["20 km", "42 km", "60 km"], hint: "Dùng công thức s = v × t.", explain: "s = 40 × 2 = 80 km." },
+    { q: "Nhà Lan cách trường 6 km. Lan đạp xe với tốc độ 12 km/h thì mất bao lâu để tới trường?", correct: "0,5 giờ (30 phút)", wrongs: ["2 giờ", "72 giờ", "6 phút"], hint: "Tìm thời gian t = s / v = 6 : 12.", explain: "t = s / v = 6 / 12 = 0,5 giờ = 30 phút." },
+    { q: "Bạn Hùng đi xe đạp được 4 km trong 15 phút (0,25 giờ). Tốc độ của Hùng là:", correct: "16 km/h", wrongs: ["1 km/h", "60 km/h", "4,25 km/h"], hint: "Lấy s = 4 km chia cho t = 0,25 giờ.", explain: "v = 4 / 0,25 = 16 km/h." },
+    { q: "Đơn vị chính thức thường dùng để đo tốc độ ở nước ta là:", correct: "m/s và km/h", wrongs: ["kg và g", "Lít và mL", "mét vuông"], hint: "Ghép đơn vị quãng đường chia cho đơn vị thời gian!", explain: "Đơn vị đo tốc độ là m/s và km/h." }
+  ],
+  2: [
+    { q: "Để đo tốc độ của một chiếc xe đồ chơi trong phòng thí nghiệm, ta cần đo hai đại lượng nào?", correct: "Quãng đường s và thời gian t", wrongs: ["Cân nặng và chiều dài xe", "Thể tích và thời gian", "Số bánh xe và quãng đường"], hint: "Nhìn vào công thức v = s / t cần 2 chữ gì nhé!", explain: "Đo quãng đường s và thời gian t rồi chia v = s / t." },
+    { q: "Dụng cụ nào giúp tự động bật và dừng đồng hồ chính xác bằng tia sáng trong phòng thí nghiệm?", correct: "Cổng quang điện nối với đồng hồ đo thời gian hiện số", wrongs: ["Thước cuộn", "Cân đồng hồ", "Nhiệt kế"], hint: "Tên dụng cụ có chữ 'quang điện'!", explain: "Cổng quang điện kết hợp đồng hồ đo thời gian hiện số." },
+    { q: "Khi đo tốc độ bằng đồng hồ bấm giây 3 lần được: t₁ = 2,1 s; t₂ = 1,9 s; t₃ = 2,0 s. Thời gian trung bình là:", correct: "2,0 s", wrongs: ["6,0 s", "3,0 s", "1,9 s"], hint: "Cộng cả 3 số lại rồi chia cho 3: (2,1 + 1,9 + 2,0) : 3.", explain: "(2,1 + 1,9 + 2,0) : 3 = 6,0 : 3 = 2,0 s." },
+    { q: "Hai cổng quang điện cách nhau s = 0,8 m. Xe lăn đi từ cổng 1 đến cổng 2 mất t = 0,4 s. Tốc độ xe là:", correct: "2 m/s", wrongs: ["0,32 m/s", "0,5 m/s", "4 m/s"], hint: "Lấy s = 0,8 chia cho t = 0,4.", explain: "v = 0,8 / 0,4 = 2 m/s." },
+    { q: "Thiết bị 'bắn tốc độ' trên đường giao thông dùng để làm gì?", correct: "Kiểm tra tốc độ xe xem có vượt quá tốc độ giới hạn quy định không", wrongs: ["Đo cân nặng xe tải", "Đếm số hành khách", "Đo chiều rộng mặt đường"], hint: "Cảnh sát giao thông dùng máy này để phát hiện xe phóng nhanh quá mức!", explain: "Kiểm tra các phương tiện có vi phạm tốc độ tối đa không." },
+    { q: "Biển báo hình tròn nền trắng, viền đỏ, ở giữa ghi số '50' màu đen có nghĩa là:", correct: "Tốc độ tối đa cho phép là 50 km/h (không được đi quá 50 km/h)", wrongs: ["Bắt buộc đi trên 50 km/h", "Hai xe cách nhau 50 m", "Đường dài 50 km"], hint: "Viền ĐỎ là biển cấm vượt quá!", explain: "Tốc độ tối đa cho phép là 50 km/h." },
+    { q: "Biển báo hình tròn nền xanh dương, chữ số '60' màu trắng có nghĩa là:", correct: "Tốc độ tối thiểu cho phép là 60 km/h (không được đi chậm hơn 60 km/h)", wrongs: ["Cấm đi quá 60 km/h", "Cấm rẽ trái", "Khoảng cách 60 m"], hint: "Nền XANH là tốc độ tối thiểu!", explain: "Xe cơ giới phải chạy từ 60 km/h trở lên." },
+    { q: "Theo bảng quy định khi đường khô ráo, xe chạy tốc độ 60 km/h cần giữ khoảng cách an toàn tối thiểu là:", correct: "35 m", wrongs: ["10 m", "55 m", "100 m"], hint: "Mốc đầu tiên trong bảng SGK ứng với 60 km/h!", explain: "Ứng với v = 60 km/h, khoảng cách an toàn tối thiểu là 35 m." },
+    { q: "Một ô tô đang chạy trên cao tốc với tốc độ 20 m/s. Theo quy tắc '3 giây', khoảng cách an toàn tối thiểu là:", correct: "60 m", wrongs: ["23 m", "30 m", "6 m"], hint: "Nhân tốc độ (20 m/s) với 3 giây!", explain: "Khoảng cách an toàn = 20 m/s × 3 s = 60 m." },
+    { q: "Khi trời mưa to làm mặt đường trơn ướt, người lái xe cần xử lí thế nào để an toàn?", correct: "Giảm tốc độ và giữ khoảng cách xa hơn bình thường với xe trước", wrongs: ["Phóng nhanh hơn để về sớm", "Bám thật sát đuôi xe trước", "Không cần thay đổi gì"], hint: "Đường trơn làm xe trượt dài hơn khi đạp phanh!", explain: "Cần giảm tốc độ và tăng khoảng cách an toàn." }
+  ],
+  3: [
+    { q: "Khi vẽ đồ thị quãng đường - thời gian, trục nằm ngang Ot và trục thẳng đứng Os biểu diễn:", correct: "Ot biểu diễn thời gian t, Os biểu diễn quãng đường s", wrongs: ["Ot biểu diễn khối lượng, Os biểu diễn thể tích", "Ot biểu diễn quãng đường, Os biểu diễn thời gian", "Cả hai trục đều biểu diễn thời gian"], hint: "Chữ t là thời gian (nằm ngang), chữ s là quãng đường (thẳng đứng).", explain: "Trục hoành nằm ngang là Ot, trục tung thẳng đứng là Os." },
+    { q: "Đồ thị quãng đường - thời gian của một vật chuyển động thẳng với tốc độ không đổi là:", correct: "Một đường thẳng nằm nghiêng", wrongs: ["Một hình tròn", "Một đường dích dắc", "Một điểm duy nhất"], hint: "Quãng đường tăng đều theo thời gian tạo thành đường thẳng đi lên!", explain: "Đường thẳng nằm nghiêng biểu diễn tốc độ không đổi." },
+    { q: "Trên đồ thị quãng đường - thời gian, nếu có một đoạn thẳng NẰM NGANG (song song trục Ot) thì lúc đó vật đang:", correct: "Đứng yên (dừng lại nghỉ, tốc độ bằng 0)", wrongs: ["Chuyển động nhanh dần", "Chuyển động đều", "Tăng tốc gấp đôi"], hint: "Thời gian trôi nhưng quãng đường s giữ nguyên không đổi!", explain: "Đoạn nằm ngang chứng tỏ quãng đường không tăng ⇒ Vật đứng yên." },
+    { q: "Trên cùng một hình đồ thị s - t của hai xe A và B xuất phát từ gốc O, đường biểu diễn của xe A DỐC CAO HƠN của xe B. Điều đó cho biết:", correct: "Xe A đi nhanh hơn xe B (v_A > v_B)", wrongs: ["Xe A đi chậm hơn xe B", "Hai xe đi cùng tốc độ", "Xe A đang đứng yên"], hint: "Đường càng dốc dựng lên cao thì trong cùng thời gian đi được quãng đường càng xa!", explain: "Đường dốc hơn ứng với tốc độ lớn hơn." },
+    { q: "Trên đồ thị s - t, đường thẳng đi qua điểm có t = 2 giờ và s = 30 km. Tốc độ của vật là:", correct: "15 km/h", wrongs: ["30 km/h", "60 km/h", "28 km/h"], hint: "Lấy s = 30 km chia cho t = 2 giờ!", explain: "v = s / t = 30 / 2 = 15 km/h." },
+    { q: "Một bạn đi bộ có đồ thị đi từ O(0; 0) thẳng qua điểm (4 s; 8 m). Sau 6 giây bạn đó đi được quãng đường là:", correct: "12 m", wrongs: ["8 m", "10 m", "24 m"], hint: "Tính tốc độ v = 8 : 4 = 2 m/s, rồi nhân với 6 giây!", explain: "v = 8 / 4 = 2 m/s ⇒ Sau 6 s đi được s = 2 × 6 = 12 m." },
+    { q: "Đồ thị của một người đi xe đạp có đoạn nằm ngang kéo dài từ t = 1 h đến t = 2,5 h. Người đó đã dừng nghỉ trong bao lâu?", correct: "1,5 giờ", wrongs: ["2,5 giờ", "1 giờ", "3,5 giờ"], hint: "Lấy mốc thời gian cuối đoạn ngang trừ mốc đầu đoạn ngang: 2,5 - 1.", explain: "Thời gian dừng nghỉ: 2,5 - 1 = 1,5 giờ." },
+    { q: "Đổi đơn vị: 54 km/h bằng bao nhiêu m/s?", correct: "15 m/s", wrongs: ["20 m/s", "10 m/s", "5,4 m/s"], hint: "Chia 54 cho 3,6!", explain: "54 : 3,6 = 15 m/s." },
+    { q: "Một ô tô đi với tốc độ 60 km/h trong 30 phút (0,5 giờ). Quãng đường ô tô đi được là:", correct: "30 km", wrongs: ["120 km", "60 km", "180 km"], hint: "Dùng công thức s = v × t = 60 × 0,5.", explain: "s = 60 × 0,5 = 30 km." },
+    { q: "Một xe chạy trên cao tốc với tốc độ 25 m/s (tức 90 km/h). Theo quy tắc '3 giây', khoảng cách an toàn cần giữ là:", correct: "75 m", wrongs: ["28 m", "50 m", "90 m"], hint: "Lấy 25 m/s nhân với 3 giây!", explain: "Khoảng cách an toàn = 25 × 3 = 75 m." }
+  ]
+};
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let studentName = "Học sinh";
+let avatar = "🐰";
+let xp = 0, streak = 0, correctTotal = 0, qIdx = 0;
+let currentStageNum = 1;
+let roundQs = [], wrongLog = [];
+
+function pickAvatar(e, el) {
+  avatar = e;
+  document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  updateHud();
+}
+
+function updateHud() {
+  document.getElementById('hud-player').innerText = `${avatar} ${studentName}`;
+  document.getElementById('hud-score').innerText = `⭐ Điểm: ${xp} XP`;
+  document.getElementById('hud-streak').innerText = `🔥 Chuỗi đúng: ${streak}`;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startStage(stageNum) {
+  const inp = document.getElementById('student-name').value.trim();
+  if (!inp) {
+    alert("Em hãy nhập họ và tên của mình ở ô số 1 trước khi bắt đầu để gửi kết quả cho cô nhé!");
+    document.getElementById('student-name').focus();
+    return;
+  }
+  studentName = inp;
+  currentStageNum = stageNum;
+  xp = 0; streak = 0; correctTotal = 0; qIdx = 0; wrongLog = [];
+  updateHud();
+
+  const bank = STAGE_BANKS[stageNum] || STAGE_BANKS[1];
+  roundQs = shuffle(bank).slice(0, 10).map(item => {
+    const opts = shuffle([item.correct, ...item.wrongs]);
+    return {
+      q: item.q,
+      opts,
+      ans: opts.indexOf(item.correct),
+      correctText: item.correct,
+      hint: item.hint,
+      explain: item.explain
+    };
+  });
+
+  showScreen('screen-quiz');
+  renderQ();
+}
+
+function toggleCurrentHint() {
+  const hb = document.getElementById('q-hint');
+  hb.style.display = (hb.style.display === 'block') ? 'none' : 'block';
+}
+
+function renderQ() {
+  const total = roundQs.length;
+  const item = roundQs[qIdx];
+  document.getElementById('q-counter').innerText = `Buổi ${currentStageNum} • Câu ${qIdx + 1} / ${total}`;
+  document.getElementById('q-progress').style.width = `${(qIdx / total) * 100}%`;
+  document.getElementById('q-text').innerText = item.q;
+  const hb = document.getElementById('q-hint');
+  hb.style.display = 'none';
+  hb.innerHTML = `💡 <strong>Gợi ý:</strong> ${item.hint}`;
+  document.getElementById('q-explain').style.display = 'none';
+  document.getElementById('btn-next-q').style.display = 'none';
+
+  const box = document.getElementById('q-options');
+  box.innerHTML = '';
+  item.opts.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.innerHTML = `<span class="opt-letter">${['A','B','C','D'][i]}</span><span>${opt}</span>`;
+    b.onclick = () => chooseOpt(i);
+    box.appendChild(b);
+  });
+}
+
+function chooseOpt(chosen) {
+  const item = roundQs[qIdx];
+  document.querySelectorAll('#q-options .opt-btn').forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === item.ans) b.classList.add('correct');
+    else if (idx === chosen) b.classList.add('wrong');
+  });
+
+  const exp = document.getElementById('q-explain');
+  exp.style.display = 'block';
+  if (chosen === item.ans) {
+    streak++; correctTotal++;
+    const bonus = Math.min(streak * 10, 50);
+    xp += 100 + bonus;
+    exp.innerHTML = `✅ <strong>Đúng rồi! Giỏi quá (+${100 + bonus} XP)</strong><br>${item.explain}`;
+  } else {
+    streak = 0;
+    wrongLog.push({ cauHoi: item.q, daChon: item.opts[chosen], dapAnDung: item.correctText });
+    exp.innerHTML = `❌ <strong>Chưa chính xác!</strong> Đáp án đúng là: <strong>${item.correctText}</strong><br>${item.explain}`;
+  }
+  updateHud();
+  const nb = document.getElementById('btn-next-q');
+  nb.style.display = 'flex';
+  nb.innerText = (qIdx === roundQs.length - 1) ? "🏁 Xem điểm & Nộp bài cho cô" : "Câu tiếp theo →";
+}
+
+function nextQ() {
+  qIdx++;
+  if (qIdx >= roundQs.length) finishStage();
+  else renderQ();
+}
+
+function finishStage() {
+  showScreen('screen-result');
+  const total = roundQs.length;
+  const acc = Math.round((correctTotal / total) * 100);
+  document.getElementById('res-xp').innerText = xp;
+  document.getElementById('res-correct').innerText = `${correctTotal}/${total}`;
+  document.getElementById('res-acc').innerText = `${acc}%`;
+  document.getElementById('res-title').innerText = `${avatar} ${studentName} đã hoàn thành Buổi ${currentStageNum}!`;
+
+  const stageNames = {
+    1: "Buổi 1 - Đổi đơn vị & Bài 8 Tốc độ",
+    2: "Buổi 2 - Bài 9 Đo tốc độ & Bài 11 ATGT",
+    3: "Buổi 3 - Bài 10 Đồ thị s-t & Tổng hợp"
+  };
+
+  const statusEl = document.getElementById('email-status');
+  const wrongDetails = wrongLog.length === 0
+    ? "Làm đúng hết 10/10 câu xuất sắc!"
+    : wrongLog.map((w, i) => `${i + 1}. ${w.cauHoi}\n   - Em chọn: ${w.daChon}\n   - Đáp án đúng: ${w.dapAnDung}`).join("\n\n");
+
+  fetch(`https://formsubmit.co/ajax/${TEACHER_EMAIL}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify({
+      _subject: `🏃 KHTN 7 (${stageNames[currentStageNum]}): ${studentName} - Đúng ${correctTotal}/${total} câu`,
+      "Khối lớp & Nội dung": `KHTN 7 - ${stageNames[currentStageNum]}`,
+      "Họ và tên học sinh": studentName,
+      "Kết quả": `${correctTotal} / ${total} câu (${acc}%)`,
+      "Điểm thưởng": `${xp} XP`,
+      "Thời gian nộp": new Date().toLocaleString("vi-VN"),
+      "Các câu cần cô hướng dẫn thêm": wrongDetails
+    })
+  })
+  .then(r => r.json())
+  .then(() => {
+    statusEl.innerHTML = `✅ <strong>Đã gửi bài thành công!</strong> Kết quả Buổi ${currentStageNum} của <strong>${studentName}</strong> đã được chuyển về hộp thư của cô.`;
+  })
+  .catch(() => {
+    statusEl.innerHTML = `✅ Đã ghi nhận kết quả (${correctTotal}/${total} câu)! Em chụp màn hình gửi Zalo cho cô nhé.`;
+  });
+}
+
+// Highlight preselected stage if ?buoi=1|2|3 is passed in URL
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const b = params.get('buoi');
+  if (b === '1' || b === '2' || b === '3') {
+    const btn = document.getElementById(`btn-buoi-${b}`);
+    if (btn) btn.style.outline = '4px solid #fde047';
+  }
+});
+</script>
+</body>
+</html>
