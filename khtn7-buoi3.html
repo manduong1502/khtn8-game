@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KHTN 7 - Buổi 3: Bài 10 Đồ Thị Quãng Đường - Thời Gian & Ôn Tập</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
+  body { background-color: #f5f3ff; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  .sticky-top-shell { position: sticky; top: 0; z-index: 900; background: #ffffff; box-shadow: 0 4px 16px rgba(15,23,42,0.1); }
+  header { background: linear-gradient(135deg, #312e81 0%, #4f46e5 60%, #7c3aed 100%); color: white; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .logo-title h1 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .logo-title p { font-size: 12.5px; opacity: 0.94; margin-top: 2px; }
+
+  nav.tab-bar { background: #ffffff; border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; padding: 0 14px; }
+  .nav-tab { padding: 12px 16px; font-size: 14.5px; font-weight: 700; color: var(--muted); border: none; background: transparent; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
+  .nav-tab:hover { color: var(--primary); background: #f8fafc; }
+  .nav-tab.active { color: var(--primary-dark); border-bottom-color: var(--primary); background: #eef2ff; }
+
+  main { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 22px 18px 80px; }
+  .section-view { display: none; animation: fadeIn 0.25s ease; }
+  .section-view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card { background: white; border-radius: 20px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid var(--border); margin-bottom: 24px; }
+  .section-header { margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .section-header h2 { font-size: 22.5px; font-weight: 800; color: #312e81; display: flex; align-items: center; gap: 10px; }
+  .section-header p { font-size: 15px; color: var(--muted); margin-top: 4px; }
+
+  .btn-reset { background: #fff1f2; color: #be123c; border: 1.5px solid #fda4af; padding: 8px 15px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .btn-action-soft { background: #eef2ff; color: #4338ca; border: 1.5px solid #c7d2fe; padding: 8px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+
+  .sim-panel { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 18px; padding: 18px; margin-bottom: 22px; }
+  .sim-btn { background: white; border: 1.5px solid #cbd5e1; padding: 8px 13px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .sim-btn.play { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; }
+  .sim-btn.active-step { background: #e0e7ff; border-color: #4f46e5; color: #312e81; }
+
+  .data-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15.5px; text-align: center; }
+  .data-table th, .data-table td { border: 1.5px solid #cbd5e1; padding: 10px 12px; }
+  .data-table th { background: #4338ca; color: white; font-weight: 800; }
+
+  .rule-cards-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 16px 0; }
+  .rule-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 16px; padding: 16px; }
+
+  .ex-card { background: #ffffff; border: 2px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
+  .ex-badge { display: inline-block; background: #e0e7ff; color: #4338ca; font-size: 13px; font-weight: 800; padding: 4px 12px; border-radius: 12px; margin-bottom: 8px; }
+  .ex-title { font-size: 17.5px; font-weight: 700; color: #0f172a; line-height: 1.55; margin-bottom: 12px; }
+  .hint-strip { display: none; background: #fffbeb; border-left: 4px solid #f59e0b; padding: 10px 14px; border-radius: 0 10px 10px 0; font-size: 15px; color: #92400e; margin-bottom: 12px; }
+  .ex-btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .hint-btn { background: #fef3c7; color: #b45309; border: 2px solid #fcd34d; border-radius: 10px; padding: 9px 15px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .ans-toggle-btn { background: #f1f5f9; color: #334155; border: 2px solid #cbd5e1; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .wb-toggle-btn { background: #f5f3ff; color: #6d28d9; border: 2px solid #ddd6fe; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .solution-box { display: none; background: #f0fdf4; border-left: 5px solid #10b981; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 14px; font-size: 16px; line-height: 1.65; }
+
+  .quiz-opt-btn { padding: 12px 15px; text-align: left; border: 2px solid #cbd5e1; border-radius: 12px; background: white; font-size: 15.5px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+  .quiz-letter { width: 30px; height: 30px; border-radius: 8px; background: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0; }
+
+  .timer-bar { background: linear-gradient(135deg, #1e1b4b, #312e81); color: white; border-radius: 16px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .clock-digits { font-size: 28px; font-weight: 900; font-family: monospace; color: #fde047; letter-spacing: 2px; }
+
+  /* SMART WHITEBOARD */
+  .smart-wb-wrapper { border: 2px solid #94a3b8; background: #f8fafc; border-radius: 16px; padding: 12px; margin: 18px 0; }
+  .smart-wb-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; }
+  .wb-tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .wb-title-tag { font-size: 13.5px; font-weight: 800; color: #312e81; margin-right: 6px; }
+  .wb-btn { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-size: 12.5px; font-weight: 700; color: #334155; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+  .wb-btn.active { background: #e0e7ff; border-color: #4f46e5; color: #312e81; }
+  .wb-btn.snip-btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #6d28d9; }
+  .color-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1.5px #94a3b8; cursor: pointer; }
+  .color-dot.active { transform: scale(1.22); box-shadow: 0 0 0 2.5px #1e293b; }
+  .wb-stage { position: relative; width: 100%; height: 470px; background-color: #ffffff; background-image: linear-gradient(to right, rgba(148,163,184,0.32) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.32) 1px, transparent 1px); background-size: 30px 30px; border-radius: 12px; border: 1.5px solid #cbd5e1; overflow: hidden; touch-action: none; }
+  .wb-stage canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; }
+  .wb-bg-canvas { z-index: 1; }
+  .wb-ink-canvas { z-index: 2; cursor: crosshair; }
+
+  #snip-floating-bar { display: none; position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 9998; background: #0f172a; color: white; padding: 10px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); align-items: center; gap: 12px; font-size: 14px; font-weight: 700; border: 2px solid #8b5cf6; }
+  #snip-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(15,23,42,0.25); cursor: crosshair; touch-action: none; }
+  #snip-rect { display: none; position: fixed; border: 2.5px dashed #4f46e5; background: rgba(99,102,241,0.14); box-shadow: 0 0 0 9999px rgba(15,23,42,0.38); pointer-events: none; z-index: 10000; }
+
+  .btn-submit { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 13px 22px; border-radius: 13px; font-size: 15.5px; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div id="snip-floating-bar">
+  <span>✂️ Cuộn đến phần nội dung cần cắt, rồi bấm:</span>
+  <button onclick="beginSnipDragMode()" style="background:#8b5cf6; color:white; border:none; padding:6px 14px; border-radius:999px; font-weight:800; cursor:pointer;">🎯 Kéo chọn vùng cắt</button>
+  <button onclick="cancelSnipMode()" style="background:#334155; color:white; border:none; padding:6px 12px; border-radius:999px; font-weight:700; cursor:pointer;">✖ Hủy</button>
+</div>
+<div id="snip-overlay"></div>
+<div id="snip-rect"></div>
+
+<div class="sticky-top-shell">
+  <header>
+    <div class="logo-title">
+      <h1><span>📈</span> KHTN 7 &mdash; CHƯƠNG III: TỐC ĐỘ (BUỔI 3)</h1>
+      <p>Bài 10: Đồ thị quãng đường - thời gian & Tổng kết ôn tập toàn Chương III</p>
+    </div>
+  </header>
+
+  <nav class="tab-bar">
+    <button class="nav-tab active" onclick="switchTab('tab-draw-graph', this)">1. Bài 10: 4 Bước VẼ đồ thị s - t</button>
+    <button class="nav-tab" onclick="switchTab('tab-read-graph', this)">2. Cách ĐỌC đồ thị & Đoạn Đứng Yên</button>
+    <button class="nav-tab" onclick="switchTab('tab-graph-ex', this)">3. Bài tập Đọc & Vẽ đồ thị</button>
+    <button class="nav-tab" onclick="switchTab('tab-final-test', this)">4. Tổng kết & Đề kiểm tra Chương III</button>
+    <button class="nav-tab" onclick="switchTab('tab-hw', this)" style="color:#b45309;">5. Bài tập về nhà Buổi 3 📤</button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: BÀI 10 - 4 BƯỚC VẼ ĐỒ THỊ QUÃNG ĐƯỜNG - THỜI GIAN                  -->
+  <!-- ========================================================================= -->
+  <section id="tab-draw-graph" class="section-view active">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📏</span> 1. BÀI 10: HƯỚNG DẪN 4 BƯỚC VẼ ĐỒ THỊ QUÃNG ĐƯỜNG - THỜI GIAN</h2>
+          <p>Làm chậm rãi từng bước một từ bảng số liệu sang hình vẽ</p>
+        </div>
+      </div>
+
+      <!-- BẢNG SỐ LIỆU MẪU SGK -->
+      <div style="margin-bottom:14px;">
+        <strong style="font-size:16.5px; color:#312e81;">Ví dụ mẫu:</strong> Bảng ghi quãng đường <code>s</code> đi được của một người đi xe đạp theo thời gian <code>t</code>:
+        <table class="data-table">
+          <tr>
+            <th>Thời gian t (h)</th>
+            <td>0</td><td>1</td><td>2</td><td>3</td><td>4</td>
+          </tr>
+          <tr>
+            <th>Quãng đường s (km)</th>
+            <td>0</td><td>15</td><td>30</td><td>45</td><td>60</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- MÔ PHỎNG TỪNG BƯỚC VẼ ĐỒ THỊ -->
+      <div class="sim-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+          <strong style="font-size:16.5px; color:#312e81;">🎬 Hoạt hình 4 bước vẽ đồ thị trên giấy kẻ ô:</strong>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="sim-btn play" onclick="playDrawGraphAuto()">▶️ Chạy tự động 4 bước</button>
+            <button class="sim-btn" id="dg-b1" onclick="setDrawStep(1)">Bước 1: Kẻ 2 trục</button>
+            <button class="sim-btn" id="dg-b2" onclick="setDrawStep(2)">Bước 2: Chia vạch số</button>
+            <button class="sim-btn" id="dg-b3" onclick="setDrawStep(3)">Bước 3: Chấm điểm</button>
+            <button class="sim-btn" id="dg-b4" onclick="setDrawStep(4)">Bước 4: Nối thẳng</button>
+            <button class="sim-btn" onclick="setDrawStep(0)">🔄 Xóa làm lại</button>
+          </div>
+        </div>
+        <canvas id="drawGraphCanvas" width="760" height="330" style="width:100%; height:auto; background:white; border-radius:14px; border:1.5px solid #cbd5e1;"></canvas>
+        <div id="dg-caption" style="margin-top:10px; padding:12px 16px; background:#eef2ff; border-radius:10px; font-size:15.5px; font-weight:700; color:#312e81;">
+          Nhấn từng bước (Bước 1 &rarr; Bước 4) hoặc bấm &ldquo;▶️ Chạy tự động&rdquo; để quan sát cách vẽ đồ thị!
+        </div>
+      </div>
+
+      <!-- BẢNG VIẾT BÚT CẢM ỨNG CÓ NÚT CHÈN KHUNG TRỤC TỌA ĐỘ TRỐNG -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <strong style="color:#312e81;">✍️ Thực hành chấm điểm & vẽ thử ngay trên bảng lưới:</strong>
+        <button class="btn-action-soft" onclick="insertBlankAxesToWB('wb-g7b3-tab1', 't (h)', 's (km)', [1,2,3,4], [15,30,45,60])">📌 Chèn sẵn khung trục tọa độ mẫu vào bảng vẽ</button>
+      </div>
+      <div id="wb-g7b3-tab1"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: CÁCH ĐỌC ĐỒ THỊ & NHẬN BIẾT ĐOẠN VẬT ĐỨNG YÊN                      -->
+  <!-- ========================================================================= -->
+  <section id="tab-read-graph" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🔍</span> 2. CÁCH ĐỌC ĐỒ THỊ & NHẬN BIẾT ĐOẠN NẰM NGANG LÀ ĐỨNG YÊN</h2>
+          <p>Nhìn xe chạy đồng bộ với điểm trên đồ thị để hiểu ngay hình dạng đường biểu diễn</p>
+        </div>
+      </div>
+
+      <!-- MÔ PHỎNG ĐỒNG BỘ XE CHẠY - DỪNG NGHỈ - CHẠY TIẾP VỚI ĐỒ THỊ -->
+      <div class="sim-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+          <strong style="font-size:16.5px; color:#312e81;">🚲 Mô phỏng đồng bộ: Xe đang đi &rarr; Dừng nghỉ bên đường &rarr; Đi tiếp</strong>
+          <div style="display:flex; gap:8px;">
+            <button class="sim-btn play" onclick="runSyncGraphSim()">▶️ Cho xe chạy & Xem điểm vẽ trên đồ thị</button>
+            <button class="sim-btn" onclick="resetSyncGraphSim()">🔄 Đặt lại</button>
+          </div>
+        </div>
+        <canvas id="syncGraphCanvas" width="800" height="340" style="width:100%; height:auto; background:white; border-radius:14px; border:1.5px solid #cbd5e1;"></canvas>
+        <div id="sync-caption" style="margin-top:10px; padding:12px 16px; background:#fef3c7; border-radius:10px; font-size:15.5px; font-weight:700; color:#92400e;">
+          Bấm nút chạy để thấy rõ: Khi xe <strong>đứng yên nghỉ ngơi</strong>, thời gian t vẫn trôi nhưng quãng đường s không tăng &rArr; Đồ thị tạo thành <strong>đoạn nằm ngang</strong>!
+        </div>
+      </div>
+
+      <!-- 3 DẤU HIỆU NHÌN HÌNH CỰC DỄ NHỚ CHO HS YẾU -->
+      <div class="rule-cards-3">
+        <div class="rule-card" style="border-color:#93c5fd; background:#eff6ff;">
+          <div style="font-size:17px; font-weight:800; color:#1d4ed8; margin-bottom:6px;">1️⃣ Đường thẳng NẰM NGHIÊNG LÊN</div>
+          <p style="font-size:15px; line-height:1.5;">Quãng đường tăng đều theo thời gian &rArr; <strong>Vật đang chuyển động với tốc độ không đổi</strong>.</p>
+        </div>
+        <div class="rule-card" style="border-color:#fcd34d; background:#fffbeb;">
+          <div style="font-size:17px; font-weight:800; color:#b45309; margin-bottom:6px;">2️⃣ Đường thẳng NẰM NGANG</div>
+          <p style="font-size:15px; line-height:1.5;">Thời gian vẫn tăng nhưng quãng đường đứng nguyên một số &rArr; <strong>Vật ĐỨNG YÊN (dừng nghỉ, v = 0)</strong>.</p>
+        </div>
+        <div class="rule-card" style="border-color:#86efac; background:#f0fdf4;">
+          <div style="font-size:17px; font-weight:800; color:#047857; margin-bottom:6px;">3️⃣ Đường nào DỐC CAO HƠN</div>
+          <p style="font-size:15px; line-height:1.5;">Trên cùng một mặt phẳng tọa độ, đường nào dốc dựng đứng hơn &rArr; <strong>Vật đó đi NHANH HƠN</strong>!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: BÀI TẬP THỰC HÀNH ĐỌC & VẼ ĐỒ THỊ (CƠ BẢN BÁM SÁT SGK)            -->
+  <!-- ========================================================================= -->
+  <section id="tab-graph-ex" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📝</span> 3. BÀI TẬP ĐỌC THÔNG SỐ & VẼ ĐỒ THỊ CƠ BẢN</h2>
+          <p>6 câu trắc nghiệm đọc hình + 3 bài tự luận cơ bản bám sát SGK KHTN 7</p>
+        </div>
+        <button class="btn-reset" onclick="resetB3Exercises()">🔄 Đặt lại toàn bộ Phần 3</button>
+      </div>
+
+      <!-- HÌNH ĐỒ THỊ CHUNG CHO BÀI TẬP TRẮC NGHIỆM 1 -> 4 -->
+      <div style="background:#f8fafc; border:2px solid #cbd5e1; border-radius:16px; padding:16px; margin-bottom:16px; text-align:center;">
+        <div style="font-weight:800; color:#312e81; margin-bottom:8px;">Quan sát đồ thị quãng đường - thời gian của một ca nô dưới đây để trả lời từ Câu 1 đến Câu 4:</div>
+        <svg viewBox="0 0 500 245" style="max-width:480px; width:100%; background:white; border-radius:12px; border:1px solid #e2e8f0;">
+          <!-- Lưới ngang & dọc -->
+          <g stroke="#e2e8f0" stroke-width="1">
+            <line x1="65" y1="160" x2="440" y2="160"/><line x1="65" y1="120" x2="440" y2="120"/>
+            <line x1="65" y1="80" x2="440" y2="80"/><line x1="65" y1="40" x2="440" y2="40"/>
+            <line x1="150" y1="30" x2="150" y2="200"/><line x1="235" y1="30" x2="235" y2="200"/>
+            <line x1="320" y1="30" x2="320" y2="200"/><line x1="405" y1="30" x2="405" y2="200"/>
+          </g>
+          <!-- Trục Os và Ot -->
+          <line x1="65" y1="200" x2="455" y2="200" stroke="#0f172a" stroke-width="2.5"/>
+          <line x1="65" y1="200" x2="65" y2="20" stroke="#0f172a" stroke-width="2.5"/>
+          <text x="462" y="205" font-size="13" font-weight="bold">t (h)</text>
+          <text x="20" y="24" font-size="13" font-weight="bold">s (km)</text>
+          <text x="50" y="216" font-size="13" font-weight="bold">O</text>
+
+          <!-- Nhãn trục t: 1, 2, 3, 4 -->
+          <text x="150" y="218" font-size="13" text-anchor="middle">1</text>
+          <text x="235" y="218" font-size="13" text-anchor="middle">2</text>
+          <text x="320" y="218" font-size="13" text-anchor="middle">3</text>
+          <text x="405" y="218" font-size="13" text-anchor="middle">4</text>
+
+          <!-- Nhãn trục s: 20, 40, 60, 80 -->
+          <text x="56" y="164" font-size="13" text-anchor="end">20</text>
+          <text x="56" y="124" font-size="13" text-anchor="end">40</text>
+          <text x="56" y="84" font-size="13" text-anchor="end">60</text>
+          <text x="56" y="44" font-size="13" text-anchor="end">80</text>
+
+          <!-- Đường đồ thị: O(0,0) -> A(2h, 60km) -> B(3h, 60km) -> C(4h, 80km) -->
+          <polyline points="65,200 235,80 320,80 405,40" fill="none" stroke="#dc2626" stroke-width="4" stroke-linejoin="round"/>
+          <circle cx="150" cy="140" r="4.5" fill="#dc2626"/>
+          <circle cx="235" cy="80" r="5" fill="#dc2626"/><text x="230" y="70" font-size="13" font-weight="bold" fill="#b91c1c">A</text>
+          <circle cx="320" cy="80" r="5" fill="#dc2626"/><text x="322" y="70" font-size="13" font-weight="bold" fill="#b91c1c">B</text>
+          <circle cx="405" cy="40" r="5" fill="#dc2626"/><text x="405" y="31" font-size="13" font-weight="bold" fill="#b91c1c">C</text>
+        </svg>
+      </div>
+
+      <h3 style="font-size:18px; color:#312e81; margin-bottom:12px;">3.1. Trắc nghiệm đọc đồ thị (Điểm: <span id="b3-q-score" style="color:#059669;">0/6</span>)</h3>
+      <div id="b3-quiz-container"></div>
+
+      <hr style="margin:26px 0; border:none; border-top:2px dashed #cbd5e1;">
+
+      <h3 style="font-size:18px; color:#312e81; margin-bottom:12px;">3.2. Bài tập tự luận Vẽ & Đọc đồ thị cơ bản (3 bài)</h3>
+
+      <!-- BÀI 1: TỰ VẼ ĐỒ THỊ 1 GIAI ĐOẠN THẲNG -->
+      <div class="ex-card" id="b3ex-card-1">
+        <span class="ex-badge">Bài 1 &bull; Vẽ đồ thị 1 giai đoạn thẳng từ bảng số liệu</span>
+        <div class="ex-title">
+          Một ô tô chuyển động thẳng đều trên đường có bảng ghi quãng đường theo thời gian như sau:
+          <table class="data-table" style="margin-top:8px;">
+            <tr><th>Thời gian t (h)</th><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+            <tr><th>Quãng đường s (km)</th><td>0</td><td>40</td><td>80</td><td>120</td></tr>
+          </table>
+          a) Hãy vẽ đồ thị quãng đường - thời gian của ô tô.<br>
+          b) Từ đồ thị (hoặc bảng số liệu), tính tốc độ của ô tô ra km/h.
+        </div>
+        <div id="b3h-1" class="hint-strip">💡 <strong>Gợi ý:</strong> Bấm nút &ldquo;📌 Mở bảng vẽ có sẵn khung trục&rdquo; bên dưới để chấm 4 điểm (0;0), (1;40), (2;80), (3;120) rồi nối thẳng! Câu b: Lấy s = 40 chia t = 1.</div>
+        <div class="ex-btn-row">
+          <button class="hint-btn" onclick="toggleHint('b3h-1')">💡 Gợi ý bước làm</button>
+          <button class="wb-toggle-btn" onclick="openGraphWBForEx1()">📌 Mở bảng vẽ có sẵn khung trục bài 1</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-b3e1', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-b3e1-wrap" style="display:none;"><div id="wb-b3e1"></div></div>
+        <div id="sol-b3e1" class="solution-box">
+          <div>&bull; <strong>a) Vẽ đồ thị:</strong> Kẻ trục ngang Ot (h) chia các vạch 1, 2, 3 và trục đứng Os (km) chia các vạch 40, 80, 120. Chấm các điểm (0; 0), (1; 40), (2; 80), (3; 120) và nối thành tia thẳng xuất phát từ gốc O.</div>
+          <div>&bull; <strong>b) Tốc độ của ô tô:</strong> v = s / t = 40 / 1 = <strong>40 (km/h)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 2: ĐỌC ĐỒ THỊ 1 GIAI ĐOẠN -->
+      <div class="ex-card" id="b3ex-card-2">
+        <span class="ex-badge">Bài 2 &bull; Đọc quãng đường, thời gian và tốc độ từ đồ thị thẳng</span>
+        <div class="ex-title">
+          Đồ thị quãng đường - thời gian của một bạn chạy bộ là một đường thẳng đi lên từ gốc O(0; 0) và đi qua điểm M có thời gian <strong>t = 5 s</strong>, quãng đường <strong>s = 20 m</strong>.<br>
+          a) Tính tốc độ chạy bộ của bạn đó.<br>
+          b) Nếu giữ nguyên tốc độ đó thì sau 8 s bạn đó chạy được bao nhiêu mét?
+        </div>
+        <div id="b3h-2" class="hint-strip">💡 <strong>Gợi ý:</strong> a) Tại điểm M có s = 20 m và t = 5 s &rArr; tính v = s / t. &nbsp; b) Có v rồi, lấy s = v &times; 8 s!</div>
+        <div class="ex-btn-row">
+          <button class="hint-btn" onclick="toggleHint('b3h-2')">💡 Gợi ý bước làm</button>
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-b3e2-wrap', 'wb-b3e2')">✍️ Bảng viết bài 2</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-b3e2', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-b3e2-wrap" style="display:none;"><div id="wb-b3e2"></div></div>
+        <div id="sol-b3e2" class="solution-box">
+          <div>&bull; <strong>a) Tốc độ chạy bộ của bạn đó là:</strong> v = s / t = 20 / 5 = <strong>4 (m/s)</strong>.</div>
+          <div>&bull; <strong>b) Quãng đường chạy được sau 8 giây là:</strong> s' = v &middot; t' = 4 &times; 8 = <strong>32 (m)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 3: ĐỌC ĐỒ THỊ CÓ ĐOẠN ĐỨNG YÊN -->
+      <div class="ex-card" id="b3ex-card-3">
+        <span class="ex-badge" style="background:#fef3c7; color:#b45309;">Bài 3 &bull; Đọc đồ thị có đoạn nằm ngang (Đứng yên)</span>
+        <div class="ex-title">
+          Nhìn lại đồ thị của chiếc ca nô ở đầu Phần 3:<br>
+          a) Trong 2 giờ đầu (đoạn OA), ca nô đi được bao nhiêu kilômét và đi với tốc độ bao nhiêu km/h?<br>
+          b) Từ giờ thứ 2 đến giờ thứ 3 (đoạn nằm ngang AB), ca nô đang chuyển động thế nào? Thời gian dừng lại là bao lâu?
+        </div>
+        <div id="b3h-3" class="hint-strip">💡 <strong>Gợi ý:</strong> Điểm A ứng với t = 2 h và s = 60 km. Đoạn AB nằm ngang từ t = 2 h đến t = 3 h tức là ca nô dừng yên tại bến!</div>
+        <div class="ex-btn-row">
+          <button class="hint-btn" onclick="toggleHint('b3h-3')">💡 Gợi ý bước làm</button>
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-b3e3-wrap', 'wb-b3e3')">✍️ Bảng viết bài 3</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-b3e3', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-b3e3-wrap" style="display:none;"><div id="wb-b3e3"></div></div>
+        <div id="sol-b3e3" class="solution-box">
+          <div>&bull; <strong>a) Trong 2 giờ đầu (đoạn OA):</strong> Ca nô đi được s = <strong>60 km</strong>. Tốc độ của ca nô là: v = 60 / 2 = <strong>30 (km/h)</strong>.</div>
+          <div>&bull; <strong>b) Trên đoạn nằm ngang AB:</strong> Ca nô <strong>đứng yên (dừng nghỉ)</strong> trong khoảng thời gian: 3 &minus; 2 = <strong>1 giờ</strong>.</div>
+        </div>
+      </div>
+
+      <div id="wb-g7b3-tab3"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 4: TỔNG KẾT CHƯƠNG III & ĐỀ KIỂM TRA THỬ 30 PHÚT                      -->
+  <!-- ========================================================================= -->
+  <section id="tab-final-test" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🏆</span> 4. TỔNG KẾT CHƯƠNG III & ĐỀ KIỂM TRA TỔNG HỢP (30 PHÚT)</h2>
+          <p>Khớp 100% với bản Đề kiểm tra file Word in giấy để chấm và chữa trực tiếp trên màn hình</p>
+        </div>
+        <button class="btn-reset" onclick="resetFinalTest()">🔄 Đặt lại Đề kiểm tra</button>
+      </div>
+
+      <!-- BẢNG TÓM TẮT 4 Ý CỐT LÕI TOÀN CHƯƠNG CHO HS YẾU -->
+      <div style="background:#eef2ff; border:2px solid #a5b4fc; border-radius:16px; padding:16px 20px; margin-bottom:20px; font-size:15.5px; line-height:1.65; color:#1e1b4b;">
+        <strong>📌 TÓM TẮT NHỚ NHANH TOÀN CHƯƠNG III (TỐC ĐỘ):</strong><br>
+        1) <strong>Công thức (Bài 8):</strong> <code>v = s / t</code> &nbsp;|&nbsp; <code>s = v &middot; t</code> &nbsp;|&nbsp; <code>t = s / v</code>. Đổi đơn vị: <code>1 m/s = 3,6 km/h</code>; đổi phút sang giờ chia 60.<br>
+        2) <strong>Đo tốc độ (Bài 9):</strong> Cần đo <code>s</code> và <code>t</code> (bằng thước + đồng hồ bấm giây, hoặc cổng quang điện + đồng hồ hiện số).<br>
+        3) <strong>Đồ thị s - t (Bài 10):</strong> Trục ngang <code>Ot</code>, trục đứng <code>Os</code>. Đoạn nghiêng lên là đang đi; <strong>đoạn nằm ngang là đứng yên</strong>.<br>
+        4) <strong>An toàn giao thông (Bài 11):</strong> Tuân thủ biển tốc độ tối đa; giữ khoảng cách an toàn (quy tắc 3 giây: <code>s = v (m/s) &times; 3</code>).
+      </div>
+
+      <!-- ĐỒNG HỒ 30 PHÚT -->
+      <div class="timer-bar">
+        <div>
+          <div style="font-size:12.5px; opacity:0.85; font-weight:700;">ĐỒNG HỒ LÀM ĐỀ KIỂM TRA CHƯƠNG III</div>
+          <div class="clock-digits" id="g7-clock">30:00</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button onclick="startG7Clock()" style="background:#10b981; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">▶️ Bắt đầu</button>
+          <button onclick="pauseG7Clock()" style="background:#f59e0b; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">⏸️ Tạm dừng</button>
+          <button onclick="resetG7Clock()" style="background:#475569; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">🔄 Đặt lại 30:00</button>
+        </div>
+      </div>
+
+      <h3 style="color:#312e81; font-size:18px; margin-bottom:12px;">Phần I. Trắc nghiệm (5,0 điểm &mdash; 10 câu cơ bản, mỗi câu 0,5 điểm)</h3>
+      <div id="g7-final-mc"></div>
+
+      <hr style="margin:24px 0; border:none; border-top:2px dashed #cbd5e1;">
+
+      <h3 style="color:#312e81; font-size:18px; margin-bottom:12px;">Phần II. Tự luận có hướng dẫn bước làm (5,0 điểm)</h3>
+
+      <div class="ex-card">
+        <span class="ex-badge">Câu tự luận 1 (2,0 điểm) &bull; Bài 8</span>
+        <div class="ex-title">
+          Một người đi xe đạp đi được quãng đường 6 km trong thời gian 30 phút.<br>
+          a) Đổi thời gian 30 phút sang đơn vị giờ (h).<br>
+          b) Tính tốc độ của người đi xe đạp theo đơn vị km/h.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-ft1-wrap', 'wb-ft1')">✍️ Bảng viết chữa Câu 1</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-ft1', this)">👁️ Xem đáp án & điểm</button>
+        </div>
+        <div id="wb-ft1-wrap" style="display:none;"><div id="wb-ft1"></div></div>
+        <div id="sol-ft1" class="solution-box">
+          <div>&bull; <em>(0,75 đ)</em> a) Đổi: t = 30 phút = 30 : 60 = <strong>0,5 giờ</strong>.</div>
+          <div>&bull; <em>(1,25 đ)</em> b) Tốc độ của người đi xe đạp là: v = s / t = 6 / 0,5 = <strong>12 (km/h)</strong>.</div>
+        </div>
+      </div>
+
+      <div class="ex-card">
+        <span class="ex-badge">Câu tự luận 2 (1,5 điểm) &bull; Bài 11</span>
+        <div class="ex-title">
+          Một ô tô đang chạy trên đường cao tốc với tốc độ 72 km/h.<br>
+          a) Đổi tốc độ 72 km/h ra đơn vị m/s.<br>
+          b) Theo quy tắc &ldquo;3 giây&rdquo;, người lái xe cần giữ khoảng cách an toàn tối thiểu với xe trước là bao nhiêu mét?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-ft2-wrap', 'wb-ft2')">✍️ Bảng viết chữa Câu 2</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-ft2', this)">👁️ Xem đáp án & điểm</button>
+        </div>
+        <div id="wb-ft2-wrap" style="display:none;"><div id="wb-ft2"></div></div>
+        <div id="sol-ft2" class="solution-box">
+          <div>&bull; <em>(0,75 đ)</em> a) Đổi tốc độ: v = 72 : 3,6 = <strong>20 (m/s)</strong>.</div>
+          <div>&bull; <em>(0,75 đ)</em> b) Khoảng cách an toàn theo quy tắc 3 giây: s = v &middot; t = 20 &times; 3 = <strong>60 (m)</strong>.</div>
+        </div>
+      </div>
+
+      <div class="ex-card">
+        <span class="ex-badge">Câu tự luận 3 (1,5 điểm) &bull; Bài 10 (Vẽ & đọc đồ thị 1 giai đoạn)</span>
+        <div class="ex-title">
+          Một bạn đi bộ đều có bảng ghi quãng đường theo thời gian như sau:
+          <table class="data-table" style="margin-top:8px;">
+            <tr><th>Thời gian t (s)</th><td>0</td><td>2</td><td>4</td><td>6</td></tr>
+            <tr><th>Quãng đường s (m)</th><td>0</td><td>3</td><td>6</td><td>9</td></tr>
+          </table>
+          a) Vẽ đồ thị quãng đường - thời gian của bạn đó vào khung trục tọa độ.<br>
+          b) Tính tốc độ đi bộ của bạn đó ra m/s.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="openGraphWBForFinal()">📌 Bảng vẽ khung trục chữa Câu 3</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-ft3', this)">👁️ Xem đáp án & điểm</button>
+        </div>
+        <div id="wb-ft3-wrap" style="display:none;"><div id="wb-ft3"></div></div>
+        <div id="sol-ft3" class="solution-box">
+          <div>&bull; <em>(1,0 đ)</em> a) Chấm đúng 4 điểm (0; 0), (2; 3), (4; 6), (6; 9) và nối thành đường thẳng đi lên từ gốc O.</div>
+          <div>&bull; <em>(0,5 đ)</em> b) Tốc độ đi bộ của bạn đó là: v = s / t = 3 / 2 = <strong>1,5 (m/s)</strong>.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 5: BÀI TẬP VỀ NHÀ BUỔI 3                                              -->
+  <!-- ========================================================================= -->
+  <section id="tab-hw" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📤</span> 5. BÀI TẬP VỀ NHÀ TRỰC TUYẾN BUỔI 3 (ĐỒ THỊ & TỔNG HỢP CHƯƠNG III)</h2>
+          <p>Chọn <strong>Chặng 3 - Buổi 3</strong> trên cổng trò chơi Tốc độ Lớp 7 &mdash; Gửi kết quả về <strong>thaomy1005@gmail.com</strong></p>
+        </div>
+      </div>
+
+      <div style="background:#eef2ff; border:2px solid #a5b4fc; border-radius:16px; padding:20px; margin-bottom:18px;">
+        <h4 style="color:#312e81; font-size:16.5px; margin-bottom:8px;">🎯 ĐƯỜNG LINK BÀI TẬP VỀ NHÀ BUỔI 3</h4>
+        <p style="font-size:15px; color:#312e81; margin-bottom:14px;">
+          Ôn tập cách đọc đồ thị quãng đường - thời gian, nhận biết đoạn nằm ngang (đứng yên) và tổng hợp kiến thức toàn Chương III.
+        </p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a href="https://manduong1502.github.io/khtn8-game/khtn7-tocdo-game.html?buoi=3" target="_blank" class="btn-submit" style="background:linear-gradient(135deg,#4f46e5,#7c3aed);">🔗 Mở Bài tập về nhà Buổi 3</a>
+          <button class="btn-submit" onclick="copyZaloB3()">📋 Sao chép tin nhắn gửi nhóm Zalo</button>
+        </div>
+      </div>
+
+      <textarea id="zalo-g7b3" style="width:100%; height:170px; padding:14px; border:2px solid #cbd5e1; border-radius:12px; font-size:14.5px; line-height:1.55; outline:none;">Cô gửi các em bài tập trò chơi ôn luyện Buổi 3 môn KHTN 7 (Bài 10: Đồ thị quãng đường - thời gian & Tổng kết Chương III):
+🔗 Link làm bài: https://manduong1502.github.io/khtn8-game/khtn7-tocdo-game.html?buoi=3
+
+Hướng dẫn làm bài:
+1. Nhập họ và tên của em rồi bấm vào "Chặng 3 - Buổi 3: Đồ thị s - t & Tổng hợp Chương III".
+2. Nhớ mẹo nhìn đồ thị: Đường nghiêng lên là đang đi; đường nằm ngang là vật đứng yên nhé!
+3. Kết quả bài làm sẽ tự động gửi về email của cô. Chúc các em hoàn thành thật tốt!</textarea>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function switchTab(tabId, btnEl) {
+  document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => {
+    Object.keys(WB_REGISTRY).forEach(id => resizeWB(id));
+    if (tabId === 'tab-draw-graph') renderDrawGraphCanvas();
+    if (tabId === 'tab-read-graph') renderSyncGraphCanvas();
+  }, 40);
+}
+
+function toggleHint(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+}
+
+function toggleAns(solId, btnEl) {
+  const box = document.getElementById(solId);
+  if (!box) return;
+  const hasPts = btnEl && btnEl.innerText.includes('điểm');
+  if (box.style.display === 'block') {
+    box.style.display = 'none';
+    if (btnEl) btnEl.innerHTML = hasPts ? '👁️ Xem đáp án & điểm' : '👁️ Hiển thị lời giải chi tiết';
+  } else {
+    box.style.display = 'block';
+    if (btnEl) btnEl.innerHTML = hasPts ? '🙈 Ẩn đáp án & điểm' : '🙈 Ẩn lời giải chi tiết';
+  }
+}
+
+// =============================================================================
+// MÔ PHỎNG 1: 4 BƯỚC VẼ ĐỒ THỊ QUÃNG ĐƯỜNG - THỜI GIAN
+// =============================================================================
+let drawStep = 0;
+let dgTimer = null;
+
+function setDrawStep(st, keepAuto = false) {
+  if (!keepAuto) clearTimeout(dgTimer);
+  drawStep = st;
+  for (let i = 1; i <= 4; i++) {
+    const b = document.getElementById(`dg-b${i}`);
+    if (b) b.classList.toggle('active-step', i === st);
+  }
+  const cap = document.getElementById('dg-caption');
+  if (st === 0) cap.innerHTML = 'Nhấn từng bước (Bước 1 &rarr; Bước 4) để xem cách vẽ đồ thị từ bảng số liệu.';
+  if (st === 1) cap.innerHTML = '✅ <strong>Bước 1:</strong> Kẻ trục nằm ngang là thời gian <strong>Ot (h)</strong>, trục thẳng đứng là quãng đường <strong>Os (km)</strong> cắt vuông góc tại gốc <strong>O(0; 0)</strong>.';
+  if (st === 2) cap.innerHTML = '✅ <strong>Bước 2:</strong> Chia các khoảng đều nhau trên trục Ot (1, 2, 3, 4 giờ) và trên trục Os (15, 30, 45, 60 km).';
+  if (st === 3) cap.innerHTML = '✅ <strong>Bước 3:</strong> Từ mỗi cặp số (t; s), kẻ đường nét đứt thẳng lên và ngang sang cắt nhau &rarr; chấm tròn các điểm biểu diễn!';
+  if (st === 4) cap.innerHTML = '🎯 <strong>Bước 4:</strong> Đặt thước thẳng nối từ gốc O đi qua tất cả các điểm vừa chấm &rArr; Hoàn thành đồ thị!';
+  renderDrawGraphCanvas();
+}
+
+function playDrawGraphAuto() {
+  clearTimeout(dgTimer);
+  setDrawStep(1, true);
+  dgTimer = setTimeout(() => {
+    setDrawStep(2, true);
+    dgTimer = setTimeout(() => {
+      setDrawStep(3, true);
+      dgTimer = setTimeout(() => {
+        setDrawStep(4, true);
+      }, 1500);
+    }, 1400);
+  }, 1300);
+}
+
+function renderDrawGraphCanvas() {
+  const cv = document.getElementById('drawGraphCanvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  const ox = 110, oy = 280, stepX = 130, stepY = 54;
+
+  // Lưới giấy ô vuông mờ
+  ctx.strokeStyle = '#f1f5f9'; ctx.lineWidth = 1;
+  for (let x = 40; x < cv.width - 20; x += 26) { ctx.beginPath(); ctx.moveTo(x, 20); ctx.lineTo(x, 305); ctx.stroke(); }
+  for (let y = 20; y < 305; y += 27) { ctx.beginPath(); ctx.moveTo(40, y); ctx.lineTo(cv.width - 20, y); ctx.stroke(); }
+
+  if (drawStep >= 1) {
+    ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 3;
+    // Trục ngang Ot
+    ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(680, oy); ctx.stroke();
+    // Trục đứng Os
+    ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox, 32); ctx.stroke();
+    ctx.fillStyle = '#0f172a'; ctx.font = 'bold 16px sans-serif';
+    ctx.fillText('O', ox - 22, oy + 20);
+    ctx.fillText('t (h)', 688, oy + 5);
+    ctx.fillText('s (km)', ox - 58, 36);
+  }
+
+  if (drawStep >= 2) {
+    ctx.fillStyle = '#1e3a8a'; ctx.font = 'bold 14px sans-serif'; ctx.textAlign = 'center';
+    [1, 2, 3, 4].forEach(t => {
+      const x = ox + t * stepX;
+      ctx.beginPath(); ctx.moveTo(x, oy - 5); ctx.lineTo(x, oy + 5); ctx.stroke();
+      ctx.fillText(`${t}`, x, oy + 23);
+    });
+    ctx.textAlign = 'right';
+    [15, 30, 45, 60].forEach((s, i) => {
+      const y = oy - (i + 1) * stepY;
+      ctx.beginPath(); ctx.moveTo(ox - 5, y); ctx.lineTo(ox + 5, y); ctx.stroke();
+      ctx.fillText(`${s}`, ox - 12, y + 5);
+    });
+  }
+
+  if (drawStep >= 3) {
+    [1, 2, 3, 4].forEach(t => {
+      const x = ox + t * stepX;
+      const y = oy - t * stepY;
+      ctx.save();
+      ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.moveTo(x, oy); ctx.lineTo(x, y); ctx.lineTo(ox, y); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.fillStyle = '#dc2626';
+    ctx.beginPath(); ctx.arc(ox, oy, 6, 0, Math.PI * 2); ctx.fill();
+  }
+
+  if (drawStep >= 4) {
+    ctx.strokeStyle = '#4f46e5'; ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.lineTo(ox + 4.3 * stepX, oy - 4.3 * stepY);
+    ctx.stroke();
+  }
+}
+
+// =============================================================================
+// MÔ PHỎNG 2: ĐỒNG BỘ XE CHẠY & ĐOẠN ĐỨNG YÊN TRÊN ĐỒ THỊ
+// =============================================================================
+let syncState = { t: 0, animId: null };
+
+function resetSyncGraphSim() {
+  cancelAnimationFrame(syncState.animId);
+  syncState = { t: 0, animId: null };
+  document.getElementById('sync-caption').innerHTML = 'Bấm nút chạy để thấy rõ: Khi xe <strong>đứng yên nghỉ ngơi</strong>, thời gian t vẫn trôi nhưng quãng đường s không tăng &rArr; Đồ thị tạo thành <strong>đoạn nằm ngang</strong>!';
+  renderSyncGraphCanvas();
+}
+
+function getSyncS(t) {
+  // 0..2h: s tăng từ 0 -> 30 km; 2..3h: đứng yên s = 30 km; 3..4h: đi tiếp từ 30 -> 45 km
+  if (t <= 2) return 15 * t;
+  if (t <= 3) return 30;
+  return 30 + 15 * (t - 3);
+}
+
+function runSyncGraphSim() {
+  cancelAnimationFrame(syncState.animId);
+  const start = performance.now();
+  function frame(now) {
+    const curT = Math.min(4, (now - start) / 1000 * 0.9);
+    syncState.t = curT;
+    renderSyncGraphCanvas();
+    const cap = document.getElementById('sync-caption');
+    if (curT < 2) cap.innerHTML = `🚲 <strong>Từ 0h đến 2h:</strong> Xe đang chạy đều &rarr; Đường đồ thị <strong>nghiêng đi lên</strong>!`;
+    else if (curT <= 3) cap.innerHTML = `🛑 <strong>Từ 2h đến 3h:</strong> Xe <strong>DỪNG NGHỈ BÊN GỐC CÂY</strong> (quãng đường giữ nguyên 30 km) &rarr; Đồ thị đi <strong>NẰM NGANG</strong>!`;
+    else cap.innerHTML = `🚲 <strong>Từ 3h đến 4h:</strong> Xe chạy tiếp từ km 30 lên km 45 &rarr; Đồ thị lại <strong>nghiêng đi lên</strong>!`;
+
+    if (curT < 4) syncState.animId = requestAnimationFrame(frame);
+  }
+  syncState.animId = requestAnimationFrame(frame);
+}
+
+function renderSyncGraphCanvas() {
+  const cv = document.getElementById('syncGraphCanvas');
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  ctx.clearRect(0, 0, cv.width, cv.height);
+
+  // Nửa trên: Đồ thị s - t
+  const ox = 110, oy = 215, sx = 140, sy = 3.2; // 45 km * 3.2 = 144 px
+  ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
+  [1, 2, 3, 4].forEach(t => { ctx.beginPath(); ctx.moveTo(ox + t * sx, 30); ctx.lineTo(ox + t * sx, oy); ctx.stroke(); });
+  [15, 30, 45].forEach(s => { ctx.beginPath(); ctx.moveTo(ox, oy - s * sy); ctx.lineTo(690, oy - s * sy); ctx.stroke(); });
+
+  ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(705, oy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox, 28); ctx.stroke();
+
+  ctx.fillStyle = '#334155'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center';
+  [0, 1, 2, 3, 4].forEach(t => ctx.fillText(`${t}h`, ox + t * sx, oy + 20));
+  ctx.textAlign = 'right';
+  [15, 30, 45].forEach(s => ctx.fillText(`${s} km`, ox - 10, oy - s * sy + 4));
+
+  // Vẽ đường đồ thị mờ làm nền + đường đậm tới thời điểm hiện tại syncState.t
+  ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(ox, oy);
+  ctx.lineTo(ox + 2 * sx, oy - 30 * sy);
+  ctx.lineTo(ox + 3 * sx, oy - 30 * sy);
+  ctx.lineTo(ox + 4 * sx, oy - 45 * sy);
+  ctx.stroke();
+
+  // Đường đỏ đã đi được
+  const t = syncState.t;
+  const curS = getSyncS(t);
+  ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(ox, oy);
+  if (t <= 2) {
+    ctx.lineTo(ox + t * sx, oy - curS * sy);
+  } else if (t <= 3) {
+    ctx.lineTo(ox + 2 * sx, oy - 30 * sy);
+    ctx.lineTo(ox + t * sx, oy - 30 * sy);
+  } else {
+    ctx.lineTo(ox + 2 * sx, oy - 30 * sy);
+    ctx.lineTo(ox + 3 * sx, oy - 30 * sy);
+    ctx.lineTo(ox + t * sx, oy - curS * sy);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = '#dc2626';
+  ctx.beginPath(); ctx.arc(ox + t * sx, oy - curS * sy, 7, 0, Math.PI * 2); ctx.fill();
+
+  // Nửa dưới: Mặt đường xe chạy từ 0 km -> 45 km
+  const roadLeft = 110, roadRight = 670;
+  const pxPerKm = (roadRight - roadLeft) / 45;
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillRect(roadLeft, 285, roadRight - roadLeft, 30);
+  [0, 15, 30, 45].forEach(km => {
+    const rx = roadLeft + km * pxPerKm;
+    ctx.fillStyle = '#475569'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(`${km} km`, rx, 330);
+  });
+  // Cây xanh ở mốc 30 km (chỗ dừng nghỉ)
+  const treeX = roadLeft + 30 * pxPerKm;
+  ctx.fillStyle = '#16a34a';
+  ctx.beginPath(); ctx.arc(treeX, 265, 13, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#78350f'; ctx.fillRect(treeX - 3, 276, 6, 10);
+
+  // Xe chạy
+  const carX = roadLeft + curS * pxPerKm;
+  ctx.fillStyle = '#4f46e5';
+  ctx.beginPath(); ctx.roundRect(carX - 20, 274, 40, 18, 5); ctx.fill();
+}
+
+// =============================================================================
+// CHÈN NHANH KHUNG TRỤC TỌA ĐỘ TRỐNG VÀO BẢNG VIẾT ĐỂ CHẤM VẼ TRỰC TIẾP
+// =============================================================================
+function insertBlankAxesToWB(wbId, xLabel, yLabel, xTicks, yTicks) {
+  const off = document.createElement('canvas');
+  off.width = 760; off.height = 360;
+  const c = off.getContext('2d');
+  c.fillStyle = '#ffffff'; c.fillRect(0, 0, off.width, off.height);
+
+  const ox = 110, oy = 305;
+  const stepX = 125, stepY = 58;
+
+  // Lưới nét đứt sẵn cho học sinh yếu dễ gióng!
+  c.strokeStyle = '#cbd5e1'; c.lineWidth = 1.2; c.setLineDash([4, 4]);
+  xTicks.forEach((_, i) => {
+    const x = ox + (i + 1) * stepX;
+    c.beginPath(); c.moveTo(x, 30); c.lineTo(x, oy); c.stroke();
+  });
+  yTicks.forEach((_, i) => {
+    const y = oy - (i + 1) * stepY;
+    c.beginPath(); c.moveTo(ox, y); c.lineTo(ox + xTicks.length * stepX + 30, y); c.stroke();
+  });
+  c.setLineDash([]);
+
+  // Hai trục đậm
+  c.strokeStyle = '#0f172a'; c.lineWidth = 3;
+  c.beginPath(); c.moveTo(ox, oy); c.lineTo(ox + xTicks.length * stepX + 55, oy); c.stroke();
+  c.beginPath(); c.moveTo(ox, oy); c.lineTo(ox, 24); c.stroke();
+
+  c.fillStyle = '#0f172a'; c.font = 'bold 16px sans-serif';
+  c.fillText('O', ox - 22, oy + 22);
+  c.fillText(xLabel, ox + xTicks.length * stepX + 62, oy + 5);
+  c.fillText(yLabel, ox - 60, 28);
+
+  c.textAlign = 'center'; c.fillStyle = '#1e3a8a';
+  xTicks.forEach((v, i) => {
+    const x = ox + (i + 1) * stepX;
+    c.beginPath(); c.moveTo(x, oy - 5); c.lineTo(x, oy + 5); c.stroke();
+    c.fillText(`${v}`, x, oy + 24);
+  });
+  c.textAlign = 'right';
+  yTicks.forEach((v, i) => {
+    const y = oy - (i + 1) * stepY;
+    c.beginPath(); c.moveTo(ox - 5, y); c.lineTo(ox + 5, y); c.stroke();
+    c.fillText(`${v}`, ox - 12, y + 5);
+  });
+
+  const im = new Image();
+  im.onload = () => addImageElementToWB(wbId, im);
+  im.src = off.toDataURL('image/png');
+}
+
+function openGraphWBForEx1() {
+  const w = document.getElementById('wb-b3e1-wrap');
+  w.style.display = 'block';
+  createSmartWhiteboard('wb-b3e1', 'Bảng vẽ đồ thị Bài 1', 460);
+  setTimeout(() => {
+    resizeWB('wb-b3e1');
+    if (WB_REGISTRY['wb-b3e1'].images.length === 0) {
+      insertBlankAxesToWB('wb-b3e1', 't (h)', 's (km)', [1, 2, 3, 4], [40, 80, 120, 160]);
+    }
+  }, 50);
+}
+
+function openGraphWBForFinal() {
+  const w = document.getElementById('wb-ft3-wrap');
+  w.style.display = 'block';
+  createSmartWhiteboard('wb-ft3', 'Bảng vẽ đồ thị Câu 3', 460);
+  setTimeout(() => {
+    resizeWB('wb-ft3');
+    if (WB_REGISTRY['wb-ft3'].images.length === 0) {
+      insertBlankAxesToWB('wb-ft3', 't (s)', 's (m)', [2, 4, 6, 8], [3, 6, 9, 12]);
+    }
+  }, 50);
+}
+
+// =============================================================================
+// TRẮC NGHIỆM BÀI 10 (TAB 3) & ĐỀ KIỂM TRA CHƯƠNG III (TAB 4)
+// =============================================================================
+const B3_QUIZ = [
+  { q: "Câu 1 (Nhìn hình ca nô). Sau 1 giờ kể từ lúc xuất phát, ca nô đi được quãng đường bao nhiêu?", opts: ["20 km", "30 km", "40 km", "60 km"], ans: 1, exp: "Tại vạch t = 1 h gióng lên gặp chấm đỏ ở giữa 20 và 40 km, tức là s = 30 km." },
+  { q: "Câu 2 (Nhìn hình ca nô). Sau 2 giờ (tại điểm A), ca nô đi được quãng đường là:", opts: ["40 km", "60 km", "80 km", "20 km"], ans: 1, exp: "Từ t = 2 h gióng thẳng lên điểm A rồi gióng ngang sang trục Os thấy số 60 km." },
+  { q: "Câu 3 (Nhìn hình ca nô). Trên đoạn nằm ngang AB (từ 2 giờ đến 3 giờ), ca nô đang ở trạng thái nào?", opts: ["Chạy nhanh nhất", "Đứng yên (dừng nghỉ tại chỗ)", "Quay đầu chạy lùi", "Tăng tốc gấp đôi"], ans: 1, exp: "Đoạn thẳng nằm ngang song song với trục thời gian cho biết vật đang đứng yên." },
+  { q: "Câu 4 (Nhìn hình ca nô). Tổng quãng đường ca nô đi được sau cả chuyến đi 4 giờ (tại điểm C) là:", opts: ["60 km", "80 km", "100 km", "40 km"], ans: 1, exp: "Tại điểm C (t = 4 h), gióng ngang sang trục quãng đường Os được 80 km." },
+  { q: "Câu 5. Khi vẽ đồ thị quãng đường - thời gian, trục nằm ngang thường dùng để biểu diễn đại lượng nào?", opts: ["Quãng đường s", "Thời gian t", "Khối lượng m", "Tốc độ v"], ans: 1, exp: "Quy ước chuẩn SGK: Trục nằm ngang là trục thời gian Ot, trục thẳng đứng là trục quãng đường Os." },
+  { q: "Câu 6. Đồ thị quãng đường - thời gian của một vật chuyển động thẳng với tốc độ không đổi từ gốc O có dạng là:", opts: ["Một đường tròn", "Một đường thẳng nằm nghiêng đi qua gốc tọa độ O", "Một đường dích dắc lên xuống", "Một đường thẳng đứng"], ans: 1, exp: "Chuyển động với tốc độ không đổi có đồ thị là đường thẳng nằm nghiêng." }
+];
+
+const G7_FINAL_MC = [
+  { q: "Câu 1. Công thức tính tốc độ chuyển động là:", opts: ["v = s · t", "v = s / t", "v = t / s", "v = s + t"], ans: 1, exp: "v = s / t." },
+  { q: "Câu 2. Đơn vị đo tốc độ hợp pháp thường dùng là:", opts: ["m/s và km/h", "kg và g", "m và km", "giờ và phút"], ans: 0, exp: "m/s và km/h." },
+  { q: "Câu 3. Đổi đơn vị: 10 m/s bằng bao nhiêu km/h?", opts: ["3,6 km/h", "36 km/h", "100 km/h", "27 km/h"], ans: 1, exp: "10 × 3,6 = 36 km/h." },
+  { q: "Câu 4. Một bạn chạy 60 m hết 12 giây. Tốc độ chạy của bạn là:", opts: ["5 m/s", "6 m/s", "720 m/s", "0,2 m/s"], ans: 0, exp: "v = 60 / 12 = 5 m/s." },
+  { q: "Câu 5. Một ô tô đi với tốc độ 50 km/h trong 2 giờ thì đi được quãng đường là:", opts: ["25 km", "52 km", "100 km", "48 km"], ans: 2, exp: "s = v · t = 50 × 2 = 100 km." },
+  { q: "Câu 6. Trong phòng thí nghiệm, dụng cụ hiện đại dùng tia sáng tự bật/tắt đồng hồ để đo tốc độ là:", opts: ["Thước dây", "Cổng quang điện nối với đồng hồ đo thời gian hiện số", "Nhiệt kế", "Cân điện tử"], ans: 1, exp: "Cổng quang điện nối với đồng hồ hiện số." },
+  { q: "Câu 7. Trên đồ thị quãng đường - thời gian, nếu đường biểu diễn là đoạn thẳng NẰM NGANG thì vật đang:", opts: ["Đi rất nhanh", "Đứng yên (không chuyển động)", "Đi chậm dần", "Bay lên cao"], ans: 1, exp: "Đoạn nằm ngang biểu diễn vật đứng yên." },
+  { q: "Câu 8. Biển báo giao thông hình tròn nền trắng, viền đỏ, ghi số '50' màu đen có ý nghĩa là:", opts: ["Tốc độ tối đa cho phép là 50 km/h", "Phải đi nhanh hơn 50 km/h", "Khoảng cách tối thiểu 50 m", "Đường dài 50 km"], ans: 0, exp: "Biển cấm vượt quá tốc độ tối đa 50 km/h." },
+  { q: "Câu 9. Theo bảng SGK, khi mặt đường khô ráo, xe chạy tốc độ 60 km/h cần giữ khoảng cách an toàn tối thiểu là:", opts: ["35 m", "55 m", "70 m", "100 m"], ans: 0, exp: "Với v = 60 km/h, khoảng cách tối thiểu là 35 m." },
+  { q: "Câu 10. Khi trời mưa to làm đường trơn trượt, người lái xe cần làm gì để đảm bảo an toàn?", opts: ["Tăng tốc độ đi thật nhanh", "Giảm tốc độ và tăng khoảng cách an toàn với xe phía trước", "Đi sát đuôi xe trước", "Tắt đèn xe"], ans: 1, exp: "Trời mưa đường trơn phải giảm tốc độ và giữ khoảng cách xa hơn." }
+];
+
+let b3Score = 0;
+function renderMCList(arr, boxId, prefix, onScore) {
+  const box = document.getElementById(boxId);
+  box.innerHTML = '';
+  arr.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.style.background = '#f8fafc';
+    let html = `<div class="ex-title" style="font-size:16px;">${item.q}</div><div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:8px;">`;
+    item.opts.forEach((opt, oIdx) => {
+      html += `<button class="quiz-opt-btn" id="${prefix}-${idx}-${oIdx}" onclick="checkGenericMC('${prefix}', ${idx}, ${oIdx})"><span class="quiz-letter">${['A','B','C','D'][oIdx]}</span><span>${opt}</span></button>`;
+    });
+    html += `</div><div id="${prefix}-exp-${idx}" style="display:none; margin-top:8px; padding:9px 13px; border-radius:8px; font-size:14px;"></div>`;
+    card.innerHTML = html;
+    box.appendChild(card);
+  });
+}
+
+function checkGenericMC(prefix, idx, chosen) {
+  const arr = prefix === 'b3q' ? B3_QUIZ : G7_FINAL_MC;
+  const item = arr[idx];
+  for (let i = 0; i < 4; i++) {
+    const b = document.getElementById(`${prefix}-${idx}-${i}`);
+    b.disabled = true;
+    if (i === item.ans) { b.style.borderColor = '#10b981'; b.style.background = '#ecfdf5'; }
+    else if (i === chosen) { b.style.borderColor = '#ef4444'; b.style.background = '#fef2f2'; }
+  }
+  const exp = document.getElementById(`${prefix}-exp-${idx}`);
+  exp.style.display = 'block';
+  if (chosen === item.ans) {
+    if (prefix === 'b3q') { b3Score++; document.getElementById('b3-q-score').innerText = `${b3Score}/6`; }
+    exp.style.background = '#ecfdf5'; exp.style.color = '#065f46';
+    exp.innerHTML = `✅ <strong>Chính xác!</strong> ${item.exp}`;
+  } else {
+    exp.style.background = '#fef2f2'; exp.style.color = '#991b1b';
+    exp.innerHTML = `❌ <strong>Lưu ý:</strong> ${item.exp}`;
+  }
+}
+
+function resetB3Exercises() {
+  b3Score = 0;
+  document.getElementById('b3-q-score').innerText = '0/6';
+  renderMCList(B3_QUIZ, 'b3-quiz-container', 'b3q');
+  for (let i = 1; i <= 3; i++) {
+    const h = document.getElementById(`b3h-${i}`); if (h) h.style.display = 'none';
+    const s = document.getElementById(`sol-b3e${i}`); if (s) s.style.display = 'none';
+    const w = document.getElementById(`wb-b3e${i}-wrap`); if (w) w.style.display = 'none';
+    if (WB_REGISTRY[`wb-b3e${i}`]) clearWBAll(`wb-b3e${i}`);
+  }
+  clearWBAll('wb-g7b3-tab3');
+}
+
+// ĐỒNG HỒ 30 PHÚT
+let g7Secs = 30 * 60, g7ClockId = null;
+function updateG7Clock() {
+  document.getElementById('g7-clock').innerText = `${String(Math.floor(g7Secs / 60)).padStart(2,'0')}:${String(g7Secs % 60).padStart(2,'0')}`;
+}
+function startG7Clock() {
+  if (g7ClockId) return;
+  g7ClockId = setInterval(() => {
+    if (g7Secs > 0) { g7Secs--; updateG7Clock(); }
+    else { clearInterval(g7ClockId); g7ClockId = null; alert("⏰ Hết 30 phút làm bài!"); }
+  }, 1000);
+}
+function pauseG7Clock() { clearInterval(g7ClockId); g7ClockId = null; }
+function resetG7Clock() { pauseG7Clock(); g7Secs = 30 * 60; updateG7Clock(); }
+
+function resetFinalTest() {
+  resetG7Clock();
+  renderMCList(G7_FINAL_MC, 'g7-final-mc', 'g7f');
+  ['ft1', 'ft2', 'ft3'].forEach(k => {
+    const s = document.getElementById(`sol-${k}`); if (s) s.style.display = 'none';
+    const w = document.getElementById(`wb-${k}-wrap`); if (w) w.style.display = 'none';
+    if (WB_REGISTRY[`wb-${k}`]) clearWBAll(`wb-${k}`);
+  });
+}
+
+function copyZaloB3() {
+  navigator.clipboard.writeText(document.getElementById('zalo-g7b3').value).then(() => {
+    alert("✅ Đã sao chép tin nhắn gửi nhóm Zalo cho Buổi 3!");
+  });
+}
+
+// =============================================================================
+// SMART WHITEBOARD + SCREEN SNIPPING ENGINE
+// =============================================================================
+const WB_REGISTRY = {};
+let activeSnipTargetWB = null;
+
+function createSmartWhiteboard(mountId, titleText = "Bảng viết & Ghi chú", initialHeight = 460) {
+  const mount = document.getElementById(mountId);
+  if (!mount || WB_REGISTRY[mountId]) return;
+  mount.innerHTML = `
+    <div class="smart-wb-wrapper">
+      <div class="smart-wb-toolbar">
+        <div class="wb-tool-group">
+          <span class="wb-title-tag">✍️ ${titleText}</span>
+          <button type="button" class="wb-btn active" id="${mountId}-tool-pen" onclick="setWBTool('${mountId}', 'pen')">🖊️ Bút viết</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-hl" onclick="setWBTool('${mountId}', 'hl')">🖍️ Dạ quang</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-eraser" onclick="setWBTool('${mountId}', 'eraser')">🧽 Tẩy nét</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-move" onclick="setWBTool('${mountId}', 'move')">✋ Chỉnh ảnh cắt</button>
+        </div>
+        <div class="wb-tool-group">
+          <div class="color-dot active" style="background:#dc2626;" onclick="setWBColor('${mountId}', '#dc2626', this)"></div>
+          <div class="color-dot" style="background:#4f46e5;" onclick="setWBColor('${mountId}', '#4f46e5', this)"></div>
+          <div class="color-dot" style="background:#059669;" onclick="setWBColor('${mountId}', '#059669', this)"></div>
+          <div class="color-dot" style="background:#0f172a;" onclick="setWBColor('${mountId}', '#0f172a', this)"></div>
+          <select onchange="setWBSize('${mountId}', this.value)" style="padding:5px 8px; border-radius:8px; border:1.5px solid #cbd5e1; font-size:12.5px; font-weight:700;">
+            <option value="2.5">Nét mảnh</option><option value="4" selected>Nét vừa</option><option value="7">Nét đậm</option>
+          </select>
+        </div>
+        <div class="wb-tool-group">
+          <button type="button" class="wb-btn snip-btn" onclick="startSnipForWB('${mountId}')">✂️ Cắt ảnh màn hình đưa xuống đây</button>
+          <label class="wb-btn" style="margin:0;">🖼️ Chèn ảnh<input type="file" accept="image/*" style="display:none;" onchange="uploadImgToWB('${mountId}', this)"></label>
+          <button type="button" class="wb-btn" onclick="undoWB('${mountId}')">↩️ Hoàn tác</button>
+          <button type="button" class="wb-btn" onclick="changeWBHeight('${mountId}', 200)">➕ Mở rộng bảng</button>
+          <button type="button" class="wb-btn" onclick="clearWBInk('${mountId}')">🧹 Xóa nét</button>
+          <button type="button" class="wb-btn" style="color:#be123c;" onclick="clearWBAll('${mountId}')">🗑️ Xóa hết</button>
+        </div>
+      </div>
+      <div class="wb-stage" id="${mountId}-stage" style="height:${initialHeight}px;">
+        <canvas class="wb-bg-canvas" id="${mountId}-bg"></canvas>
+        <canvas class="wb-ink-canvas" id="${mountId}-ink"></canvas>
+      </div>
+    </div>
+  `;
+  const stage = document.getElementById(`${mountId}-stage`), bgCanvas = document.getElementById(`${mountId}-bg`), inkCanvas = document.getElementById(`${mountId}-ink`);
+  const state = { id: mountId, stage, bgCanvas, inkCanvas, bgCtx: bgCanvas.getContext('2d'), inkCtx: inkCanvas.getContext('2d'), tool: 'pen', color: '#dc2626', size: 4, drawing: false, lastPt: null, history: [], images: [], dragImg: null, resizingImg: null, dragOffset: { x: 0, y: 0 } };
+  WB_REGISTRY[mountId] = state; resizeWB(mountId); bindWBEvents(state);
+}
+function resizeWB(id) {
+  const st = WB_REGISTRY[id]; if (!st) return;
+  const rect = st.stage.getBoundingClientRect(); if (rect.width < 10 || rect.height < 10) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), tW = Math.round(rect.width * dpr), tH = Math.round(rect.height * dpr);
+  if (st.inkCanvas.width === tW && st.inkCanvas.height === tH) return;
+  const tmp = document.createElement('canvas'); tmp.width = st.inkCanvas.width; tmp.height = st.inkCanvas.height;
+  if (tmp.width > 0 && tmp.height > 0) tmp.getContext('2d').drawImage(st.inkCanvas, 0, 0);
+  st.bgCanvas.width = tW; st.bgCanvas.height = tH; st.inkCanvas.width = tW; st.inkCanvas.height = tH;
+  st.bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0); st.inkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (tmp.width > 0 && tmp.height > 0) { st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.drawImage(tmp,0,0); st.inkCtx.restore(); }
+  redrawWBImages(st);
+}
+function redrawWBImages(st) {
+  const rect = st.stage.getBoundingClientRect(); st.bgCtx.clearRect(0, 0, rect.width || 2000, rect.height || 2000);
+  st.images.forEach(it => {
+    st.bgCtx.drawImage(it.img, it.x, it.y, it.w, it.h);
+    if (st.tool === 'move') {
+      st.bgCtx.save(); st.bgCtx.strokeStyle = '#4f46e5'; st.bgCtx.lineWidth = 2; st.bgCtx.setLineDash([6,4]); st.bgCtx.strokeRect(it.x, it.y, it.w, it.h); st.bgCtx.setLineDash([]); st.bgCtx.fillStyle = '#4f46e5'; st.bgCtx.fillRect(it.x + it.w - 14, it.y + it.h - 14, 14, 14); st.bgCtx.restore();
+    }
+  });
+}
+function saveWBHistory(st) { if (!st.inkCanvas.width) return; if (st.history.length >= 15) st.history.shift(); const s = document.createElement('canvas'); s.width = st.inkCanvas.width; s.height = st.inkCanvas.height; s.getContext('2d').drawImage(st.inkCanvas, 0, 0); st.history.push(s); }
+function bindWBEvents(st) {
+  const cv = st.inkCanvas;
+  const getPos = e => { const r = cv.getBoundingClientRect(), p = (e.touches && e.touches[0]) ? e.touches[0] : e; return { x: p.clientX - r.left, y: p.clientY - r.top }; };
+  cv.addEventListener('pointerdown', e => {
+    if (e.button !== undefined && e.button !== 0) return; e.preventDefault(); const pos = getPos(e);
+    if (st.tool === 'move') {
+      for (let i = st.images.length - 1; i >= 0; i--) {
+        const it = st.images[i];
+        if (pos.x >= it.x + it.w - 22 && pos.x <= it.x + it.w + 8 && pos.y >= it.y + it.h - 22 && pos.y <= it.y + it.h + 8) { st.resizingImg = it; return; }
+        if (pos.x >= it.x && pos.x <= it.x + it.w && pos.y >= it.y && pos.y <= it.y + it.h) { st.dragImg = it; st.dragOffset = { x: pos.x - it.x, y: pos.y - it.y }; return; }
+      }
+      return;
+    }
+    saveWBHistory(st); st.drawing = true; st.lastPt = pos; const ctx = st.inkCtx;
+    ctx.beginPath(); ctx.moveTo(pos.x, pos.y); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    if (st.tool === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = 26; ctx.strokeStyle = 'rgba(0,0,0,1)'; }
+    else if (st.tool === 'hl') { ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = 20; ctx.strokeStyle = 'rgba(250,204,21,0.35)'; }
+    else { ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = st.size; ctx.strokeStyle = st.color; }
+    ctx.lineTo(pos.x + 0.1, pos.y + 0.1); ctx.stroke();
+  });
+  cv.addEventListener('pointermove', e => {
+    if (st.tool === 'move') {
+      if (!st.dragImg && !st.resizingImg) return; e.preventDefault(); const pos = getPos(e);
+      if (st.resizingImg) { const ratio = st.resizingImg.aspect || (st.resizingImg.w / st.resizingImg.h); st.resizingImg.w = Math.max(80, pos.x - st.resizingImg.x); st.resizingImg.h = st.resizingImg.w / ratio; }
+      else if (st.dragImg) { st.dragImg.x = pos.x - st.dragOffset.x; st.dragImg.y = pos.y - st.dragOffset.y; }
+      redrawWBImages(st); return;
+    }
+    if (!st.drawing) return; e.preventDefault(); const pos = getPos(e);
+    st.inkCtx.quadraticCurveTo(st.lastPt.x, st.lastPt.y, (st.lastPt.x + pos.x) / 2, (st.lastPt.y + pos.y) / 2); st.inkCtx.stroke(); st.lastPt = pos;
+  });
+  window.addEventListener('pointerup', () => { st.drawing = false; st.dragImg = null; st.resizingImg = null; st.inkCtx.globalCompositeOperation = 'source-over'; });
+}
+function setWBTool(id, tool) { const st = WB_REGISTRY[id]; if (!st) return; st.tool = tool; ['pen','hl','eraser','move'].forEach(t => { const b = document.getElementById(`${id}-tool-${t}`); if (b) b.classList.toggle('active', t === tool); }); redrawWBImages(st); }
+function setWBColor(id, c, el) { const st = WB_REGISTRY[id]; if (!st) return; st.color = c; if (st.tool === 'eraser' || st.tool === 'move') setWBTool(id, 'pen'); el.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active')); el.classList.add('active'); }
+function setWBSize(id, v) { if (WB_REGISTRY[id]) WB_REGISTRY[id].size = parseFloat(v); }
+function undoWB(id) { const st = WB_REGISTRY[id]; if (!st || !st.history.length) return; const p = st.history.pop(); st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.clearRect(0,0,st.inkCanvas.width,st.inkCanvas.height); st.inkCtx.drawImage(p,0,0); st.inkCtx.restore(); }
+function clearWBInk(id) { const st = WB_REGISTRY[id]; if (!st) return; saveWBHistory(st); st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.clearRect(0,0,st.inkCanvas.width,st.inkCanvas.height); st.inkCtx.restore(); }
+function clearWBAll(id) { const st = WB_REGISTRY[id]; if (!st) return; clearWBInk(id); st.images = []; redrawWBImages(st); }
+function changeWBHeight(id, d) { const st = WB_REGISTRY[id]; if (!st) return; st.stage.style.height = `${Math.max(300, st.stage.offsetHeight + d)}px`; resizeWB(id); }
+function toggleInlineWB(wrapId, wbId) { const w = document.getElementById(wrapId); if (!w) return; if (w.style.display === 'none' || !w.style.display) { w.style.display = 'block'; createSmartWhiteboard(wbId, 'Bảng viết giải bài', 420); setTimeout(() => resizeWB(wbId), 30); } else w.style.display = 'none'; }
+function addImageElementToWB(id, imgObj) {
+  const st = WB_REGISTRY[id]; if (!st) return; resizeWB(id);
+  const r = st.stage.getBoundingClientRect(), drawW = Math.min(imgObj.width, Math.max(260, r.width - 40)), ratio = imgObj.width / imgObj.height, drawH = drawW / ratio;
+  if (drawH > r.height * 0.68 && drawH + 220 > r.height) { st.stage.style.height = `${Math.round(drawH + 220)}px`; resizeWB(id); }
+  st.images.push({ img: imgObj, x: Math.max(16, (st.stage.getBoundingClientRect().width - drawW) / 2), y: 16, w: drawW, h: drawH, aspect: ratio });
+  setWBTool(id, 'pen'); redrawWBImages(st);
+}
+function uploadImgToWB(id, inp) { const f = inp.files && inp.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = ev => { const im = new Image(); im.onload = () => addImageElementToWB(id, im); im.src = ev.target.result; }; rd.readAsDataURL(f); inp.value = ''; }
+function startSnipForWB(id) { activeSnipTargetWB = id; document.getElementById('snip-floating-bar').style.display = 'flex'; }
+function cancelSnipMode() { activeSnipTargetWB = null; document.getElementById('snip-floating-bar').style.display = 'none'; document.getElementById('snip-overlay').style.display = 'none'; document.getElementById('snip-rect').style.display = 'none'; }
+function beginSnipDragMode() {
+  document.getElementById('snip-floating-bar').style.display = 'none';
+  const ov = document.getElementById('snip-overlay'), rc = document.getElementById('snip-rect'); ov.style.display = 'block'; rc.style.display = 'none';
+  let sx = 0, sy = 0, drag = false;
+  function down(e) { e.preventDefault(); const p = (e.touches && e.touches[0]) ? e.touches[0] : e; sx = p.clientX; sy = p.clientY; drag = true; rc.style.left = `${sx}px`; rc.style.top = `${sy}px`; rc.style.width = '0px'; rc.style.height = '0px'; rc.style.display = 'block'; }
+  function move(e) { if (!drag) return; e.preventDefault(); const p = (e.touches && e.touches[0]) ? e.touches[0] : e; rc.style.left = `${Math.min(sx, p.clientX)}px`; rc.style.top = `${Math.min(sy, p.clientY)}px`; rc.style.width = `${Math.abs(p.clientX - sx)}px`; rc.style.height = `${Math.abs(p.clientY - sy)}px`; }
+  async function up() {
+    if (!drag) return; drag = false; ov.removeEventListener('pointerdown', down); ov.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+    const box = rc.getBoundingClientRect(); ov.style.display = 'none'; rc.style.display = 'none';
+    if (box.width < 20 || box.height < 20 || !activeSnipTargetWB) { cancelSnipMode(); return; }
+    const target = activeSnipTargetWB; activeSnipTargetWB = null;
+    if (window.html2canvas) {
+      const snap = await window.html2canvas(document.body, { x: box.left + window.scrollX, y: box.top + window.scrollY, width: box.width, height: box.height, scale: Math.min(window.devicePixelRatio || 2, 2), backgroundColor: '#ffffff', useCORS: true, logging: false });
+      const im = new Image(); im.onload = () => { addImageElementToWB(target, im); document.getElementById(target).scrollIntoView({ behavior: 'smooth', block: 'center' }); }; im.src = snap.toDataURL('image/png');
+    }
+  }
+  ov.addEventListener('pointerdown', down); ov.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+}
+
+window.addEventListener('resize', () => Object.keys(WB_REGISTRY).forEach(id => resizeWB(id)));
+window.addEventListener('DOMContentLoaded', () => {
+  createSmartWhiteboard('wb-g7b3-tab1', 'Bảng lưới thực hành vẽ đồ thị', 470);
+  createSmartWhiteboard('wb-g7b3-tab3', 'Bảng viết nháp chung Phần 3', 450);
+  renderDrawGraphCanvas();
+  renderSyncGraphCanvas();
+  renderMCList(B3_QUIZ, 'b3-quiz-container', 'b3q');
+  renderMCList(G7_FINAL_MC, 'g7-final-mc', 'g7f');
+});
+</script>
+</body>
+</html>
