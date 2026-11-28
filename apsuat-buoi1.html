@@ -17,81 +17,126 @@
     --border: #e2e8f0;
     --text: #1e293b;
     --muted: #64748b;
+    --z: 1;
+    --spot-z: 1.35;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
-  body { background-color: #f1f5f9; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+  body { background-color: #f1f5f9; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+  sub, sup { font-size: 0.72em; line-height: 0; position: relative; vertical-align: baseline; }
+  sup { top: -0.45em; }
+  sub { bottom: -0.26em; }
 
   /* STICKY TOP HEADER & TABS */
   .sticky-top-shell { position: sticky; top: 0; z-index: 900; background: #ffffff; box-shadow: 0 4px 16px rgba(15,23,42,0.1); }
-  header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #0284c7 100%); color: white; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-  .logo-title h1 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  header { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #0284c7 100%); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .logo-title h1 { font-size: 19.5px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
   .logo-title p { font-size: 12.5px; opacity: 0.94; margin-top: 2px; }
+
+  /* TABLET REFLOW ZOOM BAR */
+  .zoom-bar { display: inline-flex; align-items: center; gap: 6px; background: rgba(15,23,42,0.32); border: 1.5px solid rgba(255,255,255,0.35); padding: 5px 10px; border-radius: 999px; }
+  .zoom-label { font-size: 12.5px; font-weight: 700; color: #e0f2fe; margin-right: 2px; white-space: nowrap; }
+  .zoom-btn { background: #ffffff; color: #1e3a8a; border: none; border-radius: 8px; padding: 5px 11px; font-size: 13.5px; font-weight: 900; cursor: pointer; touch-action: manipulation; }
+  .zoom-btn:active { transform: scale(0.95); }
+  .zoom-val { background: transparent; color: #fde047; border: 1px dashed rgba(253,224,71,0.6); border-radius: 8px; padding: 4px 9px; font-size: 13px; font-weight: 800; cursor: pointer; min-width: 52px; text-align: center; }
 
   nav.tab-bar { background: #ffffff; border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; padding: 0 14px; }
   .nav-tab { padding: 12px 15px; font-size: 14px; font-weight: 700; color: var(--muted); border: none; background: transparent; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
   .nav-tab:hover { color: var(--primary); background: #f8fafc; }
   .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #eff6ff; }
 
-  main { flex: 1; max-width: 1220px; width: 100%; margin: 0 auto; padding: 22px 18px 80px; }
+  main { flex: 1; max-width: min(100%, calc(1220px * var(--z, 1))); width: 100%; margin: 0 auto; padding: 22px 18px 80px; }
   .section-view { display: none; animation: fadeIn 0.25s ease; }
   .section-view.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card { background: white; border-radius: 20px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid var(--border); margin-bottom: 24px; }
+  .card { background: white; border-radius: 20px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid var(--border); margin-bottom: 24px; overflow-wrap: break-word; word-wrap: break-word; }
   .section-header { margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
-  .section-header h2 { font-size: 22.5px; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 10px; }
-  .section-header p { font-size: 14.5px; color: var(--muted); margin-top: 4px; }
+  .section-header h2 { font-size: calc(22.5px * var(--z, 1)); font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 10px; line-height: 1.35; }
+  .section-header p { font-size: calc(14.5px * var(--z, 1)); color: var(--muted); margin-top: 4px; line-height: 1.5; }
+  .sub-sec-title { font-size: calc(18.5px * var(--z, 1)); color: #1e3a8a; margin-bottom: 12px; font-weight: 800; line-height: 1.4; }
 
   .btn-reset { background: #fff1f2; color: #be123c; border: 1.5px solid #fda4af; padding: 8px 15px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
   .btn-action-soft { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; padding: 8px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
 
+  /* SPOTLIGHT / FOCUS BUTTON & FULLSCREEN MODAL FOR STUDENT NOTE-COPYING */
+  .btn-spotlight { background: #eef2ff; color: #3730a3; border: 1.5px solid #c7d2fe; padding: 6px 12px; border-radius: 9px; font-size: 13px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s; touch-action: manipulation; }
+  .btn-spotlight:hover { background: #e0e7ff; border-color: #818cf8; }
+  .block-top-actions { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+
+  #spotlight-modal { display: none; position: fixed; inset: 0; z-index: 9600; background: rgba(15,23,42,0.84); backdrop-filter: blur(4px); padding: 14px; align-items: center; justify-content: center; }
+  #spotlight-modal.open { display: flex; }
+  .spotlight-sheet { background: #ffffff; width: 96vw; max-width: 1360px; max-height: 93vh; border-radius: 22px; box-shadow: 0 25px 60px rgba(0,0,0,0.45); display: flex; flex-direction: column; overflow: hidden; border: 2px solid #93c5fd; }
+  .spotlight-bar { background: linear-gradient(135deg, #1e3a8a, #2563eb); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .spotlight-bar-title { font-size: 15.5px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .spotlight-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .spot-btn { background: rgba(255,255,255,0.18); color: white; border: 1.5px solid rgba(255,255,255,0.4); padding: 7px 14px; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; touch-action: manipulation; }
+  .spot-btn.primary { background: #fde047; color: #0f172a; border-color: #facc15; }
+  .spot-btn.close { background: #ef4444; color: white; border-color: #f87171; }
+  .spotlight-body { padding: 28px 30px; overflow-y: auto; flex: 1; --z: var(--spot-z, 1.35); overflow-wrap: break-word; word-wrap: break-word; }
+  .spotlight-body .ex-card, .spotlight-body .formula-hero, .spotlight-body .golden-box, .spotlight-body .compare-box, .spotlight-body .theory-callout, .spotlight-body .sim-panel, .spotlight-body .unit-chain-container { margin: 0; box-shadow: none; }
+  .spotlight-body .unit-chain { flex-wrap: wrap; justify-content: center; row-gap: 12px; }
+
   /* UNIT CONVERSION CHAINS */
   .unit-chain-container { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 18px; padding: 18px 16px; margin-bottom: 18px; }
-  .unit-chain-title { font-size: 16px; font-weight: 800; color: #1e3a8a; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-  .unit-chain { display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; overflow-x: auto; padding: 8px 2px; gap: 2px; }
-  .unit-box { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 10px 12px; min-width: 72px; text-align: center; flex-shrink: 0; }
-  .unit-box .sym { font-size: 19px; font-weight: 800; color: #1e3a8a; }
-  .unit-box .name { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+  .unit-chain-title { font-size: calc(16px * var(--z, 1)); font-weight: 800; color: #1e3a8a; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .unit-chain { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; row-gap: 10px; padding: 8px 2px; gap: 4px; }
+  .unit-box { background: white; border: 2px solid var(--primary); border-radius: 12px; padding: 10px 12px; min-width: 72px; text-align: center; flex: 1 1 auto; }
+  .unit-box .sym { font-size: calc(19px * var(--z, 1)); font-weight: 800; color: #1e3a8a; }
+  .unit-box .name { font-size: calc(11.5px * var(--z, 1)); color: var(--muted); font-weight: 600; margin-top: 2px; }
   .arrow-step { display: flex; flex-direction: column; align-items: center; padding: 0 3px; flex-shrink: 0; }
-  .arrow-step .step-val { font-size: 11px; font-weight: 800; color: #b91c1c; background: #fee2e2; padding: 2px 6px; border-radius: 6px; }
-  .arrow-step .arrow-icon { font-size: 16px; color: #64748b; line-height: 1; }
+  .arrow-step .step-val { font-size: calc(11.5px * var(--z, 1)); font-weight: 800; color: #b91c1c; background: #fee2e2; padding: 2px 6px; border-radius: 6px; }
+  .arrow-step .arrow-icon { font-size: calc(16px * var(--z, 1)); color: #64748b; line-height: 1; }
 
   .golden-box { background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%); border: 2px solid #f59e0b; border-radius: 16px; padding: 16px 20px; margin: 14px 0; }
-  .golden-box h4 { font-size: 15.5px; color: #92400e; font-weight: 800; margin-bottom: 10px; }
-  .golden-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
-  .golden-item { background: white; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 14px; font-size: 15px; font-weight: 700; color: #78350f; text-align: center; }
+  .golden-box h4 { font-size: calc(16px * var(--z, 1)); color: #92400e; font-weight: 800; margin-bottom: 10px; }
+  .golden-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px; }
+  .golden-item { background: white; border: 1px solid #fde68a; border-radius: 10px; padding: 10px 14px; font-size: calc(15px * var(--z, 1)); font-weight: 700; color: #78350f; text-align: center; line-height: 1.5; }
 
-  /* FORMULA HERO */
+  /* THEORY CALLOUT & FORMULA HERO */
+  .theory-callout { background: #f8fafc; border-left: 5px solid var(--primary); padding: 16px 20px; border-radius: 0 14px 14px 0; margin-bottom: 20px; font-size: calc(15.5px * var(--z, 1)); line-height: 1.68; }
+  .theory-callout h3 { color: #1e3a8a; font-size: calc(18.5px * var(--z, 1)); margin-bottom: 6px; }
+
   .formula-hero { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 2px solid #60a5fa; border-radius: 20px; padding: 24px; text-align: center; margin: 20px 0; }
-  .formula-display { font-size: 42px; font-weight: 900; color: #1e3a8a; font-family: 'Cambria Math', Georgia, serif; display: inline-flex; align-items: center; gap: 10px; }
+  .fh-kicker { font-size: calc(15px * var(--z, 1)); font-weight: 800; color: #1e40af; text-transform: uppercase; margin-bottom: 8px; }
+  .fh-quote { font-size: calc(18.5px * var(--z, 1)); font-weight: 700; color: #0f172a; margin-bottom: 16px; line-height: 1.5; }
+  .formula-display { font-size: calc(42px * var(--z, 1)); font-weight: 900; color: #1e3a8a; font-family: 'Cambria Math', Georgia, serif; display: inline-flex; align-items: center; gap: 10px; }
   .frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; line-height: 1.05; }
   .frac .num { border-bottom: 3px solid currentColor; padding: 0 8px 3px; }
   .frac .den { padding: 3px 8px 0; }
-  .sub-formula-pill { background: white; border: 2px solid #3b82f6; padding: 9px 20px; border-radius: 30px; font-size: 20px; font-weight: 800; color: #1d4ed8; display: inline-flex; align-items: center; gap: 6px; margin: 8px 6px 0; }
+  .fh-legend { font-size: calc(15.5px * var(--z, 1)); color: #334155; margin-top: 12px; font-weight: 600; line-height: 1.55; }
+  .sub-formula-pill { background: white; border: 2px solid #3b82f6; padding: 9px 20px; border-radius: 30px; font-size: calc(20px * var(--z, 1)); font-weight: 800; color: #1d4ed8; display: inline-flex; align-items: center; gap: 6px; margin: 8px 6px 0; }
+  .fh-units { margin-top: 14px; font-size: calc(15.5px * var(--z, 1)); font-weight: 800; color: #047857; line-height: 1.65; }
 
   /* SIMULATIONS */
   .sim-panel { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 18px; padding: 18px; margin-bottom: 22px; }
+  .sim-title { font-size: calc(17px * var(--z, 1)); color: #1e3a8a; font-weight: 800; }
+  .sim-caption { margin-top: 10px; padding: 12px 16px; background: #eff6ff; border-radius: 10px; font-size: calc(15.5px * var(--z, 1)); font-weight: 700; color: #1e3a8a; line-height: 1.55; }
+  .sim-split { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 18px; align-items: center; }
+  .sim-notes { font-size: calc(15.5px * var(--z, 1)); line-height: 1.68; }
   .sim-btn { background: white; border: 1.5px solid #cbd5e1; padding: 8px 13px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
   .sim-btn.play { background: linear-gradient(135deg, #2563eb, #4f46e5); color: white; border: none; }
   .sim-btn.active-step { background: #dbeafe; border-color: #2563eb; color: #1e3a8a; }
 
   /* EXERCISE CARDS */
   .ex-card { background: #ffffff; border: 2px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
-  .ex-badge { display: inline-block; background: #dbeafe; color: #1d4ed8; font-size: 12.5px; font-weight: 800; padding: 4px 11px; border-radius: 12px; margin-bottom: 8px; }
-  .ex-title { font-size: 17.5px; font-weight: 700; color: #0f172a; line-height: 1.55; margin-bottom: 14px; }
+  .ex-badge { display: inline-block; background: #dbeafe; color: #1d4ed8; font-size: calc(12.5px * var(--z, 1)); font-weight: 800; padding: 4px 11px; border-radius: 12px; margin-bottom: 8px; }
+  .ex-title { font-size: calc(17.5px * var(--z, 1)); font-weight: 700; color: #0f172a; line-height: 1.58; margin-bottom: 14px; }
   .ex-btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   .ans-toggle-btn { background: #f1f5f9; color: #334155; border: 2px solid #cbd5e1; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
   .wb-toggle-btn { background: #f5f3ff; color: #6d28d9; border: 2px solid #ddd6fe; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
-  .solution-box { display: none; background: #f0fdf4; border-left: 5px solid #10b981; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 14px; font-size: 16px; line-height: 1.65; }
+  .solution-box { display: none; background: #f0fdf4; border-left: 5px solid #10b981; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 14px; font-size: calc(16px * var(--z, 1)); line-height: 1.68; }
   .solution-box .step-line { margin-bottom: 6px; }
 
-  .quiz-opt-btn { padding: 11px 14px; text-align: left; border: 2px solid #cbd5e1; border-radius: 11px; background: white; font-size: 15px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+  .quiz-opt-btn { padding: 11px 14px; text-align: left; border: 2px solid #cbd5e1; border-radius: 11px; background: white; font-size: calc(15px * var(--z, 1)); font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px; line-height: 1.45; }
   .quiz-opt-btn:hover:not(:disabled) { border-color: var(--primary); background: #eff6ff; }
   .quiz-letter { width: 28px; height: 28px; border-radius: 7px; background: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+  .quiz-exp-box { display: none; margin-top: 10px; padding: 10px 14px; border-radius: 8px; font-size: calc(14.5px * var(--z, 1)); line-height: 1.55; }
 
-  .compare-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin: 16px 0; }
+  .compare-2col { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; margin: 16px 0; }
   .compare-box { border-radius: 16px; padding: 18px; border: 2px solid; }
+  .compare-box h4 { font-size: calc(16.5px * var(--z, 1)); margin-bottom: 8px; line-height: 1.4; }
+  .compare-box p { font-size: calc(15px * var(--z, 1)); line-height: 1.65; }
 
   /* SMART WHITEBOARD */
   .smart-wb-wrapper { border: 2px solid #94a3b8; background: #f8fafc; border-radius: 16px; padding: 12px; margin: 18px 0; }
@@ -126,11 +171,33 @@
 <div id="snip-overlay"></div>
 <div id="snip-rect"></div>
 
+<div id="spotlight-modal" onclick="if(event.target===this) closeSpotlight()">
+  <div class="spotlight-sheet">
+    <div class="spotlight-bar">
+      <div class="spotlight-bar-title">🔍 CHẾ ĐỘ PHÓNG TO RÕ NÉT (TỰ ĐỘNG XUỐNG DÒNG)</div>
+      <div class="spotlight-controls">
+        <button type="button" class="spot-btn" onclick="changeSpotScale(-0.15)">A&minus;</button>
+        <span id="spot-scale-label" style="font-weight:900; color:#fde047; min-width:52px; text-align:center;">135%</span>
+        <button type="button" class="spot-btn" onclick="changeSpotScale(0.15)">A+</button>
+        <button type="button" class="spot-btn primary" id="spot-sol-btn" style="display:none;" onclick="toggleSpotSolution()">👁️ Hiện / Ẩn lời giải</button>
+        <button type="button" class="spot-btn close" onclick="closeSpotlight()">✖ Thu nhỏ lại</button>
+      </div>
+    </div>
+    <div class="spotlight-body" id="spotlight-body"></div>
+  </div>
+</div>
+
 <div class="sticky-top-shell">
   <header>
     <div class="logo-title">
       <h1><span>⚖️</span> CHƯƠNG III: KHỐI LƯỢNG RIÊNG VÀ ÁP SUẤT (PHẦN ÁP SUẤT - BUỔI 1)</h1>
       <p>Bài 15: Áp suất trên một bề mặt (Trọng tâm) & Bài 16: Áp suất chất lỏng, Áp suất khí quyển</p>
+    </div>
+    <div class="zoom-bar">
+      <span class="zoom-label">🔍 Cỡ chữ:</span>
+      <button type="button" class="zoom-btn" onclick="changePageScale(-1)">A&minus;</button>
+      <button type="button" class="zoom-val" id="page-scale-label" onclick="resetPageScale()">100%</button>
+      <button type="button" class="zoom-btn" onclick="changePageScale(1)">A+</button>
     </div>
   </header>
 
@@ -181,13 +248,13 @@
           <div class="unit-box"><div class="sym">mm&sup2;</div><div class="name">milimét vuông</div></div>
         </div>
 
-        <div class="golden-box">
+        <div class="golden-box zoom-block">
           <h4>⭐ 4 QUY TẮC VÀNG DÙNG TRONG MỌI BÀI TOÁN ÁP SUẤT:</h4>
           <div class="golden-grid">
             <div class="golden-item">1 m&sup2; = 10 000 cm&sup2; &nbsp;&rArr;&nbsp; Đổi cm&sup2; sang m&sup2;: <strong>CHIA 10 000</strong></div>
             <div class="golden-item">1 m&sup2; = 100 dm&sup2; &nbsp;&rArr;&nbsp; Đổi dm&sup2; sang m&sup2;: <strong>CHIA 100</strong></div>
             <div class="golden-item">Trọng lượng vật: <strong>P = 10 &middot; m</strong> &nbsp;(m tính bằng kg, P tính bằng N)</div>
-            <div class="golden-item">Đơn vị áp suất: <strong>1 Pa = 1 N/m&sup2;</strong> &nbsp;(ngoài ra có atm, mmHg, Bar)</div>
+            <div class="golden-item">Đơn vị chuẩn: <strong>1 Pa = 1 N/m&sup2;</strong><br><span style="font-size:0.9em; font-weight:600;">(1 atm = 1,013.10<sup>5</sup> Pa; 1 mmHg = 133,3 Pa; 1 Bar = 10<sup>5</sup> Pa)</span></div>
           </div>
         </div>
       </div>
@@ -196,7 +263,7 @@
 
       <hr style="margin:26px 0; border:none; border-top:2px dashed #cbd5e1;">
 
-      <h3 style="font-size:18.5px; color:#1e3a8a; margin-bottom:12px;">🎮 Phản xạ đổi nhanh diện tích & trọng lượng (Điểm: <span id="area-q-score" style="color:#059669;">0/6</span>)</h3>
+      <h3 class="sub-sec-title">🎮 Phản xạ đổi nhanh diện tích & trọng lượng (Điểm: <span id="area-q-score" style="color:#059669;">0/6</span>)</h3>
       <div id="area-quiz-box"></div>
     </div>
   </section>
@@ -214,17 +281,17 @@
       </div>
 
       <!-- 2.1 ÁP LỰC LÀ GÌ -->
-      <div style="background:#f8fafc; border-left:5px solid var(--primary); padding:16px 20px; border-radius:0 14px 14px 0; margin-bottom:20px; font-size:15.5px; line-height:1.65;">
-        <h3 style="color:#1e3a8a; font-size:18px; margin-bottom:6px;">2.1. Khái niệm Áp lực (F)</h3>
+      <div class="theory-callout zoom-block">
+        <h3>2.1. Khái niệm Áp lực (F)</h3>
         &bull; <strong>Định nghĩa chuẩn SGK:</strong> <em>Áp lực là lực ép có phương <strong>vuông góc</strong> với mặt bị ép.</em><br>
         &bull; <strong>Ví dụ:</strong> Lực của bàn chân người đứng ép vuông góc lên mặt sàn; lực của tủ sách ép vuông góc lên nền nhà; lực ngón tay ấn vuông góc lên mũ đinh ghim.<br>
         &bull; <strong>Lưu ý đặc biệt khi giải toán:</strong> Khi một vật đặt nằm yên trên mặt phẳng nằm ngang (như mặt bàn, mặt đường ngang) và không chịu thêm lực đè/kéo nào khác thì độ lớn áp lực đúng bằng trọng lượng của vật: <strong>F = P = 10 &middot; m</strong>.
       </div>
 
       <!-- 2.2 THÍ NGHIỆM HOẠT HÌNH KHỐI HỘP LÚN CÁT MỊN (HÌNH 15.3 SGK) -->
-      <div class="sim-panel">
+      <div class="sim-panel zoom-block">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
-          <strong style="font-size:17px; color:#1e3a8a;">🔬 2.2. Mô phỏng thí nghiệm SGK: Tác dụng của áp lực (độ lún) phụ thuộc vào yếu tố nào?</strong>
+          <strong class="sim-title">🔬 2.2. Mô phỏng thí nghiệm SGK: Tác dụng của áp lực (độ lún) phụ thuộc vào yếu tố nào?</strong>
           <div style="display:flex; gap:6px; flex-wrap:wrap;">
             <button class="sim-btn play" onclick="runSandSim('all')">▶️ Thả đồng thời cả 3 trường hợp</button>
             <button class="sim-btn" onclick="runSandSim(1)">TH 1: 1 khối nằm ngang</button>
@@ -234,42 +301,43 @@
           </div>
         </div>
         <canvas id="sandCanvas" width="820" height="255" style="width:100%; height:auto; background:white; border-radius:14px; border:1.5px solid #cbd5e1;"></canvas>
-        <div id="sand-caption" style="margin-top:10px; padding:12px 16px; background:#eff6ff; border-radius:10px; font-size:15.5px; font-weight:700; color:#1e3a8a; line-height:1.5;">
+        <div id="sand-caption" class="sim-caption">
           Nhấn &ldquo;▶️ Thả đồng thời cả 3 trường hợp&rdquo; để so sánh độ lún trên bột mì/cát mịn: (1) Cùng S, khi F lớn hơn thì lún sâu hơn; (2) Cùng F, khi S nhỏ hơn thì lún sâu hơn!
         </div>
       </div>
 
       <!-- 2.3 ĐỊNH NGHĨA & CÔNG THỨC TÍNH ÁP SUẤT -->
-      <div class="formula-hero">
-        <div style="font-size:15px; font-weight:800; color:#1e40af; text-transform:uppercase; margin-bottom:8px;">
+      <div class="formula-hero zoom-block">
+        <div class="fh-kicker">
           2.3. Định nghĩa & Công thức tính Áp suất (SGK KHTN 8)
         </div>
-        <p style="font-size:18.5px; font-weight:700; color:#0f172a; margin-bottom:16px;">
+        <p class="fh-quote">
           &ldquo;Áp suất được tính bằng độ lớn của áp lực trên một đơn vị diện tích bị ép.&rdquo;
         </p>
         <div class="formula-display">
           <span>p =</span>
           <span class="frac"><span class="num">F</span><span class="den">S</span></span>
         </div>
-        <div style="font-size:15.5px; color:#334155; margin-top:12px; font-weight:600;">
+        <div class="fh-legend">
           Trong đó: <strong>F</strong> là độ lớn áp lực (N) &nbsp;|&nbsp; <strong>S</strong> là diện tích bị ép (m&sup2;) &nbsp;|&nbsp; <strong>p</strong> là áp suất (Pa hoặc N/m&sup2;)
         </div>
         <div style="margin-top:10px;">
           <span class="sub-formula-pill">F = p &middot; S</span>
-          <span class="sub-formula-pill">S = <span class="frac" style="font-size:18px;"><span class="num" style="border-bottom-width:2px;">F</span><span class="den">p</span></span></span>
+          <span class="sub-formula-pill">S = <span class="frac" style="font-size:0.9em;"><span class="num" style="border-bottom-width:2px;">F</span><span class="den">p</span></span></span>
         </div>
-        <div style="margin-top:14px; font-size:15.5px; font-weight:800; color:#047857; line-height:1.6;">
+        <div class="fh-units">
           &bull; Đơn vị chuẩn SI: <strong>1 Pa (paxcan) = 1 N/m&sup2;</strong><br>
-          &bull; Một số đơn vị áp suất khác trong thực tế: <strong>Atmôtphe (atm)</strong> (1 atm &approx; 101 325 Pa) &nbsp;|&nbsp; <strong>Milimét thủy ngân (mmHg)</strong> (1 mmHg &approx; 133,3 Pa) &nbsp;|&nbsp; <strong>Bar</strong> (1 Bar = 100 000 Pa)
+          &bull; Một số đơn vị áp suất khác trong thực tế (theo SGK):<br>
+          <strong>1 atm = 1,013.10<sup>5</sup> Pa</strong> &nbsp;&nbsp;|&nbsp;&nbsp; <strong>1 mmHg = 133,3 Pa</strong> &nbsp;&nbsp;|&nbsp;&nbsp; <strong>1 Bar = 10<sup>5</sup> Pa</strong>
         </div>
       </div>
 
       <!-- 2.4 NGUYÊN TẮC TĂNG / GIẢM ÁP SUẤT TRONG THỰC TẾ -->
-      <h3 style="font-size:18.5px; color:#1e3a8a; margin-bottom:8px;">2.4. Công dụng của việc Tăng, Giảm áp suất trong đời sống & kĩ thuật</h3>
-      <div class="compare-2col">
+      <h3 class="sub-sec-title">2.4. Công dụng của việc Tăng, Giảm áp suất trong đời sống & kĩ thuật</h3>
+      <div class="compare-2col zoom-block">
         <div class="compare-box" style="background:#fef2f2; border-color:#fca5a5;">
-          <h4 style="color:#b91c1c; font-size:16.5px; margin-bottom:8px;">🔺 CÁCH LÀM TĂNG ÁP SUẤT (p lớn &rarr; dễ cắt, đâm xuyên)</h4>
-          <p style="font-size:15px; line-height:1.6;">
+          <h4 style="color:#b91c1c;">🔺 CÁCH LÀM TĂNG ÁP SUẤT (p lớn &rarr; dễ cắt, đâm xuyên)</h4>
+          <p>
             &bull; <strong>Nguyên tắc:</strong> Tăng áp lực <strong>F</strong>, hoặc <strong>giảm diện tích bị ép S</strong>, hoặc kết hợp cả hai.<br>
             &bull; <strong>Ví dụ thực tế:</strong><br>
             &nbsp;&ndash; Mài mỏng, sắc lưỡi dao, lưỡi kéo, lưỡi cuốc.<br>
@@ -279,8 +347,8 @@
         </div>
 
         <div class="compare-box" style="background:#f0fdf4; border-color:#86efac;">
-          <h4 style="color:#047857; font-size:16.5px; margin-bottom:8px;">🔻 CÁCH LÀM GIẢM ÁP SUẤT (p nhỏ &rarr; chống lún, đỡ đau)</h4>
-          <p style="font-size:15px; line-height:1.6;">
+          <h4 style="color:#047857;">🔻 CÁCH LÀM GIẢM ÁP SUẤT (p nhỏ &rarr; chống lún, đỡ đau)</h4>
+          <p>
             &bull; <strong>Nguyên tắc:</strong> Giảm áp lực <strong>F</strong>, hoặc <strong>tăng diện tích bị ép S</strong>, hoặc kết hợp cả hai.<br>
             &bull; <strong>Ví dụ thực tế:</strong><br>
             &nbsp;&ndash; Xe tăng, máy xúc nặng đi trên đất mềm phải lắp <strong>bánh xích bản rộng</strong> thay vì bánh lốp.<br>
@@ -534,17 +602,17 @@
       </div>
 
       <!-- 5.1 ÁP SUẤT CHẤT LỎNG + MÔ PHỎNG TIA NƯỚC PHUN THEO ĐỘ SÂU -->
-      <div class="sim-panel">
+      <div class="sim-panel zoom-block">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-          <strong style="font-size:17px; color:#1e3a8a;">💧 5.1. Áp suất chất lỏng: Càng xuống sâu áp suất chất lỏng càng lớn!</strong>
+          <strong class="sim-title">💧 5.1. Áp suất chất lỏng: Càng xuống sâu áp suất chất lỏng càng lớn!</strong>
           <div style="display:flex; gap:8px;">
             <button class="sim-btn play" onclick="toggleJetSim(true)">▶️ Mở khóa 3 vòi phun ở 3 độ sâu</button>
             <button class="sim-btn" onclick="toggleJetSim(false)">🔄 Đóng vòi</button>
           </div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:18px; align-items:center;">
+        <div class="sim-split">
           <canvas id="jetCanvas" width="420" height="235" style="width:100%; height:auto; background:white; border-radius:14px; border:1.5px solid #cbd5e1;"></canvas>
-          <div style="font-size:15.5px; line-height:1.65;">
+          <div class="sim-notes">
             <strong>📌 3 ý lí thuyết trọng tâm SGK:</strong><br>
             1) Khác với vật rắn (chỉ gây áp suất theo phương vuông góc với mặt tiếp xúc), <strong>chất lỏng gây áp suất theo MỌI PHƯƠNG</strong> lên đáy bình, thành bình và các vật ở trong lòng nó.<br>
             2) <strong>Càng xuống sâu</strong> so với mặt thoáng chất lỏng, áp suất chất lỏng <strong>càng lớn</strong> (nên lỗ C ở sát đáy phun tia nước xa nhất!).<br>
@@ -554,17 +622,17 @@
       </div>
 
       <!-- 5.2 ÁP SUẤT KHÍ QUYỂN + MÔ PHỎNG CỐC NƯỚC ĐẬY TỜ BÌA ÚP NGƯỢC -->
-      <div class="sim-panel">
+      <div class="sim-panel zoom-block">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-          <strong style="font-size:17px; color:#1e3a8a;">🌬️ 5.2. Áp suất khí quyển: Thí nghiệm cốc nước đậy tờ bìa lật úp ngược</strong>
+          <strong class="sim-title">🌬️ 5.2. Áp suất khí quyển: Thí nghiệm cốc nước đậy tờ bìa lật úp ngược</strong>
           <div style="display:flex; gap:8px;">
             <button class="sim-btn play" onclick="flipCupSim(true)">▶️ Lật úp ngược cốc & Bỏ tay ra</button>
             <button class="sim-btn" onclick="flipCupSim(false)">🔄 Đặt ngửa lại</button>
           </div>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1.1fr; gap:18px; align-items:center;">
+        <div class="sim-split">
           <canvas id="cupCanvas" width="420" height="235" style="width:100%; height:auto; background:white; border-radius:14px; border:1.5px solid #cbd5e1;"></canvas>
-          <div style="font-size:15.5px; line-height:1.65;">
+          <div class="sim-notes">
             <strong>📌 Kiến thức cốt lõi & 4 hiện tượng thực tế:</strong><br>
             &bull; Trái Đất được bao quanh bởi khí quyển có trọng lượng nên gây ra <strong>áp suất khí quyển theo mọi phương</strong>. Càng lên cao không khí càng loãng &rarr; <strong>áp suất khí quyển càng giảm</strong>.<br>
             &bull; <strong>4 hiện tượng thực tế hay hỏi:</strong><br>
@@ -578,7 +646,7 @@
 
       <hr style="margin:24px 0; border:none; border-top:2px dashed #cbd5e1;">
 
-      <h3 style="font-size:18px; color:#1e3a8a; margin-bottom:12px;">5.3. Trắc nghiệm củng cố nhanh Bài 16 (6 câu định tính &mdash; Điểm: <span id="b16-score" style="color:#059669;">0/6</span>)</h3>
+      <h3 class="sub-sec-title">5.3. Trắc nghiệm củng cố nhanh Bài 16 (6 câu định tính &mdash; Điểm: <span id="b16-score" style="color:#059669;">0/6</span>)</h3>
       <div id="b16-quiz-box"></div>
     </div>
   </section>
@@ -823,7 +891,7 @@ const AREA_QUIZ = [
   { q: "Câu 3. Đổi diện tích: S = 45 cm² sang mét vuông (m²) được:", opts: ["0,45 m²", "0,045 m²", "0,0045 m²", "4,5 m²"], ans: 2, exp: "45 : 10 000 = 0,0045 m²." },
   { q: "Câu 4. Đổi diện tích: S = 8 dm² sang mét vuông (m²) được:", opts: ["0,8 m²", "0,08 m²", "0,008 m²", "800 m²"], ans: 1, exp: "1 m² = 100 dm² ⇒ 8 : 100 = 0,08 m²." },
   { q: "Câu 5. Một bao gạo có khối lượng m = 50 kg đặt trên sàn ngang thì tác dụng lên sàn áp lực F = P bằng:", opts: ["50 N", "5 N", "500 N", "5 000 N"], ans: 2, exp: "F = P = 10 · m = 10 × 50 = 500 N." },
-  { q: "Câu 6. Ngoài đơn vị chuẩn Pa (N/m²), các đơn vị đo áp suất khác thường dùng trong thực tế được nêu trong SGK là:", opts: ["Atmôtphe (atm), milimét thủy ngân (mmHg) và Bar", "Kilôgam trên mét khối (kg/m³) và g/cm³", "Niutơn nhân mét (N·m)", "Kilômét trên giờ (km/h)"], ans: 0, exp: "SGK giới thiệu các đơn vị áp suất khác thường gặp trong thực tế gồm: Atmôtphe (atm), milimét thủy ngân (mmHg) và Bar (1 Bar = 100 000 Pa)." }
+  { q: "Câu 6. Ngoài đơn vị chuẩn Pa (N/m²), các đơn vị đo áp suất khác thường dùng trong thực tế được nêu trong SGK là:", opts: ["Atmôtphe (atm), milimét thủy ngân (mmHg) và Bar", "Kilôgam trên mét khối (kg/m³) và g/cm³", "Niutơn nhân mét (N·m)", "Kilômét trên giờ (km/h)"], ans: 0, exp: "SGK nêu các đơn vị áp suất khác thường gặp: Atmôtphe (1 atm = 1,013.10<sup>5</sup> Pa), milimét thủy ngân (1 mmHg = 133,3 Pa) và Bar (1 Bar = 10<sup>5</sup> Pa)." }
 ];
 
 const B15_QUAL_QUIZ = [
@@ -857,11 +925,11 @@ function renderMC(arr, boxId, scoreId, prefix, resetScoreFn) {
     const card = document.createElement('div');
     card.className = 'ex-card';
     card.style.background = '#f8fafc';
-    let html = `<div class="ex-title" style="font-size:16.5px;">${item.q}</div><div style="display:flex; flex-direction:column; gap:8px;">`;
+    let html = `<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;"><div class="ex-title" style="flex:1;">${item.q}</div><button type="button" class="btn-spotlight" onclick="openSpotlight(this.closest('.ex-card'))">🔍 Phóng to</button></div><div style="display:flex; flex-direction:column; gap:8px;">`;
     item.opts.forEach((opt, oIdx) => {
       html += `<button class="quiz-opt-btn" id="${prefix}-${idx}-${oIdx}" onclick="checkMC('${prefix}', ${idx}, ${oIdx})"><span class="quiz-letter">${['A','B','C','D'][oIdx]}</span><span>${opt}</span></button>`;
     });
-    html += `</div><div id="${prefix}-exp-${idx}" style="display:none; margin-top:10px; padding:10px 14px; border-radius:8px; font-size:14.5px;"></div>`;
+    html += `</div><div id="${prefix}-exp-${idx}" class="quiz-exp-box"></div>`;
     card.innerHTML = html;
     box.appendChild(card);
   });
@@ -1088,6 +1156,108 @@ function beginSnipDragMode() {
   ov.addEventListener('pointerdown', down); ov.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
 }
 
+// =============================================================================
+// TABLET REFLOW ZOOM & FULLSCREEN SPOTLIGHT ENGINE
+// =============================================================================
+const PAGE_SCALES = [85, 100, 115, 130, 145, 165, 185];
+let pageScaleIdx = 1;
+let spotScale = 1.35;
+
+function applyPageScale() {
+  const pct = PAGE_SCALES[pageScaleIdx];
+  document.documentElement.style.setProperty('--z', (pct / 100).toFixed(2));
+  const lbl = document.getElementById('page-scale-label');
+  if (lbl) lbl.innerText = `${pct}%`;
+  setTimeout(() => Object.keys(WB_REGISTRY).forEach(id => resizeWB(id)), 40);
+}
+function changePageScale(dir) {
+  pageScaleIdx = Math.max(0, Math.min(PAGE_SCALES.length - 1, pageScaleIdx + dir));
+  applyPageScale();
+}
+function resetPageScale() {
+  pageScaleIdx = 1;
+  applyPageScale();
+}
+
+function attachSpotlightButtons() {
+  // Unit chain container & zoom-blocks
+  document.querySelectorAll('.unit-chain-container, .zoom-block').forEach(blk => {
+    if (blk.querySelector('.btn-spotlight')) return;
+    const bar = document.createElement('div');
+    bar.className = 'block-top-actions';
+    bar.innerHTML = `<button type="button" class="btn-spotlight" onclick="openSpotlight(this.closest('.unit-chain-container, .zoom-block'))">🔍 Phóng to khung này</button>`;
+    blk.insertBefore(bar, blk.firstChild);
+  });
+  // Static exercise cards
+  document.querySelectorAll('.ex-card').forEach(card => {
+    if (card.querySelector('.btn-spotlight')) return;
+    const row = card.querySelector('.ex-btn-row');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-spotlight';
+    btn.innerHTML = '🔍 Phóng to chép bài';
+    btn.onclick = () => openSpotlight(card);
+    if (row) row.appendChild(btn);
+    else card.insertBefore(btn, card.firstChild);
+  });
+}
+
+function openSpotlight(sourceEl) {
+  if (!sourceEl) return;
+  const body = document.getElementById('spotlight-body');
+  body.innerHTML = '';
+  const clone = sourceEl.cloneNode(true);
+  // Remove whiteboard / snip / spotlight buttons inside clone for clean note-copying view
+  clone.querySelectorAll('.smart-wb-wrapper, [id$="-wrap"], .wb-toggle-btn, .ans-toggle-btn, .btn-spotlight, .block-top-actions, .btn-action-soft').forEach(el => el.remove());
+  // Copy canvas drawings if present
+  const srcCanvases = sourceEl.querySelectorAll('canvas');
+  const dstCanvases = clone.querySelectorAll('canvas');
+  srcCanvases.forEach((sc, i) => {
+    if (dstCanvases[i] && sc.width > 0 && sc.height > 0) {
+      dstCanvases[i].width = sc.width;
+      dstCanvases[i].height = sc.height;
+      dstCanvases[i].getContext('2d').drawImage(sc, 0, 0);
+    }
+  });
+  const sol = clone.querySelector('.solution-box');
+  const solBtn = document.getElementById('spot-sol-btn');
+  if (sol) {
+    solBtn.style.display = 'inline-block';
+    const srcSol = sourceEl.querySelector('.solution-box');
+    sol.style.display = (srcSol && srcSol.style.display === 'block') ? 'block' : 'block';
+    solBtn.innerHTML = '🙈 Ẩn lời giải';
+  } else {
+    solBtn.style.display = 'none';
+  }
+  body.appendChild(clone);
+  document.documentElement.style.setProperty('--spot-z', spotScale.toFixed(2));
+  document.getElementById('spot-scale-label').innerText = `${Math.round(spotScale * 100)}%`;
+  document.getElementById('spotlight-modal').classList.add('open');
+}
+
+function toggleSpotSolution() {
+  const sol = document.querySelector('#spotlight-body .solution-box');
+  const btn = document.getElementById('spot-sol-btn');
+  if (!sol) return;
+  if (sol.style.display === 'none') {
+    sol.style.display = 'block';
+    btn.innerHTML = '🙈 Ẩn lời giải';
+  } else {
+    sol.style.display = 'none';
+    btn.innerHTML = '👁️ Hiện lời giải';
+  }
+}
+
+function changeSpotScale(delta) {
+  spotScale = Math.max(0.95, Math.min(2.25, spotScale + delta));
+  document.documentElement.style.setProperty('--spot-z', spotScale.toFixed(2));
+  document.getElementById('spot-scale-label').innerText = `${Math.round(spotScale * 100)}%`;
+}
+
+function closeSpotlight() {
+  document.getElementById('spotlight-modal').classList.remove('open');
+}
+
 window.addEventListener('resize', () => Object.keys(WB_REGISTRY).forEach(id => resizeWB(id)));
 window.addEventListener('DOMContentLoaded', () => {
   createSmartWhiteboard('wb-p1-tab1', 'Bảng viết nháp đổi đơn vị diện tích', 440);
@@ -1096,6 +1266,7 @@ window.addEventListener('DOMContentLoaded', () => {
   resetAreaQuiz();
   renderMC(B15_QUAL_QUIZ, 'b15-qual-quiz', 'b15q-score', 'b15q', () => sB15 = 0);
   resetB16Quiz();
+  attachSpotlightButtons();
   drawSandSim();
   drawJetSim();
   drawCupSim();
