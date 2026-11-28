@@ -16,52 +16,81 @@
     --border: #e2e8f0;
     --text: #1e293b;
     --muted: #64748b;
+    --z: 1;
+    --spot-z: 1.35;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
-  body { background-color: #f1f5f9; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+  body { background-color: #f1f5f9; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+  sub, sup { font-size: 0.72em; line-height: 0; position: relative; vertical-align: baseline; }
+  sup { top: -0.45em; }
+  sub { bottom: -0.26em; }
 
   .sticky-top-shell { position: sticky; top: 0; z-index: 900; background: #ffffff; box-shadow: 0 4px 16px rgba(15,23,42,0.1); }
-  header { background: linear-gradient(135deg, #0f172a 0%, #1e40af 55%, #4338ca 100%); color: white; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-  .logo-title h1 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  header { background: linear-gradient(135deg, #0f172a 0%, #1e40af 55%, #4338ca 100%); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .logo-title h1 { font-size: 19.5px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
   .logo-title p { font-size: 12.5px; opacity: 0.94; margin-top: 2px; }
 
+  .header-right-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .zoom-bar { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,255,255,0.14); border: 1.5px solid rgba(255,255,255,0.35); padding: 4px 9px; border-radius: 999px; }
+  .zoom-label { font-size: 12px; font-weight: 700; color: #e0f2fe; white-space: nowrap; }
+  .zoom-btn { background: #ffffff; color: #1e3a8a; border: none; border-radius: 8px; padding: 4px 10px; font-size: 13px; font-weight: 900; cursor: pointer; touch-action: manipulation; }
+  .zoom-val { background: transparent; color: #fde047; border: 1px dashed rgba(253,224,71,0.6); border-radius: 8px; padding: 3px 8px; font-size: 12.5px; font-weight: 800; cursor: pointer; min-width: 48px; text-align: center; }
+
   .quick-ref-btn { background: rgba(255,255,255,0.18); color: white; border: 1px solid rgba(255,255,255,0.35); padding: 6px 13px; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; }
-  #formula-drawer { display: none; background: #fffbeb; border-bottom: 2px solid #f59e0b; padding: 11px 24px; font-size: 13.5px; color: #78350f; font-weight: 700; }
+  #formula-drawer { display: none; background: #fffbeb; border-bottom: 2px solid #f59e0b; padding: 11px 24px; font-size: calc(14px * var(--z, 1)); color: #78350f; font-weight: 700; line-height: 1.65; }
 
   nav.tab-bar { background: #ffffff; border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; padding: 0 14px; }
   .nav-tab { padding: 12px 15px; font-size: 14px; font-weight: 700; color: var(--muted); border: none; background: transparent; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
   .nav-tab:hover { color: var(--primary); background: #f8fafc; }
   .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #eff6ff; }
 
-  main { flex: 1; max-width: 1220px; width: 100%; margin: 0 auto; padding: 22px 18px 80px; }
+  main { flex: 1; max-width: min(100%, calc(1220px * var(--z, 1))); width: 100%; margin: 0 auto; padding: 22px 18px 80px; }
   .section-view { display: none; animation: fadeIn 0.25s ease; }
   .section-view.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-  .card { background: white; border-radius: 20px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid var(--border); margin-bottom: 24px; }
+  .card { background: white; border-radius: 20px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid var(--border); margin-bottom: 24px; overflow-wrap: break-word; word-wrap: break-word; }
   .section-header { margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
-  .section-header h2 { font-size: 22.5px; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 10px; }
-  .section-header p { font-size: 14.5px; color: var(--muted); margin-top: 4px; }
+  .section-header h2 { font-size: calc(22.5px * var(--z, 1)); font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 10px; line-height: 1.35; }
+  .section-header p { font-size: calc(14.5px * var(--z, 1)); color: var(--muted); margin-top: 4px; line-height: 1.5; }
 
   .btn-reset { background: #fff1f2; color: #be123c; border: 1.5px solid #fda4af; padding: 8px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
   .btn-action-soft { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; padding: 8px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
 
-  .method-box { background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%); border: 1.5px solid #93c5fd; border-radius: 16px; padding: 15px 18px; margin-bottom: 20px; font-size: 15px; line-height: 1.6; color: #1e3a8a; }
+  /* SPOTLIGHT MODAL FOR TABLET NOTE-COPYING */
+  .btn-spotlight { background: #eef2ff; color: #3730a3; border: 1.5px solid #c7d2fe; padding: 6px 12px; border-radius: 9px; font-size: 13px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; touch-action: manipulation; }
+  .btn-spotlight:hover { background: #e0e7ff; border-color: #818cf8; }
+  .block-top-actions { display: flex; justify-content: flex-end; margin-bottom: 6px; }
+
+  #spotlight-modal { display: none; position: fixed; inset: 0; z-index: 9600; background: rgba(15,23,42,0.84); backdrop-filter: blur(4px); padding: 14px; align-items: center; justify-content: center; }
+  #spotlight-modal.open { display: flex; }
+  .spotlight-sheet { background: #ffffff; width: 96vw; max-width: 1360px; max-height: 93vh; border-radius: 22px; box-shadow: 0 25px 60px rgba(0,0,0,0.45); display: flex; flex-direction: column; overflow: hidden; border: 2px solid #93c5fd; }
+  .spotlight-bar { background: linear-gradient(135deg, #0f172a, #1e40af); color: white; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .spotlight-bar-title { font-size: 15.5px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .spotlight-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .spot-btn { background: rgba(255,255,255,0.18); color: white; border: 1.5px solid rgba(255,255,255,0.4); padding: 7px 14px; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; touch-action: manipulation; }
+  .spot-btn.primary { background: #fde047; color: #0f172a; border-color: #facc15; }
+  .spot-btn.close { background: #ef4444; color: white; border-color: #f87171; }
+  .spotlight-body { padding: 28px 30px; overflow-y: auto; flex: 1; --z: var(--spot-z, 1.35); overflow-wrap: break-word; word-wrap: break-word; }
+  .spotlight-body .ex-card, .spotlight-body .method-box { margin: 0; box-shadow: none; }
+
+  .method-box { background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%); border: 1.5px solid #93c5fd; border-radius: 16px; padding: 15px 18px; margin-bottom: 20px; font-size: calc(15px * var(--z, 1)); line-height: 1.65; color: #1e3a8a; }
 
   .ex-card { background: #ffffff; border: 2px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
-  .ex-badge { display: inline-block; background: #dbeafe; color: #1d4ed8; font-size: 12.5px; font-weight: 800; padding: 4px 11px; border-radius: 12px; margin-bottom: 8px; }
-  .ex-title { font-size: 17.5px; font-weight: 700; color: #0f172a; line-height: 1.55; margin-bottom: 14px; }
+  .ex-badge { display: inline-block; background: #dbeafe; color: #1d4ed8; font-size: calc(12.5px * var(--z, 1)); font-weight: 800; padding: 4px 11px; border-radius: 12px; margin-bottom: 8px; }
+  .ex-title { font-size: calc(17.5px * var(--z, 1)); font-weight: 700; color: #0f172a; line-height: 1.58; margin-bottom: 14px; }
   .ex-btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
   .ans-toggle-btn { background: #f1f5f9; color: #334155; border: 2px solid #cbd5e1; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
   .wb-toggle-btn { background: #f5f3ff; color: #6d28d9; border: 2px solid #ddd6fe; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
-  .solution-box { display: none; background: #f0fdf4; border-left: 5px solid #10b981; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 14px; font-size: 16px; line-height: 1.65; }
+  .solution-box { display: none; background: #f0fdf4; border-left: 5px solid #10b981; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 14px; font-size: calc(16px * var(--z, 1)); line-height: 1.68; }
   .solution-box .step-line { margin-bottom: 6px; }
 
-  .quiz-opt-btn { padding: 11px 14px; text-align: left; border: 2px solid #cbd5e1; border-radius: 11px; background: white; font-size: 15px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+  .quiz-opt-btn { padding: 11px 14px; text-align: left; border: 2px solid #cbd5e1; border-radius: 11px; background: white; font-size: calc(15px * var(--z, 1)); font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px; line-height: 1.45; }
   .quiz-letter { width: 28px; height: 28px; border-radius: 7px; background: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+  .quiz-exp-box { display: none; margin-top: 8px; padding: 9px 13px; border-radius: 8px; font-size: calc(14.5px * var(--z, 1)); line-height: 1.55; }
 
-  .tf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 15px; }
+  .tf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: calc(15px * var(--z, 1)); }
   .tf-table th, .tf-table td { border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; }
   .tf-table th { background: #eff6ff; color: #1e3a8a; font-weight: 800; }
   .tf-choice-btn { padding: 5px 14px; border-radius: 8px; border: 1.5px solid #cbd5e1; background: white; font-weight: 700; cursor: pointer; margin-right: 6px; }
@@ -101,17 +130,41 @@
 <div id="snip-overlay"></div>
 <div id="snip-rect"></div>
 
+<div id="spotlight-modal" onclick="if(event.target===this) closeSpotlight()">
+  <div class="spotlight-sheet">
+    <div class="spotlight-bar">
+      <div class="spotlight-bar-title">🔍 CHẾ ĐỘ PHÓNG TO RÕ NÉT (TỰ ĐỘNG XUỐNG DÒNG)</div>
+      <div class="spotlight-controls">
+        <button type="button" class="spot-btn" onclick="changeSpotScale(-0.15)">A&minus;</button>
+        <span id="spot-scale-label" style="font-weight:900; color:#fde047; min-width:52px; text-align:center;">135%</span>
+        <button type="button" class="spot-btn" onclick="changeSpotScale(0.15)">A+</button>
+        <button type="button" class="spot-btn primary" id="spot-sol-btn" style="display:none;" onclick="toggleSpotSolution()">👁️ Hiện / Ẩn lời giải</button>
+        <button type="button" class="spot-btn close" onclick="closeSpotlight()">✖ Thu nhỏ lại</button>
+      </div>
+    </div>
+    <div class="spotlight-body" id="spotlight-body"></div>
+  </div>
+</div>
+
 <div class="sticky-top-shell">
   <header>
     <div class="logo-title">
       <h1><span>📚</span> CHUYÊN ĐỀ ÁP SUẤT (BUỔI 2): BÀI TẬP TỔNG HỢP & KIỂM TRA</h1>
       <p>Luyện sâu các dạng toán Bài 15 (Định lượng & Định tính), ôn nhanh Bài 16 & Kiểm tra 25 phút</p>
     </div>
-    <button class="quick-ref-btn" onclick="toggleFormulaDrawer()">📋 Nhắc nhanh công thức & Đổi đơn vị</button>
+    <div class="header-right-tools">
+      <div class="zoom-bar">
+        <span class="zoom-label">🔍 Cỡ chữ:</span>
+        <button type="button" class="zoom-btn" onclick="changePageScale(-1)">A&minus;</button>
+        <button type="button" class="zoom-val" id="page-scale-label" onclick="resetPageScale()">100%</button>
+        <button type="button" class="zoom-btn" onclick="changePageScale(1)">A+</button>
+      </div>
+      <button class="quick-ref-btn" onclick="toggleFormulaDrawer()">📋 Nhắc nhanh công thức & Đổi đơn vị</button>
+    </div>
   </header>
 
   <div id="formula-drawer">
-    📌 Công thức: <code>p = F / S</code> &rArr; <code>F = p &middot; S</code> ; <code>S = F / p</code> &nbsp;|&nbsp; Trên mặt ngang: <code>F = P = 10 &middot; m</code> &nbsp;|&nbsp; Đổi diện tích: <code>1 m&sup2; = 100 dm&sup2; = 10 000 cm&sup2;</code> &nbsp;|&nbsp; <code>1 Pa = 1 N/m&sup2;</code> (Đơn vị khác: <code>atm, mmHg, Bar</code>) &nbsp;|&nbsp; Liên hệ KLR: <code>m = D &middot; V</code>
+    📌 Công thức: <strong>p = F / S</strong> &rArr; <strong>F = p &middot; S</strong> ; <strong>S = F / p</strong> &nbsp;|&nbsp; Trên mặt ngang: <strong>F = P = 10 &middot; m</strong> &nbsp;|&nbsp; Đổi diện tích: <strong>1 m&sup2; = 100 dm&sup2; = 10 000 cm&sup2;</strong> &nbsp;|&nbsp; <strong>1 Pa = 1 N/m&sup2;</strong> (Đơn vị khác theo SGK: <strong>1 atm = 1,013.10<sup>5</sup> Pa</strong> ; <strong>1 mmHg = 133,3 Pa</strong> ; <strong>1 Bar = 10<sup>5</sup> Pa</strong>) &nbsp;|&nbsp; Liên hệ KLR: <strong>m = D &middot; V</strong>
   </div>
 
   <nav class="tab-bar">
@@ -464,7 +517,7 @@
 
       <h3 style="color:#1e3a8a; font-size:18px; margin-bottom:12px;">Phần II. Trắc nghiệm Đúng / Sai (2,0 điểm &mdash; mỗi ý 0,5 điểm)</h3>
       <div class="ex-card" style="background:#f8fafc;">
-        <div class="ex-title" style="font-size:16.5px;">
+        <div class="ex-title">
           Xét các nhận định sau về áp suất trên một bề mặt, áp suất chất lỏng và áp suất khí quyển:
         </div>
         <table class="tf-table">
@@ -588,7 +641,7 @@
 
 Yêu cầu về nhà:
 1. Nhập đầy đủ họ tên và chọn "Chặng 2 - Buổi 2: Bài tập tổng hợp Áp suất & Liên hệ KLR".
-2. Chuẩn bị nháp và máy tính cầm tay để tính chính xác các bài toán đổi cm² → m², p_max / p_min.
+2. Chuẩn bị nháp và máy tính cầm tay để tính chính xác các bài toán đổi cm² → m², tính áp suất lớn nhất và nhỏ nhất.
 3. Điểm số và các câu cần lưu ý sẽ tự động gửi về email thaomy1005@gmail.com cho cô. Chúc các bạn hoàn thành xuất sắc!</textarea>
     </div>
   </section>
@@ -642,11 +695,11 @@ const P2_WARMUP = [
   { q: "Câu 2. Một thùng hàng nặng m = 32 kg đặt nằm yên trên mặt sàn ngang có diện tích đáy tiếp xúc sàn là 0,08 m². Áp suất thùng hàng tác dụng lên sàn là:", opts: ["400 Pa", "4 000 Pa", "25,6 Pa", "40 000 Pa"], ans: 1, exp: "F = P = 10 × 32 = 320 N ⇒ p = 320 / 0,08 = 4 000 Pa." },
   { q: "Câu 3. Một người đang đứng yên bằng 2 chân trên mặt sàn ngang. Nếu người đó co 1 chân lên (chỉ đứng bằng 1 chân) thì áp lực F và áp suất p tác dụng lên sàn thay đổi như thế nào?", opts: ["Áp lực F không đổi, áp suất p tăng gấp 2 lần", "Áp lực F tăng gấp 2 lần, áp suất p tăng gấp 2 lần", "Áp lực F giảm một nửa, áp suất p không đổi", "Cả F và p đều không đổi"], ans: 0, exp: "Trọng lượng cơ thể không đổi nên áp lực F = P không đổi; diện tích bị ép S giảm đi một nửa nên p = F / S tăng gấp đôi!" },
   { q: "Câu 4. Nếu tăng độ lớn áp lực F lên gấp 3 lần và đồng thời giảm diện tích bị ép S đi 2 lần thì áp suất p sẽ:", opts: ["Tăng lên 6 lần", "Tăng lên 1,5 lần", "Giảm đi 6 lần", "Tăng lên 5 lần"], ans: 0, exp: "Vì p = F / S nên F nhân 3 và S chia 2 làm p tăng 3 × 2 = 6 lần." },
-  { q: "Câu 5. Hai khối trụ đặc bằng đồng có cùng chiều cao h nhưng diện tích đáy khối A lớn gấp đôi khối B (S_A = 2 S_B) cùng đặt đứng trên mặt bàn ngang. So sánh áp suất của chúng lên bàn:", opts: ["p_A = 2 p_B", "p_B = 2 p_A", "Bằng nhau (p_A = p_B) vì khối lượng và diện tích đáy cùng tăng gấp đôi!", "Không so sánh được"], ans: 2, exp: "Cùng chiều cao và cùng chất: S tăng 2 lần thì thể tích V = S·h tăng 2 lần ⇒ F tăng 2 lần ⇒ tỉ số p = F / S bằng nhau!" },
+  { q: "Câu 5. Hai khối trụ đặc bằng đồng có cùng chiều cao h nhưng diện tích đáy khối A lớn gấp đôi khối B (S<sub>A</sub> = 2S<sub>B</sub>) cùng đặt đứng trên mặt bàn ngang. So sánh áp suất của chúng lên bàn:", opts: ["p<sub>A</sub> = 2p<sub>B</sub>", "p<sub>B</sub> = 2p<sub>A</sub>", "Bằng nhau (p<sub>A</sub> = p<sub>B</sub>) vì khối lượng và diện tích đáy cùng tăng gấp đôi!", "Không so sánh được"], ans: 2, exp: "Cùng chiều cao và cùng chất: S tăng 2 lần thì thể tích V = S·h tăng 2 lần ⇒ F tăng 2 lần ⇒ tỉ số p = F / S bằng nhau!" },
   { q: "Câu 6. Một bàn học 4 chân có trọng lượng 200 N, diện tích mỗi chân bàn là 25 cm². Áp suất bàn tác dụng lên sàn nhà là:", opts: ["80 000 Pa", "20 000 Pa", "2 000 Pa", "8 000 Pa"], ans: 1, exp: "Tổng 4 chân: S = 4 × 25 = 100 cm² = 0,01 m² ⇒ p = 200 / 0,01 = 20 000 Pa." },
-  { q: "Câu 7. Nền đất chịu được áp suất tối đa 50 000 Pa. Một trụ bê tông gây áp lực 40 000 N lên nền đất này thì diện tích chân trụ tối thiểu phải bằng:", opts: ["0,8 m²", "1,25 m²", "0,08 m²", "8 m²"], ans: 0, exp: "S_min = F / p_max = 40 000 / 50 000 = 0,8 m²." },
+  { q: "Câu 7. Nền đất chịu được áp suất tối đa 50 000 Pa. Một trụ bê tông gây áp lực 40 000 N lên nền đất này thì diện tích chân trụ tối thiểu phải bằng:", opts: ["0,8 m²", "1,25 m²", "0,08 m²", "8 m²"], ans: 0, exp: "S<sub>min</sub> = F / p<sub>max</sub> = 40 000 / 50 000 = 0,8 m²." },
   { q: "Câu 8. Ví dụ nào dưới đây ứng dụng việc TĂNG áp suất?", opts: ["Lót tấm ván dưới kích nâng ô tô trên nền đất mềm", "Gọt nhọn đầu bút chì / đầu cọc tre đóng xuống bờ mương", "Làm bản xích rộng cho xe ủi đất", "Đeo quai túi xách bản to"], ans: 1, exp: "Vót nhọn đầu cọc làm giảm S để tăng áp suất p giúp cọc cắm sâu vào đất dễ dàng." },
-  { q: "Câu 9. Ba điểm M, N, Q nằm trong cùng một bình nước yên lặng: M gần mặt nước nhất, N ở lưng chừng bình, Q ở sát đáy bình. So sánh áp suất nước tại 3 điểm:", opts: ["p_M > p_N > p_Q", "p_Q > p_N > p_M (ở sát đáy sâu nhất áp suất lớn nhất)", "p_M = p_N = p_Q", "p_N lớn nhất"], ans: 1, exp: "Càng xuống sâu so với mặt thoáng thì áp suất chất lỏng càng lớn." },
+  { q: "Câu 9. Ba điểm M, N, Q nằm trong cùng một bình nước yên lặng: M gần mặt nước nhất, N ở lưng chừng bình, Q ở sát đáy bình. So sánh áp suất nước tại 3 điểm:", opts: ["p<sub>M</sub> &gt; p<sub>N</sub> &gt; p<sub>Q</sub>", "p<sub>Q</sub> &gt; p<sub>N</sub> &gt; p<sub>M</sub> (ở sát đáy sâu nhất áp suất lớn nhất)", "p<sub>M</sub> = p<sub>N</sub> = p<sub>Q</sub>", "p<sub>N</sub> lớn nhất"], ans: 1, exp: "Càng xuống sâu so với mặt thoáng thì áp suất chất lỏng càng lớn." },
   { q: "Câu 10. Thiết bị kĩ thuật nào sau đây hoạt động dựa trên sự truyền áp suất của chất lỏng theo mọi phương?", opts: ["Máy nén thủy lực (kích thủy lực nâng ô tô)", "Cân Rô-béc-van", "Nhiệt kế rượu", "Thước kẹp"], ans: 0, exp: "Máy nén thủy lực truyền nguyên vẹn áp suất chất lỏng giúp dùng lực nhỏ nâng được ô tô nặng." },
   { q: "Câu 11. Hiện tượng nào sau đây KHÔNG phải do áp suất khí quyển gây ra?", opts: ["Vỏ hộp sữa giấy bị bẹp dúm khi hút hết sữa", "Giác mút cao su bám chặt vào mặt kính phẳng", "Hòn đá thả từ trên cao rơi thẳng xuống mặt đất", "Nước không chảy ra khỏi cốc úp ngược có đậy tờ bìa cứng"], ans: 2, exp: "Hòn đá rơi xuống đất là do lực hút Trái Đất (trọng lực), không phải do áp suất khí quyển!" },
   { q: "Câu 12. Khi leo lên đỉnh núi rất cao (như đỉnh Fansipan), người ta thấy:", opts: ["Áp suất khí quyển giảm đi vì không khí trên cao loãng hơn", "Áp suất khí quyển tăng vọt lên", "Không còn trọng lực", "Áp suất khí quyển bằng dưới chân núi"], ans: 0, exp: "Càng lên cao không khí càng loãng nên áp suất khí quyển giảm." }
@@ -670,11 +723,11 @@ function renderGenericMC(arr, boxId, prefix) {
     const card = document.createElement('div');
     card.className = 'ex-card';
     card.style.background = '#f8fafc';
-    let html = `<div class="ex-title" style="font-size:16px;">${item.q}</div><div style="display:flex; flex-direction:column; gap:8px;">`;
+    let html = `<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;"><div class="ex-title" style="flex:1;">${item.q}</div><button type="button" class="btn-spotlight" onclick="openSpotlight(this.closest('.ex-card'))">🔍 Phóng to</button></div><div style="display:flex; flex-direction:column; gap:8px;">`;
     item.opts.forEach((opt, oIdx) => {
       html += `<button class="quiz-opt-btn" id="${prefix}-${idx}-${oIdx}" onclick="checkGenMC('${prefix}', ${idx}, ${oIdx})"><span class="quiz-letter">${['A','B','C','D'][oIdx]}</span><span>${opt}</span></button>`;
     });
-    html += `</div><div id="${prefix}-exp-${idx}" style="display:none; margin-top:8px; padding:9px 13px; border-radius:8px; font-size:14px;"></div>`;
+    html += `</div><div id="${prefix}-exp-${idx}" class="quiz-exp-box"></div>`;
     card.innerHTML = html;
     box.appendChild(card);
   });
@@ -889,6 +942,104 @@ function beginSnipDragMode() {
   ov.addEventListener('pointerdown', down); ov.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
 }
 
+// =============================================================================
+// TABLET REFLOW ZOOM & FULLSCREEN SPOTLIGHT ENGINE
+// =============================================================================
+const PAGE_SCALES = [85, 100, 115, 130, 145, 165, 185];
+let pageScaleIdx = 1;
+let spotScale = 1.35;
+
+function applyPageScale() {
+  const pct = PAGE_SCALES[pageScaleIdx];
+  document.documentElement.style.setProperty('--z', (pct / 100).toFixed(2));
+  const lbl = document.getElementById('page-scale-label');
+  if (lbl) lbl.innerText = `${pct}%`;
+  setTimeout(() => Object.keys(WB_REGISTRY).forEach(id => resizeWB(id)), 40);
+}
+function changePageScale(dir) {
+  pageScaleIdx = Math.max(0, Math.min(PAGE_SCALES.length - 1, pageScaleIdx + dir));
+  applyPageScale();
+}
+function resetPageScale() {
+  pageScaleIdx = 1;
+  applyPageScale();
+}
+
+function attachSpotlightButtons() {
+  document.querySelectorAll('.method-box').forEach(blk => {
+    if (blk.querySelector('.btn-spotlight')) return;
+    const bar = document.createElement('div');
+    bar.className = 'block-top-actions';
+    bar.innerHTML = `<button type="button" class="btn-spotlight" onclick="openSpotlight(this.closest('.method-box'))">🔍 Phóng to khung này</button>`;
+    blk.insertBefore(bar, blk.firstChild);
+  });
+  document.querySelectorAll('.ex-card').forEach(card => {
+    if (card.querySelector('.btn-spotlight')) return;
+    const row = card.querySelector('.ex-btn-row');
+    const ansBtn = card.querySelector('.ans-toggle-btn');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn-spotlight';
+    btn.innerHTML = '🔍 Phóng to chép bài';
+    btn.onclick = () => openSpotlight(card);
+    if (row) {
+      row.appendChild(btn);
+    } else if (ansBtn) {
+      ansBtn.insertAdjacentElement('afterend', btn);
+      btn.style.marginLeft = '8px';
+    } else {
+      const bar = document.createElement('div');
+      bar.className = 'block-top-actions';
+      bar.appendChild(btn);
+      card.insertBefore(bar, card.firstChild);
+    }
+  });
+}
+
+function openSpotlight(sourceEl) {
+  if (!sourceEl) return;
+  const body = document.getElementById('spotlight-body');
+  body.innerHTML = '';
+  const clone = sourceEl.cloneNode(true);
+  clone.querySelectorAll('.smart-wb-wrapper, [id$="-wrap"], .wb-toggle-btn, .ans-toggle-btn, .btn-spotlight, .block-top-actions').forEach(el => el.remove());
+  const sol = clone.querySelector('.solution-box');
+  const solBtn = document.getElementById('spot-sol-btn');
+  if (sol) {
+    solBtn.style.display = 'inline-block';
+    sol.style.display = 'block';
+    solBtn.innerHTML = '🙈 Ẩn lời giải';
+  } else {
+    solBtn.style.display = 'none';
+  }
+  body.appendChild(clone);
+  document.documentElement.style.setProperty('--spot-z', spotScale.toFixed(2));
+  document.getElementById('spot-scale-label').innerText = `${Math.round(spotScale * 100)}%`;
+  document.getElementById('spotlight-modal').classList.add('open');
+}
+
+function toggleSpotSolution() {
+  const sol = document.querySelector('#spotlight-body .solution-box');
+  const btn = document.getElementById('spot-sol-btn');
+  if (!sol) return;
+  if (sol.style.display === 'none') {
+    sol.style.display = 'block';
+    btn.innerHTML = '🙈 Ẩn lời giải';
+  } else {
+    sol.style.display = 'none';
+    btn.innerHTML = '👁️ Hiện lời giải';
+  }
+}
+
+function changeSpotScale(delta) {
+  spotScale = Math.max(0.95, Math.min(2.25, spotScale + delta));
+  document.documentElement.style.setProperty('--spot-z', spotScale.toFixed(2));
+  document.getElementById('spot-scale-label').innerText = `${Math.round(spotScale * 100)}%`;
+}
+
+function closeSpotlight() {
+  document.getElementById('spotlight-modal').classList.remove('open');
+}
+
 window.addEventListener('resize', () => Object.keys(WB_REGISTRY).forEach(id => resizeWB(id)));
 window.addEventListener('DOMContentLoaded', () => {
   createSmartWhiteboard('wb-ap2-tab1', 'Bảng viết nháp Phần 1', 440);
@@ -897,6 +1048,7 @@ window.addEventListener('DOMContentLoaded', () => {
   createSmartWhiteboard('wb-ap2-tab5', 'Bảng viết chữa Đề kiểm tra', 450);
   renderGenericMC(P2_WARMUP, 'p2w-box', 'p2w');
   renderGenericMC(AP_TEST_MC, 'ap-test-mc', 'apt');
+  attachSpotlightButtons();
 });
 </script>
 </body>
