@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KHTN 8 - Buổi 2: Bài Tập Tổng Hợp Áp Suất & Đề Kiểm Tra</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<style>
+  :root {
+    --primary: #1d4ed8;
+    --secondary: #7c3aed;
+    --accent: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
+  body { background-color: #f1f5f9; color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+
+  .sticky-top-shell { position: sticky; top: 0; z-index: 900; background: #ffffff; box-shadow: 0 4px 16px rgba(15,23,42,0.1); }
+  header { background: linear-gradient(135deg, #0f172a 0%, #1e40af 55%, #4338ca 100%); color: white; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .logo-title h1 { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .logo-title p { font-size: 12.5px; opacity: 0.94; margin-top: 2px; }
+
+  .quick-ref-btn { background: rgba(255,255,255,0.18); color: white; border: 1px solid rgba(255,255,255,0.35); padding: 6px 13px; border-radius: 999px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  #formula-drawer { display: none; background: #fffbeb; border-bottom: 2px solid #f59e0b; padding: 11px 24px; font-size: 13.5px; color: #78350f; font-weight: 700; }
+
+  nav.tab-bar { background: #ffffff; border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; padding: 0 14px; }
+  .nav-tab { padding: 12px 15px; font-size: 14px; font-weight: 700; color: var(--muted); border: none; background: transparent; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
+  .nav-tab:hover { color: var(--primary); background: #f8fafc; }
+  .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); background: #eff6ff; }
+
+  main { flex: 1; max-width: 1220px; width: 100%; margin: 0 auto; padding: 22px 18px 80px; }
+  .section-view { display: none; animation: fadeIn 0.25s ease; }
+  .section-view.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card { background: white; border-radius: 20px; padding: 26px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid var(--border); margin-bottom: 24px; }
+  .section-header { margin-bottom: 20px; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .section-header h2 { font-size: 22.5px; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 10px; }
+  .section-header p { font-size: 14.5px; color: var(--muted); margin-top: 4px; }
+
+  .btn-reset { background: #fff1f2; color: #be123c; border: 1.5px solid #fda4af; padding: 8px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .btn-action-soft { background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; padding: 8px 14px; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+
+  .method-box { background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%); border: 1.5px solid #93c5fd; border-radius: 16px; padding: 15px 18px; margin-bottom: 20px; font-size: 15px; line-height: 1.6; color: #1e3a8a; }
+
+  .ex-card { background: #ffffff; border: 2px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
+  .ex-badge { display: inline-block; background: #dbeafe; color: #1d4ed8; font-size: 12.5px; font-weight: 800; padding: 4px 11px; border-radius: 12px; margin-bottom: 8px; }
+  .ex-title { font-size: 17.5px; font-weight: 700; color: #0f172a; line-height: 1.55; margin-bottom: 14px; }
+  .ex-btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .ans-toggle-btn { background: #f1f5f9; color: #334155; border: 2px solid #cbd5e1; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .wb-toggle-btn { background: #f5f3ff; color: #6d28d9; border: 2px solid #ddd6fe; border-radius: 10px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; }
+  .solution-box { display: none; background: #f0fdf4; border-left: 5px solid #10b981; border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 14px; font-size: 16px; line-height: 1.65; }
+  .solution-box .step-line { margin-bottom: 6px; }
+
+  .quiz-opt-btn { padding: 11px 14px; text-align: left; border: 2px solid #cbd5e1; border-radius: 11px; background: white; font-size: 15px; font-weight: 600; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+  .quiz-letter { width: 28px; height: 28px; border-radius: 7px; background: #e2e8f0; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+
+  .tf-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 15px; }
+  .tf-table th, .tf-table td { border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; }
+  .tf-table th { background: #eff6ff; color: #1e3a8a; font-weight: 800; }
+  .tf-choice-btn { padding: 5px 14px; border-radius: 8px; border: 1.5px solid #cbd5e1; background: white; font-weight: 700; cursor: pointer; margin-right: 6px; }
+
+  .timer-bar { background: linear-gradient(135deg, #1e293b, #334155); color: white; border-radius: 16px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .clock-digits { font-size: 28px; font-weight: 900; font-family: monospace; color: #fde047; letter-spacing: 2px; }
+
+  /* SMART WHITEBOARD */
+  .smart-wb-wrapper { border: 2px solid #94a3b8; background: #f8fafc; border-radius: 16px; padding: 12px; margin: 18px 0; }
+  .smart-wb-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; }
+  .wb-tool-group { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  .wb-title-tag { font-size: 13.5px; font-weight: 800; color: #1e3a8a; margin-right: 6px; }
+  .wb-btn { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-size: 12.5px; font-weight: 700; color: #334155; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+  .wb-btn.active { background: #eff6ff; border-color: #2563eb; color: #1d4ed8; }
+  .wb-btn.snip-btn { background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; border-color: #6d28d9; }
+  .color-dot { width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1.5px #94a3b8; cursor: pointer; }
+  .color-dot.active { transform: scale(1.22); box-shadow: 0 0 0 2.5px #1e293b; }
+  .wb-stage { position: relative; width: 100%; height: 450px; background-color: #ffffff; background-image: linear-gradient(to right, rgba(203,213,225,0.35) 1px, transparent 1px), linear-gradient(to bottom, rgba(203,213,225,0.35) 1px, transparent 1px); background-size: 28px 28px; border-radius: 12px; border: 1.5px solid #cbd5e1; overflow: hidden; touch-action: none; }
+  .wb-stage canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; }
+  .wb-bg-canvas { z-index: 1; }
+  .wb-ink-canvas { z-index: 2; cursor: crosshair; }
+
+  #snip-floating-bar { display: none; position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 9998; background: #0f172a; color: white; padding: 10px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); align-items: center; gap: 12px; font-size: 14px; font-weight: 700; border: 2px solid #8b5cf6; }
+  #snip-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(15,23,42,0.25); cursor: crosshair; touch-action: none; }
+  #snip-rect { display: none; position: fixed; border: 2.5px dashed #2563eb; background: rgba(59,130,246,0.14); box-shadow: 0 0 0 9999px rgba(15,23,42,0.38); pointer-events: none; z-index: 10000; }
+
+  .btn-submit { background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 13px 22px; border-radius: 13px; font-size: 15.5px; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div id="snip-floating-bar">
+  <span>✂️ Cuộn đến nội dung muốn cắt, rồi bấm:</span>
+  <button onclick="beginSnipDragMode()" style="background:#8b5cf6; color:white; border:none; padding:6px 14px; border-radius:999px; font-weight:800; cursor:pointer;">🎯 Kéo chọn vùng cắt</button>
+  <button onclick="cancelSnipMode()" style="background:#334155; color:white; border:none; padding:6px 12px; border-radius:999px; font-weight:700; cursor:pointer;">✖ Hủy</button>
+</div>
+<div id="snip-overlay"></div>
+<div id="snip-rect"></div>
+
+<div class="sticky-top-shell">
+  <header>
+    <div class="logo-title">
+      <h1><span>📚</span> CHUYÊN ĐỀ ÁP SUẤT (BUỔI 2): BÀI TẬP TỔNG HỢP & KIỂM TRA</h1>
+      <p>Luyện sâu các dạng toán Bài 15 (Định lượng & Định tính), ôn nhanh Bài 16 & Kiểm tra 25 phút</p>
+    </div>
+    <button class="quick-ref-btn" onclick="toggleFormulaDrawer()">📋 Nhắc nhanh công thức & Đổi đơn vị</button>
+  </header>
+
+  <div id="formula-drawer">
+    📌 Công thức: <code>p = F / S</code> &rArr; <code>F = p &middot; S</code> ; <code>S = F / p</code> &nbsp;|&nbsp; Trên mặt ngang: <code>F = P = 10 &middot; m</code> &nbsp;|&nbsp; Đổi diện tích: <code>1 m&sup2; = 100 dm&sup2; = 10 000 cm&sup2;</code> &nbsp;|&nbsp; <code>1 kPa = 1 000 Pa</code> &nbsp;|&nbsp; Liên hệ KLR: <code>m = D &middot; V</code>
+  </div>
+
+  <nav class="tab-bar">
+    <button class="nav-tab active" onclick="switchTab('tab-w12', this)">1. Trắc nghiệm tổng hợp (12 câu)</button>
+    <button class="nav-tab" onclick="switchTab('tab-d12', this)">2. Người, Xe & Đồ vật nhiều chân (5 bài)</button>
+    <button class="nav-tab" onclick="switchTab('tab-d3', this)">3. Khối hộp & Kết hợp KLR - Áp suất (5 bài)</button>
+    <button class="nav-tab" onclick="switchTab('tab-qual', this)">4. Tổng hợp giải thích Định tính (Bài 15 & 16)</button>
+    <button class="nav-tab" onclick="switchTab('tab-test', this)">5. Đề kiểm tra giấy 25 phút</button>
+    <button class="nav-tab" onclick="switchTab('tab-hw', this)" style="color:#b45309;">6. Bài tập về nhà Buổi 2 📤</button>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: 12 CÂU TRẮC NGHIỆM TỔNG HỢP VẬN DỤNG                              -->
+  <!-- ========================================================================= -->
+  <section id="tab-w12" class="section-view active">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>⚡</span> 1. KHỞI ĐỘNG TỔNG HỢP: 12 CÂU TRẮC NGHIỆM THÔNG HIỂU & VẬN DỤNG</h2>
+          <p>Điểm hiện tại: <strong id="p2w-score" style="color:#059669;">0 / 12</strong> câu đúng</p>
+        </div>
+        <button class="btn-reset" onclick="resetP2Warmup()">🔄 Làm lại 12 câu này</button>
+      </div>
+      <div id="p2w-box"></div>
+      <div id="wb-ap2-tab1"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: DẠNG TOÁN NGƯỜI, XE TĂNG/Ô TÔ, BÀN 4 CHÂN & GIỚI HẠN NỀN ĐẤT (5 BÀI)-->
+  <!-- ========================================================================= -->
+  <section id="tab-d12" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🚗</span> 2. BÀI TOÁN NGƯỜI MANG VẬT, BÀN NHIỀU CHÂN, XE TĂNG & GIỚI HẠN LÚN</h2>
+          <p>5 bài toán thực tế trọng tâm của Bài 15</p>
+        </div>
+        <button class="btn-reset" onclick="resetRange(1, 5, 'wb-ap2-tab2')">🔄 Đặt lại Phần 2</button>
+      </div>
+
+      <div class="method-box">
+        <strong>Lưu ý tránh mất điểm đáng tiếc:</strong><br>
+        &bull; Đọc kỹ đề cho diện tích của <strong>1 bàn chân / 1 chân bàn / 1 bánh xe</strong> hay đã cho tổng diện tích tiếp xúc!<br>
+        &bull; Khi người đeo thêm cặp sách (hoặc bàn đặt thêm vật nặng), tổng áp lực ép xuống sàn là: <code>F = 10 &middot; (m<sub>1</sub> + m<sub>2</sub>)</code>.
+      </div>
+
+      <!-- BÀI 1 -->
+      <div class="ex-card" id="ap2-c1">
+        <span class="ex-badge">Bài 1 &bull; Người đeo balo đứng bằng 2 chân vs bước đi 1 chân</span>
+        <div class="ex-title">
+          Một học sinh có khối lượng 44 kg đeo trên vai chiếc balo nặng 6 kg đứng thẳng bằng hai chân trên sân trường nằm ngang. Biết diện tích tiếp xúc của <strong>mỗi đế giày</strong> với mặt sân là 125 cm&sup2;.<br>
+          a) Tính áp lực tổng cộng tác dụng lên mặt sân.<br>
+          b) Tính áp suất tác dụng lên mặt sân khi bạn đứng bằng hai chân và khi bước đi (chỉ có một chân chạm đất).
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a1-wrap', 'wb-a1')">✍️ Bảng viết giải bài 1</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a1', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a1-wrap" style="display:none;"><div id="wb-a1"></div></div>
+        <div id="sol-a1" class="solution-box">
+          <div class="step-line"><strong>a) Tổng khối lượng của học sinh và balo là:</strong> m = 44 + 6 = 50 kg &rArr; Áp lực: F = P = 10 &times; 50 = <strong>500 (N)</strong>.</div>
+          <div class="step-line"><strong>b) Tính áp suất trong hai trường hợp:</strong></div>
+          <div class="step-line">&bull; Khi đứng bằng 2 chân: S<sub>2</sub> = 2 &times; 125 = 250 cm&sup2; = <strong>0,025 m&sup2;</strong> &rArr; p<sub>2</sub> = 500 / 0,025 = <strong>20 000 (Pa)</strong> (= 20 kPa).</div>
+          <div class="step-line">&bull; Khi bước đi (1 chân chạm đất): S<sub>1</sub> = 125 cm&sup2; = <strong>0,0125 m&sup2;</strong> &rArr; p<sub>1</sub> = 500 / 0,0125 = <strong>40 000 (Pa)</strong> (= 40 kPa).</div>
+        </div>
+      </div>
+
+      <!-- BÀI 2 -->
+      <div class="ex-card" id="ap2-c2">
+        <span class="ex-badge">Bài 2 &bull; Chiếc bàn 4 chân đặt thêm vật nặng</span>
+        <div class="ex-title">
+          Một chiếc bàn gỗ <strong>4 chân</strong> có khối lượng 16 kg đặt trên mặt sàn nằm ngang. Diện tích tiếp xúc của đầu dưới <strong>mỗi chân bàn</strong> với mặt sàn là 25 cm&sup2;.<br>
+          a) Tính áp suất của chiếc bàn khi chưa đặt vật gì lên mặt bàn.<br>
+          b) Khi đặt thêm một chồng sách có khối lượng 8 kg lên mặt bàn thì áp suất bàn tác dụng lên sàn tăng thêm bao nhiêu Pa?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a2-wrap', 'wb-a2')">✍️ Bảng viết giải bài 2</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a2', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a2-wrap" style="display:none;"><div id="wb-a2"></div></div>
+        <div id="sol-a2" class="solution-box">
+          <div class="step-line">&bull; Tổng diện tích tiếp xúc của 4 chân bàn: S = 4 &times; 25 = 100 cm&sup2; = <strong>0,01 m&sup2;</strong>.</div>
+          <div class="step-line"><strong>a) Khi chưa đặt sách:</strong> F<sub>1</sub> = 10 &times; 16 = 160 N &rArr; p<sub>1</sub> = 160 / 0,01 = <strong>16 000 (Pa)</strong>.</div>
+          <div class="step-line"><strong>b) Khi đặt thêm 8 kg sách:</strong> F<sub>2</sub> = 10 &times; (16 + 8) = 240 N &rArr; p<sub>2</sub> = 240 / 0,01 = <strong>24 000 (Pa)</strong>.</div>
+          <div class="step-line">&bull; Phần áp suất tăng thêm là: &Delta;p = 24 000 &minus; 16 000 = <strong>8 000 (Pa)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 3 -->
+      <div class="ex-card" id="ap2-c3">
+        <span class="ex-badge" style="background:#fef3c7; color:#b45309;">Bài 3 &bull; So sánh bằng số liệu: Xe tăng 34 tấn vs Ô tô con 1,5 tấn (SBT KHTN 8)</span>
+        <div class="ex-title">
+          Một chiếc xe tăng có trọng lượng P<sub>1</sub> = 340 000 N, diện tích tiếp xúc của các bản xích với mặt đất là S<sub>1</sub> = 1,7 m&sup2;. Một chiếc ô tô con có trọng lượng P<sub>2</sub> = 15 000 N, tổng diện tích tiếp xúc của các bánh lốp với mặt đất là S<sub>2</sub> = 600 cm&sup2;. Hãy tính và so sánh áp suất của xe tăng và ô tô lên mặt đất nằm ngang!
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a3-wrap', 'wb-a3')">✍️ Bảng viết giải bài 3</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a3', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a3-wrap" style="display:none;"><div id="wb-a3"></div></div>
+        <div id="sol-a3" class="solution-box">
+          <div class="step-line">&bull; Áp suất của xe tăng lên mặt đất là:</div>
+          <div class="step-line" style="padding-left:16px;">p<sub>1</sub> = F<sub>1</sub> / S<sub>1</sub> = 340 000 / 1,7 = <strong>200 000 (Pa)</strong> (= 200 kPa).</div>
+          <div class="step-line">&bull; Đổi diện tích bánh ô tô: S<sub>2</sub> = 600 cm&sup2; = <strong>0,06 m&sup2;</strong>. Áp suất của ô tô lên mặt đất là:</div>
+          <div class="step-line" style="padding-left:16px;">p<sub>2</sub> = F<sub>2</sub> / S<sub>2</sub> = 15 000 / 0,06 = <strong>250 000 (Pa)</strong> (= 250 kPa).</div>
+          <div class="step-line">&bull; <strong>Kết luận:</strong> Vì p<sub>1</sub> &lt; p<sub>2</sub> (200 kPa &lt; 250 kPa) nên dù nặng gấp hơn 22 lần ô tô, xe tăng lại gây áp suất lên mặt đất nhỏ hơn ô tô và đi qua đất mềm không bị sa lầy!</div>
+        </div>
+      </div>
+
+      <!-- BÀI 4 -->
+      <div class="ex-card" id="ap2-c4">
+        <span class="ex-badge">Bài 4 &bull; Tìm khối lượng hàng tối đa xe được phép chở qua đường yếu</span>
+        <div class="ex-title">
+          Một đoạn đường nông thôn chỉ cho phép các phương tiện gây ra áp suất tối đa lên mặt đường là p<sub>max</sub> = 300 000 Pa. Một chiếc xe tải có khối lượng riêng xác xe không chở hàng là m<sub>xe</sub> = 2,2 tấn, xe có 4 bánh và diện tích tiếp xúc của <strong>mỗi bánh</strong> với mặt đường là 300 cm&sup2;. Hỏi xe này được chở tối đa bao nhiêu tấn hàng để khi đi qua không làm hư hỏng mặt đường?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a4-wrap', 'wb-a4')">✍️ Bảng viết giải bài 4</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a4', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a4-wrap" style="display:none;"><div id="wb-a4"></div></div>
+        <div id="sol-a4" class="solution-box">
+          <div class="step-line">&bull; Tổng diện tích tiếp xúc của 4 bánh xe: S = 4 &times; 300 = 1 200 cm&sup2; = <strong>0,12 m&sup2;</strong>.</div>
+          <div class="step-line">&bull; Áp lực tối đa cả xe và hàng được phép đè lên mặt đường là:</div>
+          <div class="step-line" style="padding-left:16px;">F<sub>max</sub> = p<sub>max</sub> &middot; S = 300 000 &times; 0,12 = <strong>36 000 (N)</strong>.</div>
+          <div class="step-line">&bull; Tổng khối lượng tối đa cả xe và hàng: m<sub>tổng</sub> = 36 000 / 10 = 3 600 kg = <strong>3,6 tấn</strong>.</div>
+          <div class="step-line">&bull; Khối lượng hàng hóa tối đa được phép chở: m<sub>hàng</sub> = 3,6 &minus; 2,2 = <strong>1,4 (tấn)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 5 -->
+      <div class="ex-card" id="ap2-c5">
+        <span class="ex-badge">Bài 5 &bull; Kê ván gỗ chống lún cho máy móc</span>
+        <div class="ex-title">
+          Một cỗ máy công nghiệp nặng m = 1,8 tấn cần đặt lên một nền đất chỉ chịu được áp suất tối đa 25 000 Pa. Nếu chân máy trực tiếp có diện tích tổng cộng là 0,4 m&sup2; thì nền đất có bị lún không? Nếu phải lót dưới máy một tấm thép cứng rộng (khối lượng không đáng kể) thì diện tích tấm thép tối thiểu phải bằng bao nhiêu m&sup2;?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a5-wrap', 'wb-a5')">✍️ Bảng viết giải bài 5</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a5', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a5-wrap" style="display:none;"><div id="wb-a5"></div></div>
+        <div id="sol-a5" class="solution-box">
+          <div class="step-line">&bull; Áp lực của cỗ máy: F = P = 10 &times; 1 800 kg = <strong>18 000 (N)</strong>.</div>
+          <div class="step-line">&bull; Nếu đặt trực tiếp: p = 18 000 / 0,4 = <strong>45 000 Pa</strong> &gt; 25 000 Pa &rArr; <strong>Nền đất sẽ bị lún!</strong></div>
+          <div class="step-line">&bull; Diện tích tối thiểu của tấm thép lót là: S<sub>min</sub> = F / p<sub>max</sub> = 18 000 / 25 000 = <strong>0,72 (m&sup2;)</strong>.</div>
+        </div>
+      </div>
+
+      <div id="wb-ap2-tab2"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: KHỐI HỘP & KẾT HỢP KHỐI LƯỢNG RIÊNG - ÁP SUẤT (5 BÀI TỔNG HỢP CHƯƠNG III)-->
+  <!-- ========================================================================= -->
+  <section id="tab-d3" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>🧱</span> 3. BÀI TOÁN HÌNH HỌC & KẾT HỢP KHỐI LƯỢNG RIÊNG VỚI ÁP SUẤT</h2>
+          <p>Dạng bài tổng hợp xuyên suốt cả Chương III (Bài 13 + Bài 15)</p>
+        </div>
+        <button class="btn-reset" onclick="resetRange(6, 10, 'wb-ap2-tab3')">🔄 Đặt lại Phần 3</button>
+      </div>
+
+      <!-- BÀI 6 -->
+      <div class="ex-card" id="ap2-c6">
+        <span class="ex-badge" style="background:#ede9fe; color:#6d28d9;">Bài 6 &bull; Kết hợp KLR (D = m/V) và Áp suất p<sub>max</sub>, p<sub>min</sub></span>
+        <div class="ex-title">
+          Một thỏi sắt đặc hình hộp chữ nhật có các kích thước: dài 20 cm, rộng 10 cm, cao 5 cm. Biết khối lượng riêng của sắt là D = 7 800 kg/m&sup3; (tức 7,8 g/cm&sup3;).<br>
+          a) Tính thể tích, khối lượng và trọng lượng của thỏi sắt.<br>
+          b) Đặt thỏi sắt trên mặt sàn nằm ngang, tính áp suất lớn nhất và áp suất nhỏ nhất mà thỏi sắt có thể tác dụng lên sàn.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a6-wrap', 'wb-a6')">✍️ Bảng viết giải bài 6</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a6', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a6-wrap" style="display:none;"><div id="wb-a6"></div></div>
+        <div id="sol-a6" class="solution-box">
+          <div class="step-line"><strong>a) Tính V, m và P:</strong></div>
+          <div class="step-line">&bull; Thể tích thỏi sắt: V = 20 &times; 10 &times; 5 = <strong>1 000 cm&sup3;</strong> (= 0,001 m&sup3;).</div>
+          <div class="step-line">&bull; Khối lượng thỏi sắt: m = D &middot; V = 7 800 &times; 0,001 = <strong>7,8 (kg)</strong>.</div>
+          <div class="step-line">&bull; Trọng lượng (áp lực): F = P = 10 &middot; m = 10 &times; 7,8 = <strong>78 (N)</strong>.</div>
+          <div class="step-line"><strong>b) Tính p<sub>max</sub> và p<sub>min</sub>:</strong></div>
+          <div class="step-line">&bull; Diện tích mặt nhỏ nhất: S<sub>min</sub> = 10 &times; 5 = 50 cm&sup2; = <strong>0,005 m&sup2;</strong> &rArr; p<sub>max</sub> = 78 / 0,005 = <strong>15 600 (Pa)</strong>.</div>
+          <div class="step-line">&bull; Diện tích mặt lớn nhất: S<sub>max</sub> = 20 &times; 10 = 200 cm&sup2; = <strong>0,02 m&sup2;</strong> &rArr; p<sub>min</sub> = 78 / 0,02 = <strong>3 900 (Pa)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 7 -->
+      <div class="ex-card" id="ap2-c7">
+        <span class="ex-badge">Bài 7 &bull; Khối đá hình lập phương đặt trên mặt đất</span>
+        <div class="ex-title">
+          Một khối đá hoa cương đặc hình lập phương có cạnh a = 40 cm đặt trên nền sân nằm ngang. Biết khối lượng riêng của đá hoa cương là D = 2 600 kg/m&sup3;. Tính áp suất của khối đá tác dụng lên mặt sân.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a7-wrap', 'wb-a7')">✍️ Bảng viết giải bài 7</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a7', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a7-wrap" style="display:none;"><div id="wb-a7"></div></div>
+        <div id="sol-a7" class="solution-box">
+          <div class="step-line">&bull; Đổi cạnh khối lập phương: a = 40 cm = <strong>0,4 m</strong>.</div>
+          <div class="step-line">&bull; Thể tích khối đá: V = a&sup3; = 0,4 &times; 0,4 &times; 0,4 = <strong>0,064 (m&sup3;)</strong>.</div>
+          <div class="step-line">&bull; Khối lượng khối đá: m = D &middot; V = 2 600 &times; 0,064 = <strong>166,4 (kg)</strong> &rArr; Áp lực F = 10 &middot; m = <strong>1 664 (N)</strong>.</div>
+          <div class="step-line">&bull; Diện tích mặt đáy tiếp xúc sân: S = a&sup2; = 0,4 &times; 0,4 = <strong>0,16 (m&sup2;)</strong>.</div>
+          <div class="step-line">&bull; Áp suất khối đá tác dụng lên sân: p = F / S = 1 664 / 0,16 = <strong>10 400 (Pa)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 8 -->
+      <div class="ex-card" id="ap2-c8">
+        <span class="ex-badge">Bài 8 &bull; Xếp chồng hai khối hộp lên nhau</span>
+        <div class="ex-title">
+          Đặt một khối gỗ hình lập phương cạnh a<sub>1</sub> = 20 cm, nặng m<sub>1</sub> = 6,4 kg nằm yên trên mặt bàn ngang. Sau đó đặt chồng lên chính giữa mặt trên của khối gỗ một quả cân bằng đồng nặng m<sub>2</sub> = 3,6 kg. Tính áp suất tác dụng lên mặt bàn!
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a8-wrap', 'wb-a8')">✍️ Bảng viết giải bài 8</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a8', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a8-wrap" style="display:none;"><div id="wb-a8"></div></div>
+        <div id="sol-a8" class="solution-box">
+          <div class="step-line">&bull; Tổng áp lực cả khối gỗ và quả cân đồng ép lên mặt bàn là:</div>
+          <div class="step-line" style="padding-left:16px;">F = 10 &middot; (m<sub>1</sub> + m<sub>2</sub>) = 10 &times; (6,4 + 3,6) = <strong>100 (N)</strong>.</div>
+          <div class="step-line">&bull; Chú ý: Vật tiếp xúc trực tiếp với mặt bàn là mặt đáy của khối gỗ có cạnh 20 cm = 0,2 m:</div>
+          <div class="step-line" style="padding-left:16px;">S = 0,2 &times; 0,2 = <strong>0,04 (m&sup2;)</strong>.</div>
+          <div class="step-line">&bull; Áp suất tác dụng lên mặt bàn: p = F / S = 100 / 0,04 = <strong>2 500 (Pa)</strong>.</div>
+        </div>
+      </div>
+
+      <!-- BÀI 9 -->
+      <div class="ex-card" id="ap2-c9">
+        <span class="ex-badge">Bài 9 &bull; So sánh áp suất ở mũ đinh ghim và mũi nhọn đinh ghim (SGK KHTN 8)</span>
+        <div class="ex-title">
+          Dùng ngón tay cái ấn vuông góc một lực F = 15 N lên mũ một chiếc đinh ghim để gắn giấy vào bảng gỗ mềm. Biết diện tích phần mũ đinh tiếp xúc ngón tay là S<sub>1</sub> = 1,5 cm&sup2;, còn diện tích đầu mũi nhọn đinh ghim là S<sub>2</sub> = 0,03 mm&sup2; (= 0,0003 cm&sup2;). Tính áp suất tác dụng lên ngón tay và áp suất mũi đinh tác dụng lên bảng gỗ (coi lực truyền nguyên vẹn từ mũ đinh xuống mũi đinh).
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a9-wrap', 'wb-a9')">✍️ Bảng viết giải bài 9</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a9', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a9-wrap" style="display:none;"><div id="wb-a9"></div></div>
+        <div id="sol-a9" class="solution-box">
+          <div class="step-line">&bull; Đổi S<sub>1</sub> = 1,5 cm&sup2; = <strong>0,00015 m&sup2;</strong> &rArr; Áp suất lên ngón tay: p<sub>1</sub> = 15 / 0,00015 = <strong>100 000 Pa</strong> (ngón tay không bị đau).</div>
+          <div class="step-line">&bull; Đổi S<sub>2</sub> = 0,0003 cm&sup2; = <strong>0,00000003 m&sup2;</strong> &rArr; Áp suất ở mũi nhọn lên bảng gỗ:</div>
+          <div class="step-line" style="padding-left:16px;">p<sub>2</sub> = 15 / 0,00000003 = <strong>500 000 000 Pa</strong> (gấp 5 000 lần ở mũ đinh, xuyên thủng gỗ dễ dàng!).</div>
+        </div>
+      </div>
+
+      <!-- BÀI 10 -->
+      <div class="ex-card" id="ap2-c10">
+        <span class="ex-badge" style="background:#fef3c7; color:#b45309;">Bài 10 &bull; Tư duy tỉ lệ nhanh: Cắt dọc vs Cắt ngang khối hộp</span>
+        <div class="ex-title">
+          Một miếng đậu phụ (hoặc viên gạch đồng chất) hình hộp chữ nhật đang nằm yên trên đĩa phẳng ngang, gây ra áp suất p = 600 Pa lên mặt đĩa.<br>
+          a) Nếu dùng dao <strong>cắt thẳng đứng từ trên xuống</strong> chia đôi miếng đậu thành 2 phần bằng nhau rồi nhấc bỏ 1 phần ra ngoài thì phần còn lại gây áp suất lên đĩa là bao nhiêu?<br>
+          b) Nếu dùng dao <strong>lạng ngang song song với mặt đĩa</strong> bỏ đi nửa phía trên thì nửa phía dưới còn lại gây áp suất lên đĩa là bao nhiêu?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-a10-wrap', 'wb-a10')">✍️ Bảng viết giải bài 10</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-a10', this)">👁️ Hiển thị lời giải chi tiết</button>
+        </div>
+        <div id="wb-a10-wrap" style="display:none;"><div id="wb-a10"></div></div>
+        <div id="sol-a10" class="solution-box">
+          <div class="step-line"><strong>a) Khi cắt thẳng đứng từ trên xuống bỏ đi một nửa:</strong></div>
+          <div class="step-line">&bull; Trọng lượng (áp lực F) giảm 2 lần, đồng thời diện tích đáy tiếp xúc S cũng giảm 2 lần &rArr; Tỉ số <code>p = F / S</code> <strong>KHÔNG ĐỔI, vẫn bằng 600 Pa</strong>!</div>
+          <div class="step-line"><strong>b) Khi lạng ngang bỏ đi nửa phía trên:</strong></div>
+          <div class="step-line">&bull; Áp lực F giảm đi 2 lần nhưng diện tích đáy tiếp xúc đĩa S vẫn giữ nguyên như cũ &rArr; Áp suất giảm đi 2 lần: p' = 600 : 2 = <strong>300 Pa</strong>!</div>
+        </div>
+      </div>
+
+      <div id="wb-ap2-tab3"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 4: TỔNG HỢP CÂU HỎI ĐỊNH TÍNH GIẢI THÍCH THỰC TẾ (BÀI 15 & BÀI 16)    -->
+  <!-- ========================================================================= -->
+  <section id="tab-qual" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>💬</span> 4. BỘ CÂU HỎI TỰ LUẬN ĐỊNH TÍNH CHỌN LỌC (BÀI 15 & BÀI 16)</h2>
+          <p>Rèn cách diễn đạt ngắn gọn, trúng từ khóa vật lí để đạt điểm tối đa trên lớp</p>
+        </div>
+        <button class="btn-reset" onclick="resetRange(11, 14, null)">🔄 Ẩn tất cả câu trả lời</button>
+      </div>
+
+      <div class="ex-card" id="ap2-c11">
+        <span class="ex-badge">Câu định tính 1 (Bài 15)</span>
+        <div class="ex-title">Vì sao khi xây các tòa nhà cao tầng, người ta phải đào móng rộng bản hoặc đóng nhiều cọc bê tông to xuống nền đất?</div>
+        <button class="ans-toggle-btn" onclick="toggleAns('sol-a11', this)">👁️ Hiển thị lời giải chi tiết</button>
+        <div id="sol-a11" class="solution-box">Tòa nhà cao tầng có trọng lượng (áp lực F) rất lớn. Làm móng nhà rộng bản nhằm <strong>tăng diện tích bị ép S</strong> lên nền đất, giúp <strong>giảm áp suất p = F / S</strong> để tòa nhà không bị sụt lún, nghiêng nứt.</div>
+      </div>
+
+      <div class="ex-card" id="ap2-c12">
+        <span class="ex-badge">Câu định tính 2 (Bài 16 - Chất lỏng)</span>
+        <div class="ex-title">Vì sao những con cá sống ở vùng biển rất sâu khi bị lưới kéo nhanh lên mặt nước thường bị phồng biến dạng hoặc vỡ bong bóng cá?</div>
+        <button class="ans-toggle-btn" onclick="toggleAns('sol-a12', this)">👁️ Hiển thị lời giải chi tiết</button>
+        <div id="sol-a12" class="solution-box">Ở tầng biển sâu, áp suất nước cực kì lớn nên cơ thể cá có áp suất bên trong rất cao để cân bằng với bên ngoài. Khi kéo nhanh lên mặt nước, áp suất nước bên ngoài giảm đột ngột khiến áp suất lớn bên trong cơ thể cá đẩy phồng ra ngoài.</div>
+      </div>
+
+      <div class="ex-card" id="ap2-c13">
+        <span class="ex-badge">Câu định tính 3 (Bài 16 - Khí quyển)</span>
+        <div class="ex-title">Khi khui hộp sữa đặc bằng kim loại, nếu chỉ đục duy nhất một lỗ nhỏ trên nắp hộp thì dốc hộp xuống sữa chảy ra rất khó khăn (nhỏ giọt rồi tắc). Làm cách nào để rót sữa chảy ra dễ dàng và giải thích tại sao?</div>
+        <button class="ans-toggle-btn" onclick="toggleAns('sol-a13', this)">👁️ Hiển thị lời giải chi tiết</button>
+        <div id="sol-a13" class="solution-box">
+          &bull; <strong>Cách làm:</strong> Đục thêm <strong>lỗ thứ hai</strong> ở phía đối diện trên nắp hộp.<br>
+          &bull; <strong>Giải thích:</strong> Khi chỉ có 1 lỗ, sữa chảy ra một chút làm không khí bên trong loãng đi, áp suất khí bên trong nhỏ hơn áp suất khí quyển bên ngoài nên khí quyển chặn không cho sữa chảy tiếp. Khi có lỗ thứ hai, không khí bên ngoài tràn vào qua lỗ này tạo <strong>áp suất khí quyển đẩy sữa chảy đều ra</strong> ở lỗ kia!
+        </div>
+      </div>
+
+      <div class="ex-card" id="ap2-c14">
+        <span class="ex-badge">Câu định tính 4 (Bài 16 - Khí quyển)</span>
+        <div class="ex-title">Giải thích vì sao khi ta cắm ống hút vào cốc nước giải khát và hút bớt không khí trong ống thì nước lại tự dâng lên theo ống vào miệng?</div>
+        <button class="ans-toggle-btn" onclick="toggleAns('sol-a14', this)">👁️ Hiển thị lời giải chi tiết</button>
+        <div id="sol-a14" class="solution-box">Khi ta hút bớt không khí trong ống hút, áp suất khí bên trong ống giảm nhỏ hơn áp suất khí quyển bên ngoài. Lúc đó <strong>áp suất khí quyển đè lên mặt thoáng của nước trong cốc</strong> lớn hơn sẽ đẩy nước dâng ngược lên trong ống hút vào miệng.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 5: ĐỀ KIỂM TRA TỔNG KẾT CHUYÊN ĐỀ ÁP SUẤT (25 PHÚT - KHỚP FILE WORD)  -->
+  <!-- ========================================================================= -->
+  <section id="tab-test" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>⏱️</span> 5. ĐỀ KIỂM TRA TỔNG KẾT CHUYÊN ĐỀ ÁP SUẤT (25 PHÚT)</h2>
+          <p>Khớp 100% với tệp Word in giấy để chiếu đồng hồ làm bài và chấm chữa trực tiếp trên TV</p>
+        </div>
+        <button class="btn-reset" onclick="resetApSuatTest()">🔄 Đặt lại Đề kiểm tra</button>
+      </div>
+
+      <div class="timer-bar">
+        <div>
+          <div style="font-size:12.5px; opacity:0.85; font-weight:700;">ĐỒNG HỒ LÀM BÀI TRÊN GIẤY</div>
+          <div class="clock-digits" id="ap-clock">25:00</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button onclick="startApClock()" style="background:#10b981; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">▶️ Bắt đầu tính giờ</button>
+          <button onclick="pauseApClock()" style="background:#f59e0b; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">⏸️ Tạm dừng</button>
+          <button onclick="resetApClock()" style="background:#475569; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:800; cursor:pointer;">🔄 Đặt lại 25:00</button>
+        </div>
+      </div>
+
+      <h3 style="color:#1e3a8a; font-size:18px; margin-bottom:12px;">Phần I. Trắc nghiệm nhiều lựa chọn (3,0 điểm &mdash; 6 câu, mỗi câu 0,5 điểm)</h3>
+      <div id="ap-test-mc"></div>
+
+      <hr style="margin:24px 0; border:none; border-top:2px dashed #cbd5e1;">
+
+      <h3 style="color:#1e3a8a; font-size:18px; margin-bottom:12px;">Phần II. Trắc nghiệm Đúng / Sai (2,0 điểm &mdash; mỗi ý 0,5 điểm)</h3>
+      <div class="ex-card" style="background:#f8fafc;">
+        <div class="ex-title" style="font-size:16.5px;">
+          Xét các nhận định sau về áp suất trên một bề mặt, áp suất chất lỏng và áp suất khí quyển:
+        </div>
+        <table class="tf-table">
+          <tr><th style="width:66%;">Nhận định</th><th style="width:34%; text-align:center;">Lựa chọn & Đáp án</th></tr>
+          <tr>
+            <td>a) Muốn làm giảm áp suất tác dụng lên mặt đất mềm, ta cần giảm diện tích bị ép xuống càng nhỏ càng tốt.</td>
+            <td style="text-align:center;" id="aptf-0">
+              <button class="tf-choice-btn" onclick="pickApTF(0, true, false)">Đúng</button>
+              <button class="tf-choice-btn" onclick="pickApTF(0, false, false)">Sai</button>
+            </td>
+          </tr>
+          <tr>
+            <td>b) Đặt cùng một viên gạch đặc lên mặt bàn ngang: khi dựng đứng viên gạch thì áp suất lên bàn lớn hơn khi đặt nằm bẹt.</td>
+            <td style="text-align:center;" id="aptf-1">
+              <button class="tf-choice-btn" onclick="pickApTF(1, true, true)">Đúng</button>
+              <button class="tf-choice-btn" onclick="pickApTF(1, false, true)">Sai</button>
+            </td>
+          </tr>
+          <tr>
+            <td>c) Chất lỏng gây áp suất theo mọi phương và càng xuống sâu so với mặt thoáng thì áp suất chất lỏng càng lớn.</td>
+            <td style="text-align:center;" id="aptf-2">
+              <button class="tf-choice-btn" onclick="pickApTF(2, true, true)">Đúng</button>
+              <button class="tf-choice-btn" onclick="pickApTF(2, false, true)">Sai</button>
+            </td>
+          </tr>
+          <tr>
+            <td>d) Càng lên cao so với mặt nước biển, áp suất khí quyển càng tăng lên.</td>
+            <td style="text-align:center;" id="aptf-3">
+              <button class="tf-choice-btn" onclick="pickApTF(3, true, false)">Đúng</button>
+              <button class="tf-choice-btn" onclick="pickApTF(3, false, false)">Sai</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <hr style="margin:24px 0; border:none; border-top:2px dashed #cbd5e1;">
+
+      <h3 style="color:#1e3a8a; font-size:18px; margin-bottom:12px;">Phần III. Tự luận (5,0 điểm &mdash; Trọng tâm Bài 15)</h3>
+
+      <div class="ex-card">
+        <span class="ex-badge">Câu 1 (1,5 điểm) &bull; Giải thích định tính</span>
+        <div class="ex-title">
+          Tại sao lưỡi dao, lưỡi kéo sau một thời gian sử dụng bị cùn thì cắt gọt rất khó, nhưng sau khi mài mỏng và sắc lưỡi dao lại cắt thực phẩm rất dễ dàng dù tay ta ấn lực vẫn như cũ?
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-apt1-wrap', 'wb-apt1')">✍️ Bảng viết chữa Câu 1</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-apt1', this)">👁️ Xem đáp án & biểu điểm</button>
+        </div>
+        <div id="wb-apt1-wrap" style="display:none;"><div id="wb-apt1"></div></div>
+        <div id="sol-apt1" class="solution-box">
+          &bull; <em>(0,75 đ)</em> Theo công thức <code>p = F / S</code>, khi mài mỏng và sắc lưỡi dao thì <strong>diện tích bị ép S giảm đi rất nhiều</strong>.<br>
+          &bull; <em>(0,75 đ)</em> Với cùng một độ lớn áp lực F của tay ấn xuống, S giảm nhỏ làm <strong>áp suất p tăng lên rất lớn</strong>, giúp lưỡi dao dễ dàng cắt đứt thực phẩm.
+        </div>
+      </div>
+
+      <div class="ex-card">
+        <span class="ex-badge">Câu 2 (2,0 điểm) &bull; Bài toán người đứng trên mặt sàn</span>
+        <div class="ex-title">
+          Một người có khối lượng m = 54 kg cầm trên tay một túi quà nặng 6 kg đứng thẳng bằng cả hai chân trên mặt sàn nằm ngang. Biết diện tích tiếp xúc của <strong>một bàn chân</strong> với sàn là 150 cm&sup2;.<br>
+          a) Tính độ lớn áp lực người đó tác dụng lên mặt sàn.<br>
+          b) Tính áp suất người đó tác dụng lên mặt sàn theo đơn vị Pa và kPa.
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-apt2-wrap', 'wb-apt2')">✍️ Bảng viết chữa Câu 2</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-apt2', this)">👁️ Xem đáp án & biểu điểm</button>
+        </div>
+        <div id="wb-apt2-wrap" style="display:none;"><div id="wb-apt2"></div></div>
+        <div id="sol-apt2" class="solution-box">
+          &bull; <em>(0,75 đ)</em> a) Tổng khối lượng: m = 54 + 6 = 60 kg &rArr; Độ lớn áp lực lên sàn: F = P = 10 &times; 60 = <strong>600 (N)</strong>.<br>
+          &bull; <em>(0,5 đ)</em> b) Diện tích tiếp xúc của cả hai bàn chân: S = 2 &times; 150 = 300 cm&sup2; = <strong>0,03 (m&sup2;)</strong>.<br>
+          &bull; <em>(0,75 đ)</em> Áp suất tác dụng lên sàn: p = F / S = 600 / 0,03 = <strong>20 000 (Pa)</strong> = <strong>20 (kPa)</strong>.
+        </div>
+      </div>
+
+      <div class="ex-card">
+        <span class="ex-badge">Câu 3 (1,5 điểm) &bull; Khối hộp chữ nhật & liên hệ Khối lượng riêng</span>
+        <div class="ex-title">
+          Một khối nhôm đặc hình hộp chữ nhật có kích thước ba cạnh là 20 cm, 10 cm, 5 cm. Biết khối lượng riêng của nhôm là D = 2 700 kg/m&sup3;. Đặt khối nhôm trên mặt bàn nằm ngang, hãy tính <strong>áp suất lớn nhất</strong> mà khối nhôm có thể gây ra trên mặt bàn!
+        </div>
+        <div class="ex-btn-row">
+          <button class="wb-toggle-btn" onclick="toggleInlineWB('wb-apt3-wrap', 'wb-apt3')">✍️ Bảng viết chữa Câu 3</button>
+          <button class="ans-toggle-btn" onclick="toggleAns('sol-apt3', this)">👁️ Xem đáp án & biểu điểm</button>
+        </div>
+        <div id="wb-apt3-wrap" style="display:none;"><div id="wb-apt3"></div></div>
+        <div id="sol-apt3" class="solution-box">
+          &bull; <em>(0,5 đ)</em> Thể tích khối nhôm: V = 20 &times; 10 &times; 5 = 1 000 cm&sup3; = 0,001 m&sup3; &rArr; Khối lượng m = 2 700 &times; 0,001 = 2,7 kg &rArr; Áp lực F = P = 10 &times; 2,7 = <strong>27 (N)</strong>.<br>
+          &bull; <em>(0,5 đ)</em> Để áp suất lớn nhất, phải đặt mặt có diện tích nhỏ nhất xuống bàn: S<sub>min</sub> = 10 &times; 5 = 50 cm&sup2; = <strong>0,005 (m&sup2;)</strong>.<br>
+          &bull; <em>(0,5 đ)</em> Áp suất lớn nhất tác dụng lên bàn: p<sub>max</sub> = F / S<sub>min</sub> = 27 / 0,005 = <strong>5 400 (Pa)</strong>.
+        </div>
+      </div>
+
+      <div id="wb-ap2-tab5"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 6: BÀI TẬP VỀ NHÀ BUỔI 2                                              -->
+  <!-- ========================================================================= -->
+  <section id="tab-hw" class="section-view">
+    <div class="card">
+      <div class="section-header">
+        <div>
+          <h2><span>📤</span> 6. BÀI TẬP VỀ NHÀ TRỰC TUYẾN BUỔI 2 (TỔNG HỢP CHUYÊN ĐỀ ÁP SUẤT)</h2>
+          <p>Chọn <strong>Chặng 2 - Buổi 2</strong> trên cổng trò chơi Áp suất Lớp 8 &mdash; Báo kết quả về <strong>thaomy1005@gmail.com</strong></p>
+        </div>
+      </div>
+
+      <div style="background:#fdf4ff; border:2px solid #c084fc; border-radius:16px; padding:20px; margin-bottom:18px;">
+        <h4 style="color:#6b21a8; font-size:16.5px; margin-bottom:8px;">🎯 ĐƯỜNG LINK BÀI TẬP VỀ NHÀ ÁP SUẤT - BUỔI 2</h4>
+        <p style="font-size:15px; color:#581c87; margin-bottom:14px;">
+          Tổng hợp vận dụng công thức p = F / S, bài toán người mang vật, ô tô/xe tăng, khối hộp kết hợp Khối lượng riêng và câu hỏi định tính toàn Chương III.
+        </p>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a href="https://manduong1502.github.io/khtn8-game/apsuat-game.html?buoi=2" target="_blank" class="btn-submit" style="background:linear-gradient(135deg,#2563eb,#4f46e5);">🔗 Mở Bài tập về nhà Buổi 2</a>
+          <button class="btn-submit" onclick="copyZaloP2()">📋 Sao chép tin nhắn gửi nhóm Zalo</button>
+        </div>
+      </div>
+
+      <textarea id="zalo-p2" style="width:100%; height:175px; padding:14px; border:2px solid #cbd5e1; border-radius:12px; font-size:14.5px; line-height:1.55; outline:none;">Cô gửi các bạn bài tập tổng hợp trực tuyến Buổi 2 chuyên đề Áp suất (Bài 15 & Bài 16 - KHTN 8):
+🔗 Link làm bài: https://manduong1502.github.io/khtn8-game/apsuat-game.html?buoi=2
+
+Yêu cầu về nhà:
+1. Nhập đầy đủ họ tên và chọn "Chặng 2 - Buổi 2: Bài tập tổng hợp Áp suất & Liên hệ KLR".
+2. Chuẩn bị nháp và máy tính cầm tay để tính chính xác các bài toán đổi cm² → m², p_max / p_min.
+3. Điểm số và các câu cần lưu ý sẽ tự động gửi về email thaomy1005@gmail.com cho cô. Chúc các bạn hoàn thành xuất sắc!</textarea>
+    </div>
+  </section>
+
+</main>
+
+<script>
+function toggleFormulaDrawer() {
+  const el = document.getElementById('formula-drawer');
+  el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+}
+
+function switchTab(tabId, btnEl) {
+  document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => Object.keys(WB_REGISTRY).forEach(id => resizeWB(id)), 40);
+}
+
+function toggleAns(solId, btnEl) {
+  const box = document.getElementById(solId);
+  if (!box) return;
+  const hasRubric = btnEl && btnEl.innerText.includes('biểu điểm');
+  if (box.style.display === 'block') {
+    box.style.display = 'none';
+    if (btnEl) btnEl.innerHTML = hasRubric ? '👁️ Xem đáp án & biểu điểm' : '👁️ Hiển thị lời giải chi tiết';
+  } else {
+    box.style.display = 'block';
+    if (btnEl) btnEl.innerHTML = hasRubric ? '🙈 Ẩn đáp án & biểu điểm' : '🙈 Ẩn lời giải chi tiết';
+  }
+}
+
+function resetRange(fromIdx, toIdx, mainWB) {
+  for (let i = fromIdx; i <= toIdx; i++) {
+    const s = document.getElementById(`sol-a${i}`); if (s) s.style.display = 'none';
+    const c = document.getElementById(`ap2-c${i}`);
+    if (c) { const btn = c.querySelector('.ans-toggle-btn'); if (btn) btn.innerHTML = '👁️ Hiển thị lời giải chi tiết'; }
+    const w = document.getElementById(`wb-a${i}-wrap`); if (w) w.style.display = 'none';
+    if (WB_REGISTRY[`wb-a${i}`]) clearWBAll(`wb-a${i}`);
+  }
+  if (mainWB && WB_REGISTRY[mainWB]) clearWBAll(mainWB);
+}
+
+// =============================================================================
+// TAB 1: 12 CÂU TRẮC NGHIỆM TỔNG HỢP VẬN DỤNG
+// =============================================================================
+const P2_WARMUP = [
+  { q: "Câu 1. Đổi diện tích: 350 cm² bằng bao nhiêu mét vuông (m²)?", opts: ["3,5 m²", "0,35 m²", "0,035 m²", "0,0035 m²"], ans: 2, exp: "350 : 10 000 = 0,035 m²." },
+  { q: "Câu 2. Một thùng hàng nặng m = 32 kg đặt nằm yên trên mặt sàn ngang có diện tích đáy tiếp xúc sàn là 0,08 m². Áp suất thùng hàng tác dụng lên sàn là:", opts: ["400 Pa", "4 000 Pa", "25,6 Pa", "40 000 Pa"], ans: 1, exp: "F = P = 10 × 32 = 320 N ⇒ p = 320 / 0,08 = 4 000 Pa." },
+  { q: "Câu 3. Một người đang đứng yên bằng 2 chân trên mặt sàn ngang. Nếu người đó co 1 chân lên (chỉ đứng bằng 1 chân) thì áp lực F và áp suất p tác dụng lên sàn thay đổi như thế nào?", opts: ["Áp lực F không đổi, áp suất p tăng gấp 2 lần", "Áp lực F tăng gấp 2 lần, áp suất p tăng gấp 2 lần", "Áp lực F giảm một nửa, áp suất p không đổi", "Cả F và p đều không đổi"], ans: 0, exp: "Trọng lượng cơ thể không đổi nên áp lực F = P không đổi; diện tích bị ép S giảm đi một nửa nên p = F / S tăng gấp đôi!" },
+  { q: "Câu 4. Nếu tăng độ lớn áp lực F lên gấp 3 lần và đồng thời giảm diện tích bị ép S đi 2 lần thì áp suất p sẽ:", opts: ["Tăng lên 6 lần", "Tăng lên 1,5 lần", "Giảm đi 6 lần", "Tăng lên 5 lần"], ans: 0, exp: "Vì p = F / S nên F nhân 3 và S chia 2 làm p tăng 3 × 2 = 6 lần." },
+  { q: "Câu 5. Hai khối trụ đặc bằng đồng có cùng chiều cao h nhưng diện tích đáy khối A lớn gấp đôi khối B (S_A = 2 S_B) cùng đặt đứng trên mặt bàn ngang. So sánh áp suất của chúng lên bàn:", opts: ["p_A = 2 p_B", "p_B = 2 p_A", "Bằng nhau (p_A = p_B) vì khối lượng và diện tích đáy cùng tăng gấp đôi!", "Không so sánh được"], ans: 2, exp: "Cùng chiều cao và cùng chất: S tăng 2 lần thì thể tích V = S·h tăng 2 lần ⇒ F tăng 2 lần ⇒ tỉ số p = F / S bằng nhau!" },
+  { q: "Câu 6. Một bàn học 4 chân có trọng lượng 200 N, diện tích mỗi chân bàn là 25 cm². Áp suất bàn tác dụng lên sàn nhà là:", opts: ["80 000 Pa", "20 000 Pa", "2 000 Pa", "8 000 Pa"], ans: 1, exp: "Tổng 4 chân: S = 4 × 25 = 100 cm² = 0,01 m² ⇒ p = 200 / 0,01 = 20 000 Pa." },
+  { q: "Câu 7. Nền đất chịu được áp suất tối đa 50 kPa (50 000 Pa). Một trụ bê tông gây áp lực 40 000 N lên nền đất này thì diện tích chân trụ tối thiểu phải bằng:", opts: ["0,8 m²", "1,25 m²", "0,08 m²", "8 m²"], ans: 0, exp: "S_min = F / p_max = 40 000 / 50 000 = 0,8 m²." },
+  { q: "Câu 8. Ví dụ nào dưới đây ứng dụng việc TĂNG áp suất?", opts: ["Lót tấm ván dưới kích nâng ô tô trên nền đất mềm", "Gọt nhọn đầu bút chì / đầu cọc tre đóng xuống bờ mương", "Làm bản xích rộng cho xe ủi đất", "Đeo quai túi xách bản to"], ans: 1, exp: "Vót nhọn đầu cọc làm giảm S để tăng áp suất p giúp cọc cắm sâu vào đất dễ dàng." },
+  { q: "Câu 9. Ba điểm M, N, Q nằm trong cùng một bình nước yên lặng: M gần mặt nước nhất, N ở lưng chừng bình, Q ở sát đáy bình. So sánh áp suất nước tại 3 điểm:", opts: ["p_M > p_N > p_Q", "p_Q > p_N > p_M (ở sát đáy sâu nhất áp suất lớn nhất)", "p_M = p_N = p_Q", "p_N lớn nhất"], ans: 1, exp: "Càng xuống sâu so với mặt thoáng thì áp suất chất lỏng càng lớn." },
+  { q: "Câu 10. Thiết bị kĩ thuật nào sau đây hoạt động dựa trên sự truyền áp suất của chất lỏng theo mọi phương?", opts: ["Máy nén thủy lực (kích thủy lực nâng ô tô)", "Cân Rô-béc-van", "Nhiệt kế rượu", "Thước kẹp"], ans: 0, exp: "Máy nén thủy lực truyền nguyên vẹn áp suất chất lỏng giúp dùng lực nhỏ nâng được ô tô nặng." },
+  { q: "Câu 11. Hiện tượng nào sau đây KHÔNG phải do áp suất khí quyển gây ra?", opts: ["Vỏ hộp sữa giấy bị bẹp dúm khi hút hết sữa", "Giác mút cao su bám chặt vào mặt kính phẳng", "Hòn đá thả từ trên cao rơi thẳng xuống mặt đất", "Nước không chảy ra khỏi cốc úp ngược có đậy tờ bìa cứng"], ans: 2, exp: "Hòn đá rơi xuống đất là do lực hút Trái Đất (trọng lực), không phải do áp suất khí quyển!" },
+  { q: "Câu 12. Khi leo lên đỉnh núi rất cao (như đỉnh Fansipan), người ta thấy:", opts: ["Áp suất khí quyển giảm đi vì không khí trên cao loãng hơn", "Áp suất khí quyển tăng vọt lên", "Không còn trọng lực", "Áp suất khí quyển bằng dưới chân núi"], ans: 0, exp: "Càng lên cao không khí càng loãng nên áp suất khí quyển giảm." }
+];
+
+const AP_TEST_MC = [
+  { q: "Câu 1. Công thức tính áp suất trên một bề mặt bị ép là:", opts: ["p = F · S", "p = F / S", "p = S / F", "p = m / V"], ans: 1, exp: "p = F / S." },
+  { q: "Câu 2. Đơn vị đo áp suất hợp pháp trong hệ SI là:", opts: ["N/m³", "Pa (1 Pa = 1 N/m²)", "kg/m²", "N·m"], ans: 1, exp: "1 Pa = 1 N/m²." },
+  { q: "Câu 3. Đổi đơn vị diện tích: 250 cm² bằng bao nhiêu m²?", opts: ["2,5 m²", "0,25 m²", "0,025 m²", "0,0025 m²"], ans: 2, exp: "250 : 10 000 = 0,025 m²." },
+  { q: "Câu 4. Một thùng gỗ có trọng lượng 400 N đặt trên sàn ngang với diện tích tiếp xúc là 0,2 m². Áp suất thùng gỗ gây ra trên sàn là:", opts: ["80 Pa", "200 Pa", "2 000 Pa", "20 000 Pa"], ans: 2, exp: "p = 400 / 0,2 = 2 000 Pa." },
+  { q: "Câu 5. Việc làm nào dưới đây nhằm mục đích GIẢM áp suất?", opts: ["Mài sắc lưỡi liềm cắt lúa", "Làm nhọn đầu kim khâu", "Kê tấm ván rộng trên bùn lầy để đi qua", "Ấn mạnh búa vào đinh"], ans: 2, exp: "Kê ván rộng giúp tăng diện tích bị ép S để giảm áp suất, tránh lún bùn." },
+  { q: "Câu 6. Vì sao khi hút hết sữa trong hộp giấy bằng ống hút, vỏ hộp lại bị bẹp về nhiều phía?", opts: ["Vì tay ta bóp mạnh hộp", "Vì áp suất khí bên trong hộp giảm nhỏ hơn áp suất khí quyển bên ngoài nên khí quyển ép bẹp hộp theo mọi phương", "Vì vỏ giấy tự co lại khi lạnh", "Vì ống hút kéo vỏ hộp"], ans: 1, exp: "Áp suất khí quyển bên ngoài lớn hơn áp suất bên trong hộp nên ép hộp bẹp theo mọi phương." }
+];
+
+let p2wScore = 0;
+
+function renderGenericMC(arr, boxId, prefix) {
+  const box = document.getElementById(boxId);
+  box.innerHTML = '';
+  arr.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'ex-card';
+    card.style.background = '#f8fafc';
+    let html = `<div class="ex-title" style="font-size:16px;">${item.q}</div><div style="display:flex; flex-direction:column; gap:8px;">`;
+    item.opts.forEach((opt, oIdx) => {
+      html += `<button class="quiz-opt-btn" id="${prefix}-${idx}-${oIdx}" onclick="checkGenMC('${prefix}', ${idx}, ${oIdx})"><span class="quiz-letter">${['A','B','C','D'][oIdx]}</span><span>${opt}</span></button>`;
+    });
+    html += `</div><div id="${prefix}-exp-${idx}" style="display:none; margin-top:8px; padding:9px 13px; border-radius:8px; font-size:14px;"></div>`;
+    card.innerHTML = html;
+    box.appendChild(card);
+  });
+}
+
+function checkGenMC(prefix, idx, chosen) {
+  const arr = prefix === 'p2w' ? P2_WARMUP : AP_TEST_MC;
+  const item = arr[idx];
+  for (let i = 0; i < 4; i++) {
+    const b = document.getElementById(`${prefix}-${idx}-${i}`);
+    b.disabled = true;
+    if (i === item.ans) { b.style.borderColor = '#10b981'; b.style.background = '#ecfdf5'; }
+    else if (i === chosen) { b.style.borderColor = '#ef4444'; b.style.background = '#fef2f2'; }
+  }
+  const exp = document.getElementById(`${prefix}-exp-${idx}`);
+  exp.style.display = 'block';
+  if (chosen === item.ans) {
+    if (prefix === 'p2w') { p2wScore++; document.getElementById('p2w-score').innerText = `${p2wScore} / 12`; }
+    exp.style.background = '#ecfdf5'; exp.style.color = '#065f46';
+    exp.innerHTML = `✅ <strong>Chính xác!</strong> ${item.exp}`;
+  } else {
+    exp.style.background = '#fef2f2'; exp.style.color = '#991b1b';
+    exp.innerHTML = `❌ <strong>Chưa đúng:</strong> ${item.exp}`;
+  }
+}
+
+function resetP2Warmup() {
+  p2wScore = 0;
+  document.getElementById('p2w-score').innerText = '0 / 12';
+  renderGenericMC(P2_WARMUP, 'p2w-box', 'p2w');
+  clearWBAll('wb-ap2-tab1');
+}
+
+function pickApTF(rowIdx, pickedVal, actualVal) {
+  const cell = document.getElementById(`aptf-${rowIdx}`);
+  const ok = pickedVal === actualVal;
+  cell.innerHTML = ok
+    ? `<span style="color:#059669; font-weight:800;">✅ Chọn ${pickedVal ? 'Đúng' : 'Sai'} (Chính xác!)</span>`
+    : `<span style="color:#dc2626; font-weight:800;">❌ Chọn ${pickedVal ? 'Đúng' : 'Sai'} (Đáp án: ${actualVal ? 'Đúng' : 'Sai'})</span>`;
+}
+
+let apSecs = 25 * 60, apClockId = null;
+function updateApClock() {
+  document.getElementById('ap-clock').innerText = `${String(Math.floor(apSecs / 60)).padStart(2,'0')}:${String(apSecs % 60).padStart(2,'0')}`;
+}
+function startApClock() {
+  if (apClockId) return;
+  apClockId = setInterval(() => {
+    if (apSecs > 0) { apSecs--; updateApClock(); }
+    else { clearInterval(apClockId); apClockId = null; alert("⏰ Hết 25 phút làm bài!"); }
+  }, 1000);
+}
+function pauseApClock() { clearInterval(apClockId); apClockId = null; }
+function resetApClock() { pauseApClock(); apSecs = 25 * 60; updateApClock(); }
+
+function resetApSuatTest() {
+  resetApClock();
+  renderGenericMC(AP_TEST_MC, 'ap-test-mc', 'apt');
+  [false, true, true, false].forEach((ans, idx) => {
+    const cell = document.getElementById(`aptf-${idx}`);
+    if (cell) cell.innerHTML = `<button class="tf-choice-btn" onclick="pickApTF(${idx}, true, ${ans})">Đúng</button><button class="tf-choice-btn" onclick="pickApTF(${idx}, false, ${ans})">Sai</button>`;
+  });
+  ['apt1', 'apt2', 'apt3'].forEach(k => {
+    const s = document.getElementById(`sol-${k}`); if (s) s.style.display = 'none';
+    const w = document.getElementById(`wb-${k}-wrap`); if (w) w.style.display = 'none';
+    if (WB_REGISTRY[`wb-${k}`]) clearWBAll(`wb-${k}`);
+  });
+  clearWBAll('wb-ap2-tab5');
+}
+
+function copyZaloP2() {
+  navigator.clipboard.writeText(document.getElementById('zalo-p2').value).then(() => {
+    alert("✅ Đã sao chép tin nhắn bài tập về nhà Buổi 2 chuyên đề Áp suất!");
+  });
+}
+
+// =============================================================================
+// SMART WHITEBOARD + SCREEN SNIPPING ENGINE
+// =============================================================================
+const WB_REGISTRY = {};
+let activeSnipTargetWB = null;
+
+function createSmartWhiteboard(mountId, titleText = "Bảng viết & Ghi chú", initialHeight = 450) {
+  const mount = document.getElementById(mountId);
+  if (!mount || WB_REGISTRY[mountId]) return;
+  mount.innerHTML = `
+    <div class="smart-wb-wrapper">
+      <div class="smart-wb-toolbar">
+        <div class="wb-tool-group">
+          <span class="wb-title-tag">✍️ ${titleText}</span>
+          <button type="button" class="wb-btn active" id="${mountId}-tool-pen" onclick="setWBTool('${mountId}', 'pen')">🖊️ Bút viết</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-hl" onclick="setWBTool('${mountId}', 'hl')">🖍️ Dạ quang</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-eraser" onclick="setWBTool('${mountId}', 'eraser')">🧽 Tẩy nét</button>
+          <button type="button" class="wb-btn" id="${mountId}-tool-move" onclick="setWBTool('${mountId}', 'move')">✋ Chỉnh ảnh cắt</button>
+        </div>
+        <div class="wb-tool-group">
+          <div class="color-dot active" style="background:#dc2626;" onclick="setWBColor('${mountId}', '#dc2626', this)"></div>
+          <div class="color-dot" style="background:#2563eb;" onclick="setWBColor('${mountId}', '#2563eb', this)"></div>
+          <div class="color-dot" style="background:#059669;" onclick="setWBColor('${mountId}', '#059669', this)"></div>
+          <div class="color-dot" style="background:#0f172a;" onclick="setWBColor('${mountId}', '#0f172a', this)"></div>
+          <select onchange="setWBSize('${mountId}', this.value)" style="padding:5px 8px; border-radius:8px; border:1.5px solid #cbd5e1; font-size:12.5px; font-weight:700;">
+            <option value="2.5">Nét mảnh</option><option value="4" selected>Nét vừa</option><option value="7">Nét đậm</option>
+          </select>
+        </div>
+        <div class="wb-tool-group">
+          <button type="button" class="wb-btn snip-btn" onclick="startSnipForWB('${mountId}')">✂️ Cắt ảnh màn hình đưa xuống đây</button>
+          <label class="wb-btn" style="margin:0;">🖼️ Chèn ảnh<input type="file" accept="image/*" style="display:none;" onchange="uploadImgToWB('${mountId}', this)"></label>
+          <button type="button" class="wb-btn" onclick="undoWB('${mountId}')">↩️ Hoàn tác</button>
+          <button type="button" class="wb-btn" onclick="changeWBHeight('${mountId}', 200)">➕ Mở rộng bảng</button>
+          <button type="button" class="wb-btn" onclick="clearWBInk('${mountId}')">🧹 Xóa nét</button>
+          <button type="button" class="wb-btn" style="color:#be123c;" onclick="clearWBAll('${mountId}')">🗑️ Xóa hết</button>
+        </div>
+      </div>
+      <div class="wb-stage" id="${mountId}-stage" style="height:${initialHeight}px;">
+        <canvas class="wb-bg-canvas" id="${mountId}-bg"></canvas>
+        <canvas class="wb-ink-canvas" id="${mountId}-ink"></canvas>
+      </div>
+    </div>
+  `;
+  const stage = document.getElementById(`${mountId}-stage`), bgCanvas = document.getElementById(`${mountId}-bg`), inkCanvas = document.getElementById(`${mountId}-ink`);
+  const state = { id: mountId, stage, bgCanvas, inkCanvas, bgCtx: bgCanvas.getContext('2d'), inkCtx: inkCanvas.getContext('2d'), tool: 'pen', color: '#dc2626', size: 4, drawing: false, lastPt: null, history: [], images: [], dragImg: null, resizingImg: null, dragOffset: { x: 0, y: 0 } };
+  WB_REGISTRY[mountId] = state; resizeWB(mountId); bindWBEvents(state);
+}
+function resizeWB(id) {
+  const st = WB_REGISTRY[id]; if (!st) return;
+  const rect = st.stage.getBoundingClientRect(); if (rect.width < 10 || rect.height < 10) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2), tW = Math.round(rect.width * dpr), tH = Math.round(rect.height * dpr);
+  if (st.inkCanvas.width === tW && st.inkCanvas.height === tH) return;
+  const tmp = document.createElement('canvas'); tmp.width = st.inkCanvas.width; tmp.height = st.inkCanvas.height;
+  if (tmp.width > 0 && tmp.height > 0) tmp.getContext('2d').drawImage(st.inkCanvas, 0, 0);
+  st.bgCanvas.width = tW; st.bgCanvas.height = tH; st.inkCanvas.width = tW; st.inkCanvas.height = tH;
+  st.bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0); st.inkCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (tmp.width > 0 && tmp.height > 0) { st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.drawImage(tmp,0,0); st.inkCtx.restore(); }
+  redrawWBImages(st);
+}
+function redrawWBImages(st) {
+  const rect = st.stage.getBoundingClientRect(); st.bgCtx.clearRect(0, 0, rect.width || 2000, rect.height || 2000);
+  st.images.forEach(it => {
+    st.bgCtx.drawImage(it.img, it.x, it.y, it.w, it.h);
+    if (st.tool === 'move') {
+      st.bgCtx.save(); st.bgCtx.strokeStyle = '#2563eb'; st.bgCtx.lineWidth = 2; st.bgCtx.setLineDash([6,4]); st.bgCtx.strokeRect(it.x, it.y, it.w, it.h); st.bgCtx.setLineDash([]); st.bgCtx.fillStyle = '#2563eb'; st.bgCtx.fillRect(it.x + it.w - 14, it.y + it.h - 14, 14, 14); st.bgCtx.restore();
+    }
+  });
+}
+function saveWBHistory(st) { if (!st.inkCanvas.width) return; if (st.history.length >= 15) st.history.shift(); const s = document.createElement('canvas'); s.width = st.inkCanvas.width; s.height = st.inkCanvas.height; s.getContext('2d').drawImage(st.inkCanvas, 0, 0); st.history.push(s); }
+function bindWBEvents(st) {
+  const cv = st.inkCanvas;
+  const getPos = e => { const r = cv.getBoundingClientRect(), p = (e.touches && e.touches[0]) ? e.touches[0] : e; return { x: p.clientX - r.left, y: p.clientY - r.top }; };
+  cv.addEventListener('pointerdown', e => {
+    if (e.button !== undefined && e.button !== 0) return; e.preventDefault(); const pos = getPos(e);
+    if (st.tool === 'move') {
+      for (let i = st.images.length - 1; i >= 0; i--) {
+        const it = st.images[i];
+        if (pos.x >= it.x + it.w - 22 && pos.x <= it.x + it.w + 8 && pos.y >= it.y + it.h - 22 && pos.y <= it.y + it.h + 8) { st.resizingImg = it; return; }
+        if (pos.x >= it.x && pos.x <= it.x + it.w && pos.y >= it.y && pos.y <= it.y + it.h) { st.dragImg = it; st.dragOffset = { x: pos.x - it.x, y: pos.y - it.y }; return; }
+      }
+      return;
+    }
+    saveWBHistory(st); st.drawing = true; st.lastPt = pos; const ctx = st.inkCtx;
+    ctx.beginPath(); ctx.moveTo(pos.x, pos.y); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    if (st.tool === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = 26; ctx.strokeStyle = 'rgba(0,0,0,1)'; }
+    else if (st.tool === 'hl') { ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = 20; ctx.strokeStyle = 'rgba(250,204,21,0.35)'; }
+    else { ctx.globalCompositeOperation = 'source-over'; ctx.lineWidth = st.size; ctx.strokeStyle = st.color; }
+    ctx.lineTo(pos.x + 0.1, pos.y + 0.1); ctx.stroke();
+  });
+  cv.addEventListener('pointermove', e => {
+    if (st.tool === 'move') {
+      if (!st.dragImg && !st.resizingImg) return; e.preventDefault(); const pos = getPos(e);
+      if (st.resizingImg) { const ratio = st.resizingImg.aspect || (st.resizingImg.w / st.resizingImg.h); st.resizingImg.w = Math.max(80, pos.x - st.resizingImg.x); st.resizingImg.h = st.resizingImg.w / ratio; }
+      else if (st.dragImg) { st.dragImg.x = pos.x - st.dragOffset.x; st.dragImg.y = pos.y - st.dragOffset.y; }
+      redrawWBImages(st); return;
+    }
+    if (!st.drawing) return; e.preventDefault(); const pos = getPos(e);
+    st.inkCtx.quadraticCurveTo(st.lastPt.x, st.lastPt.y, (st.lastPt.x + pos.x) / 2, (st.lastPt.y + pos.y) / 2); st.inkCtx.stroke(); st.lastPt = pos;
+  });
+  window.addEventListener('pointerup', () => { st.drawing = false; st.dragImg = null; st.resizingImg = null; st.inkCtx.globalCompositeOperation = 'source-over'; });
+}
+function setWBTool(id, tool) { const st = WB_REGISTRY[id]; if (!st) return; st.tool = tool; ['pen','hl','eraser','move'].forEach(t => { const b = document.getElementById(`${id}-tool-${t}`); if (b) b.classList.toggle('active', t === tool); }); redrawWBImages(st); }
+function setWBColor(id, c, el) { const st = WB_REGISTRY[id]; if (!st) return; st.color = c; if (st.tool === 'eraser' || st.tool === 'move') setWBTool(id, 'pen'); el.parentElement.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active')); el.classList.add('active'); }
+function setWBSize(id, v) { if (WB_REGISTRY[id]) WB_REGISTRY[id].size = parseFloat(v); }
+function undoWB(id) { const st = WB_REGISTRY[id]; if (!st || !st.history.length) return; const p = st.history.pop(); st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.clearRect(0,0,st.inkCanvas.width,st.inkCanvas.height); st.inkCtx.drawImage(p,0,0); st.inkCtx.restore(); }
+function clearWBInk(id) { const st = WB_REGISTRY[id]; if (!st) return; saveWBHistory(st); st.inkCtx.save(); st.inkCtx.setTransform(1,0,0,1,0,0); st.inkCtx.clearRect(0,0,st.inkCanvas.width,st.inkCanvas.height); st.inkCtx.restore(); }
+function clearWBAll(id) { const st = WB_REGISTRY[id]; if (!st) return; clearWBInk(id); st.images = []; redrawWBImages(st); }
+function changeWBHeight(id, d) { const st = WB_REGISTRY[id]; if (!st) return; st.stage.style.height = `${Math.max(300, st.stage.offsetHeight + d)}px`; resizeWB(id); }
+function toggleInlineWB(wrapId, wbId) { const w = document.getElementById(wrapId); if (!w) return; if (w.style.display === 'none' || !w.style.display) { w.style.display = 'block'; createSmartWhiteboard(wbId, 'Bảng viết giải bài', 420); setTimeout(() => resizeWB(wbId), 30); } else w.style.display = 'none'; }
+function addImageElementToWB(id, imgObj) {
+  const st = WB_REGISTRY[id]; if (!st) return; resizeWB(id);
+  const r = st.stage.getBoundingClientRect(), drawW = Math.min(imgObj.width, Math.max(260, r.width - 40)), ratio = imgObj.width / imgObj.height, drawH = drawW / ratio;
+  if (drawH > r.height * 0.68 && drawH + 220 > r.height) { st.stage.style.height = `${Math.round(drawH + 220)}px`; resizeWB(id); }
+  st.images.push({ img: imgObj, x: Math.max(16, (st.stage.getBoundingClientRect().width - drawW) / 2), y: 16, w: drawW, h: drawH, aspect: ratio });
+  setWBTool(id, 'pen'); redrawWBImages(st);
+}
+function uploadImgToWB(id, inp) { const f = inp.files && inp.files[0]; if (!f) return; const rd = new FileReader(); rd.onload = ev => { const im = new Image(); im.onload = () => addImageElementToWB(id, im); im.src = ev.target.result; }; rd.readAsDataURL(f); inp.value = ''; }
+function startSnipForWB(id) { activeSnipTargetWB = id; document.getElementById('snip-floating-bar').style.display = 'flex'; }
+function cancelSnipMode() { activeSnipTargetWB = null; document.getElementById('snip-floating-bar').style.display = 'none'; document.getElementById('snip-overlay').style.display = 'none'; document.getElementById('snip-rect').style.display = 'none'; }
+function beginSnipDragMode() {
+  document.getElementById('snip-floating-bar').style.display = 'none';
+  const ov = document.getElementById('snip-overlay'), rc = document.getElementById('snip-rect'); ov.style.display = 'block'; rc.style.display = 'none';
+  let sx = 0, sy = 0, drag = false;
+  function down(e) { e.preventDefault(); const p = (e.touches && e.touches[0]) ? e.touches[0] : e; sx = p.clientX; sy = p.clientY; drag = true; rc.style.left = `${sx}px`; rc.style.top = `${sy}px`; rc.style.width = '0px'; rc.style.height = '0px'; rc.style.display = 'block'; }
+  function move(e) { if (!drag) return; e.preventDefault(); const p = (e.touches && e.touches[0]) ? e.touches[0] : e; rc.style.left = `${Math.min(sx, p.clientX)}px`; rc.style.top = `${Math.min(sy, p.clientY)}px`; rc.style.width = `${Math.abs(p.clientX - sx)}px`; rc.style.height = `${Math.abs(p.clientY - sy)}px`; }
+  async function up() {
+    if (!drag) return; drag = false; ov.removeEventListener('pointerdown', down); ov.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+    const box = rc.getBoundingClientRect(); ov.style.display = 'none'; rc.style.display = 'none';
+    if (box.width < 20 || box.height < 20 || !activeSnipTargetWB) { cancelSnipMode(); return; }
+    const target = activeSnipTargetWB; activeSnipTargetWB = null;
+    if (window.html2canvas) {
+      const snap = await window.html2canvas(document.body, { x: box.left + window.scrollX, y: box.top + window.scrollY, width: box.width, height: box.height, scale: Math.min(window.devicePixelRatio || 2, 2), backgroundColor: '#ffffff', useCORS: true, logging: false });
+      const im = new Image(); im.onload = () => { addImageElementToWB(target, im); document.getElementById(target).scrollIntoView({ behavior: 'smooth', block: 'center' }); }; im.src = snap.toDataURL('image/png');
+    }
+  }
+  ov.addEventListener('pointerdown', down); ov.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+}
+
+window.addEventListener('resize', () => Object.keys(WB_REGISTRY).forEach(id => resizeWB(id)));
+window.addEventListener('DOMContentLoaded', () => {
+  createSmartWhiteboard('wb-ap2-tab1', 'Bảng viết nháp Phần 1', 440);
+  createSmartWhiteboard('wb-ap2-tab2', 'Bảng viết nháp chung Phần 2', 450);
+  createSmartWhiteboard('wb-ap2-tab3', 'Bảng viết nháp chung Phần 3', 450);
+  createSmartWhiteboard('wb-ap2-tab5', 'Bảng viết chữa Đề kiểm tra', 450);
+  renderGenericMC(P2_WARMUP, 'p2w-box', 'p2w');
+  renderGenericMC(AP_TEST_MC, 'ap-test-mc', 'apt');
+});
+</script>
+</body>
+</html>
