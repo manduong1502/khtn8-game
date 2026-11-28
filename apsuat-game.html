@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trò Chơi KHTN 8: Chuyên Đề Áp Suất (Bài 15 & Bài 16 - 2 Buổi)</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --secondary: #4f46e5;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg-grad: linear-gradient(135deg, #0f172a 0%, #1e3a8a 55%, #312e81 100%);
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; }
+  body { background: var(--bg-grad); min-height: 100vh; color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 16px; }
+
+  .game-wrapper { width: 100%; max-width: 780px; margin: auto; }
+  .hud-bar { background: rgba(255,255,255,0.14); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.25); border-radius: 18px; padding: 12px 18px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+  .hud-pill { background: rgba(15,23,42,0.45); padding: 6px 14px; border-radius: 999px; font-size: 14px; font-weight: 700; }
+
+  .screen { display: none; background: var(--card); border-radius: 24px; padding: 26px 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); animation: popIn 0.25s ease; }
+  .screen.active { display: block; }
+  @keyframes popIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .hero-badge { display: inline-block; background: #dbeafe; color: #1d4ed8; font-weight: 800; font-size: 13px; padding: 6px 14px; border-radius: 999px; margin-bottom: 10px; }
+  h1.game-title { font-size: 25px; font-weight: 900; color: #0f172a; margin-bottom: 8px; }
+  .subtitle { color: var(--muted); font-size: 15px; margin-bottom: 18px; line-height: 1.5; }
+
+  .input-group { margin-bottom: 16px; }
+  .input-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #334155; }
+  .text-input { width: 100%; padding: 13px 16px; border: 2px solid #cbd5e1; border-radius: 14px; font-size: 16px; font-weight: 600; outline: none; }
+  .text-input:focus { border-color: var(--primary); }
+
+  .avatar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 20px; }
+  @media (max-width: 600px) { .avatar-grid { grid-template-columns: repeat(3, 1fr); } }
+  .avatar-card { border: 2px solid #e2e8f0; border-radius: 14px; padding: 10px 4px; font-size: 26px; text-align: center; cursor: pointer; background: #f8fafc; }
+  .avatar-card.selected { border-color: var(--primary); background: #eff6ff; }
+
+  .stage-btn-list { display: flex; flex-direction: column; gap: 12px; }
+  .stage-btn { border: none; border-radius: 16px; padding: 16px 18px; color: white; font-size: 16px; font-weight: 800; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
+  .stage-btn.s1 { background: linear-gradient(135deg, #2563eb, #0284c7); }
+  .stage-btn.s2 { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+
+  .progress-track { width: 100%; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 18px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed); width: 0%; transition: width 0.3s; }
+
+  .q-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 18px; padding: 18px; font-size: 17.5px; font-weight: 700; line-height: 1.5; color: #0f172a; margin-bottom: 14px; }
+  .opts-list { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn { background: white; border: 2px solid #cbd5e1; border-radius: 14px; padding: 13px 16px; font-size: 15.5px; font-weight: 600; color: #1e293b; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+  .opt-letter { width: 32px; height: 32px; border-radius: 9px; background: #e2e8f0; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .opt-btn.correct { border-color: #10b981; background: #ecfdf5; color: #065f46; }
+  .opt-btn.correct .opt-letter { background: #10b981; color: white; }
+  .opt-btn.wrong { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+  .opt-btn.wrong .opt-letter { background: #ef4444; color: white; }
+
+  .explain-panel { display: none; margin-top: 14px; padding: 13px 16px; border-radius: 14px; background: #eff6ff; border-left: 5px solid #2563eb; font-size: 15px; line-height: 1.5; color: #1e3a8a; }
+  .score-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 18px 0; }
+  .stat-card { background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 14px 10px; text-align: center; }
+  .stat-card .num { font-size: 24px; font-weight: 900; color: var(--primary); }
+  .stat-card .txt { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .email-notice { background: #f0fdf4; border: 1.5px solid #86efac; color: #166534; padding: 12px 16px; border-radius: 14px; font-size: 14.5px; margin-bottom: 16px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="game-wrapper">
+  <div class="hud-bar">
+    <div class="hud-pill" id="hud-player">🦁 Học sinh</div>
+    <div class="hud-pill" id="hud-score">⭐ Điểm: 0 XP</div>
+    <div class="hud-pill" id="hud-streak">🔥 Chuỗi đúng: 0</div>
+  </div>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen active">
+    <span class="hero-badge">⚖️ KHTN 8 - CHƯƠNG III: CHUYÊN ĐỀ ÁP SUẤT (BÀI 15 & 16)</span>
+    <h1 class="game-title">Đấu Trường Chinh Phục Áp Suất</h1>
+    <p class="subtitle">Trọng tâm giải toán công thức p = F / S, giải thích tăng/giảm áp suất (Bài 15) và nhận biết hiện tượng áp suất chất lỏng, khí quyển (Bài 16). Mỗi lượt rút ngẫu nhiên 12 câu tự đảo đáp án!</p>
+
+    <div class="input-group">
+      <label for="student-name">1. Nhập họ và tên của em để nộp bài cho cô:</label>
+      <input type="text" id="student-name" class="text-input" placeholder="Ví dụ: Nguyễn Hoàng Nam...">
+    </div>
+
+    <div class="input-group">
+      <label>2. Chọn linh vật đồng hành:</label>
+      <div class="avatar-grid">
+        <div class="avatar-card selected" onclick="pickAvatar('🦁', this)">🦁</div>
+        <div class="avatar-card" onclick="pickAvatar('🐼', this)">🐼</div>
+        <div class="avatar-card" onclick="pickAvatar('🦊', this)">🦊</div>
+        <div class="avatar-card" onclick="pickAvatar('🐬', this)">🐬</div>
+        <div class="avatar-card" onclick="pickAvatar('🦉', this)">🦉</div>
+        <div class="avatar-card" onclick="pickAvatar('🚀', this)">🚀</div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>3. Chọn bài tập buổi học:</label>
+      <div class="stage-btn-list">
+        <button class="stage-btn s1" id="btn-buoi-1" onclick="startStage(1)">
+          <span>⚖️ Chặng 1 - Buổi 1: Kiến thức & Bài tập nền tảng Bài 15, 16</span>
+          <span>12 câu &rarr;</span>
+        </button>
+        <button class="stage-btn s2" id="btn-buoi-2" onclick="startStage(2)">
+          <span>🏆 Chặng 2 - Buổi 2: Bài tập tổng hợp Áp suất & Liên hệ KLR</span>
+          <span>12 câu &rarr;</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz" class="screen">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <span id="q-counter" style="font-weight:800; color:#1e3a8a; font-size:15px;">Câu 1 / 12</span>
+      <span id="q-timer" style="background:#fef3c7; color:#b45309; padding:5px 12px; border-radius:999px; font-weight:800; font-size:14px;">⏱️ 55s</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="q-progress"></div></div>
+    <div class="q-box" id="q-text"></div>
+    <div class="opts-list" id="q-options"></div>
+    <div class="explain-panel" id="q-explain"></div>
+    <button class="stage-btn s1" id="btn-next-q" style="display:none; margin-top:16px; width:100%; justify-content:center;" onclick="nextQ()">Câu tiếp theo &rarr;</button>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result" class="screen" style="text-align:center;">
+    <div style="font-size:62px; margin-bottom:6px;" id="res-trophy">🏆</div>
+    <span class="hero-badge" id="res-badge">CHUYÊN GIA ÁP SUẤT</span>
+    <h2 id="res-title" style="font-size:22px; margin-bottom:6px;">Hoàn thành xuất sắc!</h2>
+    <div class="score-stats">
+      <div class="stat-card"><div class="num" id="res-xp">0</div><div class="txt">Điểm XP</div></div>
+      <div class="stat-card"><div class="num" id="res-correct">0/12</div><div class="txt">Số câu đúng</div></div>
+      <div class="stat-card"><div class="num" id="res-acc">0%</div><div class="txt">Độ chính xác</div></div>
+    </div>
+    <div class="email-notice" id="email-status">⏳ Đang gửi kết quả bài làm về email của cô...</div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button class="stage-btn s1" style="flex:1; justify-content:center;" onclick="startStage(curStage)">🔄 Làm đề ngẫu nhiên mới</button>
+      <button class="stage-btn s2" style="flex:1; justify-content:center;" onclick="showScreen('screen-home')">🏠 Đổi chặng học</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TEACHER_EMAIL = "thaomy1005@gmail.com";
+
+const AP_BANKS = {
+  1: [
+    { q: "Áp lực là lực có đặc điểm nào sau đây?", correct: "Lực ép có phương vuông góc với mặt bị ép", wrongs: ["Mọi lực kéo tác dụng lên vật", "Lực ma sát song song với mặt tiếp xúc", "Lực đẩy Ác-si-mét hướng lên"], explain: "💡 Định nghĩa SGK: Áp lực là lực ép có phương vuông góc với mặt bị ép." },
+    { q: "Công thức tính áp suất trên một bề mặt và đơn vị chuẩn trong hệ SI là:", correct: "p = F / S ; đơn vị Pa (N/m²)", wrongs: ["p = F · S ; đơn vị N·m²", "p = S / F ; đơn vị m²/N", "p = m / V ; đơn vị kg/m³"], explain: "💡 p = F / S, với 1 Pa = 1 N/m²." },
+    { q: "Đổi đơn vị diện tích: S = 150 cm² bằng bao nhiêu mét vuông (m²)?", correct: "0,015 m²", wrongs: ["1,5 m²", "0,15 m²", "0,0015 m²"], explain: "💡 1 m² = 10 000 cm² ⇒ 150 : 10 000 = 0,015 m²." },
+    { q: "Đổi đơn vị áp suất: 18 kPa bằng bao nhiêu Pa?", correct: "18 000 Pa", wrongs: ["1 800 Pa", "180 Pa", "0,018 Pa"], explain: "💡 1 kPa = 1 000 Pa ⇒ 18 kPa = 18 000 Pa." },
+    { q: "Một vật có trọng lượng P = 600 N đặt nằm yên trên sàn ngang với diện tích tiếp xúc S = 0,03 m². Áp suất vật tác dụng lên sàn là:", correct: "20 000 Pa", wrongs: ["18 Pa", "2 000 Pa", "200 000 Pa"], explain: "💡 p = F / S = 600 / 0,03 = 20 000 Pa." },
+    { q: "Một bạn học sinh nặng 48 kg đứng bằng HAI CHÂN trên sàn ngang, diện tích MỘT bàn chân là 150 cm². Áp suất bạn tác dụng lên sàn là:", correct: "16 000 Pa", wrongs: ["32 000 Pa", "1 600 Pa", "3,2 Pa"], explain: "💡 F = 480 N; 2 bàn chân S = 2 × 150 = 300 cm² = 0,03 m² ⇒ p = 480 / 0,03 = 16 000 Pa!" },
+    { q: "Muốn làm TĂNG áp suất tác dụng lên một bề mặt, ta áp dụng biện pháp nào?", correct: "Tăng độ lớn áp lực F hoặc giảm diện tích bị ép S", wrongs: ["Giảm áp lực F và tăng diện tích bị ép S", "Chỉ cần tăng diện tích bị ép S", "Giữ nguyên F và tăng S gấp đôi"], explain: "💡 Vì p = F / S nên tăng F hoặc giảm S sẽ làm p tăng lên." },
+    { q: "Việc thiết kế xe tăng chạy bằng dải xích bản rộng thay vì bánh lốp tròn nhằm mục đích:", correct: "Tăng diện tích bị ép S lên mặt đất để làm giảm áp suất, giúp xe không bị lún trên đất mềm", wrongs: ["Làm tăng áp suất lên mặt đất", "Làm giảm khối lượng xe tăng", "Giúp xe tăng chạy nhanh hơn ô tô đua"], explain: "💡 Bản xích rộng làm S rất lớn ⇒ giảm áp suất p chống sa lầy." },
+    { q: "Một viên gạch hình hộp chữ nhật kích thước 20 cm × 10 cm × 5 cm nặng 1,6 kg đặt trên mặt bàn ngang. Áp suất LỚN NHẤT viên gạch có thể gây ra là:", correct: "3 200 Pa", wrongs: ["800 Pa", "1 600 Pa", "320 Pa"], explain: "💡 F = 16 N. Để p lớn nhất phải đặt mặt nhỏ nhất S_min = 10 × 5 = 50 cm² = 0,005 m² ⇒ p_max = 16 / 0,005 = 3 200 Pa." },
+    { q: "Để móng cột trụ chịu áp lực F = 90 000 N không làm lún nền đất (biết nền đất chịu tối đa p = 150 000 Pa), diện tích chân móng tối thiểu là:", correct: "0,6 m²", wrongs: ["1,67 m²", "6 m²", "0,06 m²"], explain: "💡 S_min = F / p_max = 90 000 / 150 000 = 0,6 m²." },
+    { q: "Khác với vật rắn, chất lỏng gây ra áp suất có đặc điểm nào?", correct: "Gây áp suất theo mọi phương và càng xuống sâu áp suất chất lỏng càng lớn", wrongs: ["Chỉ gây áp suất thẳng đứng xuống đáy bình", "Càng xuống sâu áp suất càng giảm", "Không tác dụng áp suất lên thành bình"], explain: "💡 Chất lỏng gây áp suất theo mọi phương; càng sâu áp suất càng lớn." },
+    { q: "Vì sao phải đục 2 lỗ nhỏ trên nắp hộp sữa đặc bằng sắt khi rót sữa?", correct: "Để không khí bên ngoài tràn vào một lỗ tạo áp suất khí quyển đẩy sữa chảy đều ra lỗ kia", wrongs: ["Để sữa bên trong nhanh nguội", "Để nhìn thấy lượng sữa còn lại", "Để làm giảm khối lượng riêng của sữa"], explain: "💡 Nhờ áp suất khí quyển đi vào lỗ thông khí đẩy sữa chảy ra dễ dàng." },
+    { q: "Khi lật úp ngược cốc đầy nước có đậy kín tờ bìa cứng phẳng không thấm nước, nước không đổ ra là do:", correct: "Áp suất khí quyển bên ngoài đẩy tờ bìa từ dưới lên lớn hơn áp suất nước trong cốc", wrongs: ["Lực từ trường giữ tờ bìa", "Nước hút chặt tờ bìa bằng keo", "Trọng lượng của nước bằng 0"], explain: "💡 Áp suất khí quyển tác dụng theo mọi phương, kể cả từ dưới đẩy lên giữ chặt tờ bìa." },
+    { q: "Tại sao chân đê chắn nước hoặc thân đập thủy điện luôn phải xây đáy rộng và dày hơn phần đỉnh?", correct: "Vì càng xuống sâu áp suất của nước tác dụng lên thân đập càng lớn", wrongs: ["Vì trên mặt nước áp suất lớn nhất", "Chỉ để đẹp mắt", "Vì nước không gây áp suất lên thành đập"], explain: "💡 Dưới sâu áp suất nước rất lớn nên chân đập phải dày để chịu lực ép của nước." }
+  ],
+  2: [
+    { q: "Một người nặng 52 kg đeo ba lô nặng 8 kg đứng bằng 2 chân trên sàn ngang, diện tích mỗi bàn chân là 150 cm². Áp suất lên sàn là:", correct: "20 000 Pa (20 kPa)", wrongs: ["40 000 Pa", "17 333 Pa", "2 000 Pa"], explain: "💡 Tổng m = 52 + 8 = 60 kg ⇒ F = 600 N. Hai bàn chân S = 300 cm² = 0,03 m² ⇒ p = 600 / 0,03 = 20 000 Pa." },
+    { q: "Một xe tải 4 bánh có tổng khối lượng cả xe và hàng là 3,2 tấn. Diện tích tiếp xúc của MỖI bánh xe với đường là 200 cm². Áp suất xe lên mặt đường là:", correct: "400 000 Pa (400 kPa)", wrongs: ["1 600 000 Pa", "40 000 Pa", "160 000 Pa"], explain: "💡 F = 32 000 N. Tổng 4 bánh S = 4 × 200 = 800 cm² = 0,08 m² ⇒ p = 32 000 / 0,08 = 400 000 Pa." },
+    { q: "Chiếc bàn 4 chân nặng 12 kg, diện tích mỗi chân bàn là 20 cm². Đặt lên bàn một thùng sách nặng 8 kg. Áp suất tác dụng lên sàn nhà là:", correct: "25 000 Pa", wrongs: ["15 000 Pa", "100 000 Pa", "2 500 Pa"], explain: "💡 Tổng m = 20 kg ⇒ F = 200 N. Tổng S = 4 × 20 = 80 cm² = 0,008 m² ⇒ p = 200 / 0,008 = 25 000 Pa." },
+    { q: "Một thỏi sắt đặc hình hộp chữ nhật kích thước 20 cm × 10 cm × 5 cm (biết D_sắt = 7 800 kg/m³). Trọng lượng P của thỏi sắt là:", correct: "78 N", wrongs: ["7,8 N", "780 N", "39 N"], explain: "💡 V = 1 000 cm³ = 0,001 m³ ⇒ m = 7 800 × 0,001 = 7,8 kg ⇒ P = 10 · m = 78 N." },
+    { q: "Tiếp theo câu trên: Thỏi sắt 78 N (kích thước 20 cm × 10 cm × 5 cm) đặt nằm bẹt sao cho áp suất lên mặt bàn NHỎ NHẤT thì p_min bằng:", correct: "3 900 Pa", wrongs: ["15 600 Pa", "7 800 Pa", "390 Pa"], explain: "💡 Đặt mặt lớn nhất S_max = 20 × 10 = 200 cm² = 0,02 m² ⇒ p_min = 78 / 0,02 = 3 900 Pa." },
+    { q: "Một khối đá hình lập phương cạnh a = 50 cm (0,5 m) đặt trên sân ngang. Biết KLR của đá là 2 600 kg/m³. Áp suất khối đá tác dụng lên sân là:", correct: "13 000 Pa", wrongs: ["26 000 Pa", "6 500 Pa", "1 300 Pa"], explain: "💡 V = 0,5³ = 0,125 m³ ⇒ m = 325 kg ⇒ F = 3 250 N. Mặt đáy S = 0,5² = 0,25 m² ⇒ p = 3 250 / 0,25 = 13 000 Pa." },
+    { q: "Một mặt cầu tạm chỉ chịu được áp suất tối đa 250 000 Pa. Xe tải có 4 bánh (mỗi bánh tiếp xúc 250 cm²), xác xe rỗng nặng 1,8 tấn. Xe được chở tối đa bao nhiêu hàng?", correct: "0,7 tấn (700 kg)", wrongs: ["2,5 tấn", "1,2 tấn", "0,5 tấn"], explain: "💡 S = 4 × 250 = 1 000 cm² = 0,1 m². F_max = 250 000 × 0,1 = 25 000 N ⇒ m_tổng = 2,5 tấn ⇒ m_hàng = 2,5 - 1,8 = 0,7 tấn." },
+    { q: "Một miếng bánh chưng hình hộp chữ nhật đặt trên đĩa ngang gây áp suất 500 Pa. Nếu cắt thẳng đứng từ trên xuống chia đôi thành 2 nửa bằng nhau rồi lấy đi 1 nửa thì nửa còn lại gây áp suất:", correct: "Vẫn bằng 500 Pa (không đổi)", wrongs: ["Giảm còn 250 Pa", "Tăng lên 1 000 Pa", "Giảm còn 125 Pa"], explain: "💡 Cắt dọc từ trên xuống làm cả F và diện tích đáy S cùng giảm 2 lần nên tỉ số p = F / S giữ nguyên!" },
+    { q: "Khi xoay một viên gạch đặc từ tư thế nằm bẹt sang tư thế dựng đứng trên mặt bàn ngang thì:", correct: ["Độ lớn áp lực F không đổi nhưng áp suất p tăng lên", "Cả áp lực F và áp suất p đều tăng", "Áp lực F tăng còn áp suất p giảm", "Cả F và p đều không đổi"][0], wrongs: ["Cả áp lực F và áp suất p đều tăng", "Áp lực F tăng còn áp suất p giảm", "Cả F và p đều không đổi"], explain: "💡 Trọng lượng viên gạch không đổi nên F = P không đổi; S giảm làm p = F / S tăng!" },
+    { q: "Ấn một lực F = 12 N vào mũ đinh ghim làm đầu mũi nhọn đinh ghim (có diện tích S = 0,00000004 m²) xuyên vào gỗ. Áp suất ở mũi đinh là:", correct: "300 000 000 Pa", wrongs: ["30 000 000 Pa", "48 000 Pa", "3 000 000 Pa"], explain: "💡 p = 12 / 0,00000004 = 300 000 000 Pa." },
+    { q: "Khi máy bay cất cánh lên cao nhanh, hành khách thường cảm thấy bị ù tai là do:", correct: "Áp suất khí quyển bên ngoài giảm đột ngột làm chênh lệch áp suất hai bên màng nhĩ", wrongs: ["Áp suất khí quyển bên ngoài tăng mạnh", "Không còn lực hút Trái Đất", "Nhiệt độ trong khoang máy bay quá cao"], explain: "💡 Lên cao áp suất khí quyển giảm nhanh làm mất cân bằng áp suất hai bên màng nhĩ." },
+    { q: "Trong hai bình hình trụ giống nhau: Bình A chứa nước tới độ cao 20 cm, Bình B chứa nước tới độ cao 35 cm. So sánh áp suất nước lên đáy hai bình:", correct: "Áp suất lên đáy bình B lớn hơn đáy bình A vì cột nước ở bình B sâu hơn", wrongs: ["Áp suất lên đáy bình A lớn hơn", "Bằng nhau vì cùng tiết diện đáy", "Nước không gây áp suất lên đáy bình"], explain: "💡 Cùng một chất lỏng, độ sâu cột chất lỏng càng lớn thì áp suất lên đáy càng lớn." }
+  ]
+};
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+let studentName = "Học sinh", avatar = "🦁";
+let xp = 0, streak = 0, correctTotal = 0, qIdx = 0, curStage = 1;
+let roundQs = [], wrongLog = [], timerId = null, secLeft = 55;
+
+function pickAvatar(e, el) {
+  avatar = e;
+  document.querySelectorAll('.avatar-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  updateHud();
+}
+
+function updateHud() {
+  document.getElementById('hud-player').innerText = `${avatar} ${studentName}`;
+  document.getElementById('hud-score').innerText = `⭐ Điểm: ${xp} XP`;
+  document.getElementById('hud-streak').innerText = `🔥 Chuỗi đúng: ${streak}`;
+}
+
+function showScreen(id) {
+  clearInterval(timerId);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startStage(stNum) {
+  const inp = document.getElementById('student-name').value.trim();
+  if (!inp) {
+    alert("Em hãy nhập họ và tên ở mục 1 trước khi làm bài để gửi kết quả cho cô nhé!");
+    document.getElementById('student-name').focus();
+    return;
+  }
+  studentName = inp;
+  curStage = stNum;
+  xp = 0; streak = 0; correctTotal = 0; qIdx = 0; wrongLog = [];
+  updateHud();
+
+  roundQs = shuffle(AP_BANKS[stNum] || AP_BANKS[1]).slice(0, 12).map(item => {
+    const opts = shuffle([item.correct, ...item.wrongs]);
+    return { q: item.q, opts, ans: opts.indexOf(item.correct), correctText: item.correct, explain: item.explain };
+  });
+
+  showScreen('screen-quiz');
+  renderQ();
+}
+
+function renderQ() {
+  clearInterval(timerId);
+  const total = roundQs.length, item = roundQs[qIdx];
+  document.getElementById('q-counter').innerText = `Buổi ${curStage} • Câu ${qIdx + 1} / ${total}`;
+  document.getElementById('q-progress').style.width = `${(qIdx / total) * 100}%`;
+  document.getElementById('q-text').innerText = item.q;
+  document.getElementById('q-explain').style.display = 'none';
+  document.getElementById('btn-next-q').style.display = 'none';
+
+  const box = document.getElementById('q-options');
+  box.innerHTML = '';
+  item.opts.forEach((opt, i) => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.innerHTML = `<span class="opt-letter">${['A','B','C','D'][i]}</span><span>${opt}</span>`;
+    b.onclick = () => chooseOpt(i);
+    box.appendChild(b);
+  });
+
+  secLeft = 55;
+  document.getElementById('q-timer').innerText = `⏱️ ${secLeft}s`;
+  timerId = setInterval(() => {
+    secLeft--;
+    document.getElementById('q-timer').innerText = `⏱️ ${secLeft}s`;
+    if (secLeft <= 0) { clearInterval(timerId); chooseOpt(-1); }
+  }, 1000);
+}
+
+function chooseOpt(chosen) {
+  clearInterval(timerId);
+  const item = roundQs[qIdx];
+  document.querySelectorAll('#q-options .opt-btn').forEach((b, idx) => {
+    b.disabled = true;
+    if (idx === item.ans) b.classList.add('correct');
+    else if (idx === chosen) b.classList.add('wrong');
+  });
+
+  const exp = document.getElementById('q-explain');
+  exp.style.display = 'block';
+  if (chosen === item.ans) {
+    streak++; correctTotal++;
+    const bonus = Math.min(streak * 10, 50);
+    xp += 100 + bonus;
+    exp.innerHTML = `✅ <strong>Chính xác! (+${100 + bonus} XP)</strong><br>${item.explain}`;
+  } else {
+    streak = 0;
+    wrongLog.push({ cauHoi: item.q, daChon: chosen === -1 ? "Hết giờ" : item.opts[chosen], dapAnDung: item.correctText });
+    exp.innerHTML = `❌ <strong>Chưa đúng!</strong> Đáp án đúng: <strong>${item.correctText}</strong><br>${item.explain}`;
+  }
+  updateHud();
+  const nb = document.getElementById('btn-next-q');
+  nb.style.display = 'flex';
+  nb.innerText = (qIdx === roundQs.length - 1) ? "🏁 Xem điểm & Nộp bài cho cô" : "Câu tiếp theo →";
+}
+
+function nextQ() {
+  qIdx++;
+  if (qIdx >= roundQs.length) finishStage();
+  else renderQ();
+}
+
+function finishStage() {
+  showScreen('screen-result');
+  const total = roundQs.length, acc = Math.round((correctTotal / total) * 100);
+  document.getElementById('res-xp').innerText = xp;
+  document.getElementById('res-correct').innerText = `${correctTotal}/${total}`;
+  document.getElementById('res-acc').innerText = `${acc}%`;
+  document.getElementById('res-title').innerText = `${avatar} ${studentName} đã hoàn thành Buổi ${curStage} - Chuyên đề Áp suất!`;
+
+  const stageTitle = curStage === 1
+    ? "Áp suất Buổi 1 (Bài 15 & Bài 16 nền tảng)"
+    : "Áp suất Buổi 2 (Bài tập tổng hợp & Liên hệ KLR)";
+
+  const statusEl = document.getElementById('email-status');
+  const wrongDetails = wrongLog.length === 0
+    ? "Không có câu sai (Làm đúng 100%!)"
+    : wrongLog.map((w, i) => `${i + 1}. ${w.cauHoi}\n   - Chọn: ${w.daChon}\n   - Đúng: ${w.dapAnDung}`).join("\n\n");
+
+  fetch(`https://formsubmit.co/ajax/${TEACHER_EMAIL}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+    body: JSON.stringify({
+      _subject: `⚖️ KHTN 8 (${stageTitle}): ${studentName} - Đúng ${correctTotal}/${total} câu (${xp} XP)`,
+      "Chuyên đề": stageTitle,
+      "Họ và tên học sinh": studentName,
+      "Số câu đúng": `${correctTotal} / ${total}`,
+      "Tỉ lệ chính xác": `${acc}%`,
+      "Điểm XP": `${xp} XP`,
+      "Thời gian nộp": new Date().toLocaleString("vi-VN"),
+      "Chi tiết câu sai cần lưu ý": wrongDetails
+    })
+  })
+  .then(r => r.json())
+  .then(() => {
+    statusEl.innerHTML = `✅ <strong>Đã nộp bài thành công!</strong> Kết quả của <strong>${studentName}</strong> đã được gửi về email cho cô.`;
+  })
+  .catch(() => {
+    statusEl.innerHTML = `✅ Đã ghi nhận kết quả (${correctTotal}/${total} câu)! Em chụp màn hình gửi Zalo cho cô nhé.`;
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const b = new URLSearchParams(window.location.search).get('buoi');
+  if (b === '1' || b === '2') {
+    const btn = document.getElementById(`btn-buoi-${b}`);
+    if (btn) btn.style.outline = '4px solid #fde047';
+  }
+});
+</script>
+</body>
+</html>
